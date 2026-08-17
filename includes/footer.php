@@ -29,7 +29,7 @@
 
         <p class="cgs-footer__blurb">
           Integrated customized logistics services for the oil and gas, offshore,
-          heavy lift, energy, construction and mining sectors — managing and
+          heavy lift, energy, construction and mining sectors, managing and
           optimizing supply chains from origin to final site.
         </p>
 

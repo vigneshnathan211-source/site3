@@ -40,6 +40,12 @@
   /* Type — Plus Jakarta Sans, as the Roofer build uses */
   --cgs-font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
+  /* Easing. The built-in CSS keywords are too weak to read as intentional;
+     these are the stronger variants. ease-in is deliberately absent: it
+     delays the first frame, which is exactly when the eye is watching. */
+  --ease-out:    cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
   /* Rhythm */
   --cgs-radius:    4px;        /* near-square corners read as industrial */
   --cgs-shadow:    0 8px 24px rgba(10, 30, 92, 0.08);
@@ -48,6 +54,10 @@
 }
 
 /* --- Base ---------------------------------------------------------------- */
+
+/* Keeps an #anchor target clear of the sticky header instead of landing
+   underneath it. */
+html { scroll-padding-top: 96px; }
 
 body {
   font-family: var(--cgs-font);
@@ -82,23 +92,37 @@ a:hover { color: var(--cgs-navy-700); }
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 14px 26px;
+  padding: 15px 28px;
   border: none;
   border-radius: var(--cgs-radius);
   font-weight: 600;
   font-size: 15px;
   line-height: 1;
+  white-space: nowrap;          /* a CTA that wraps to two lines is broken */
   text-decoration: none;
-  transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease;
+  /* Named properties, not `all`: `all` animates things you did not intend
+     and costs layout work on every one of them. */
+  transition: transform 160ms var(--ease-out),
+              box-shadow 200ms var(--ease-out),
+              background-color 200ms ease,
+              border-color 200ms ease,
+              color 200ms ease;
 }
-.cgs-btn:hover { transform: translateY(-2px); }
+/* Press feedback. Without it the button gives no sign it heard the click. */
+.cgs-btn:active { transform: scale(0.97); }
+.cgs-btn i { transition: transform 200ms var(--ease-out); }
+.cgs-btn:hover i { transform: translateX(3px); }
 
 .cgs-btn--primary {
   background: var(--cgs-blue-500);
   color: #fff;
-  box-shadow: 0 10px 24px rgba(30, 99, 196, .28);
+  box-shadow: 0 8px 20px rgba(30, 99, 196, .24);
 }
-.cgs-btn--primary:hover { background: var(--cgs-navy-700); color: #fff; }
+.cgs-btn--primary:hover {
+  background: var(--cgs-navy-700);
+  color: #fff;
+  box-shadow: 0 12px 28px rgba(18, 58, 143, .32);
+}
 
 .cgs-btn--ghost {
   background: transparent;
@@ -107,9 +131,27 @@ a:hover { color: var(--cgs-navy-700); }
 }
 .cgs-btn--ghost:hover { border-color: var(--cgs-blue-500); color: var(--cgs-blue-500); }
 
-.cgs-btn--on-dark {
-  background: #fff;
-  color: var(--cgs-navy-900);
+.cgs-btn--on-dark { background: #fff; color: var(--cgs-navy-900); }
+.cgs-btn--on-dark:hover { background: var(--cgs-cyan-300); color: var(--cgs-navy-900); }
+
+/* Outline on a dark ground. Needs its own border because a transparent
+   button over navy has no readable edge. */
+.cgs-btn--outline-light {
+  background: transparent;
+  color: #fff;
+  border: 1.5px solid rgba(255, 255, 255, .38);
+}
+.cgs-btn--outline-light:hover {
+  background: rgba(255, 255, 255, .1);
+  border-color: #fff;
+  color: #fff;
+}
+
+/* Hover lift only where there is a real pointer. On touch, :hover sticks
+   after a tap and the element stays lifted. */
+@media (hover: hover) and (pointer: fine) {
+  .cgs-btn:hover { transform: translateY(-2px); }
+  .cgs-btn:active { transform: translateY(-2px) scale(0.97); }
 }
 
 /* --- Section scaffolding ------------------------------------------------- */
@@ -135,11 +177,14 @@ a:hover { color: var(--cgs-navy-700); }
 
 /* --- Hero ---------------------------------------------------------------- */
 
+/* dvh, not vh: on iOS Safari the address bar makes vh taller than the real
+   viewport, so the CTA lands below the fold on first paint. */
 .cgs-hero {
   position: relative;
   display: flex;
-  align-items: center;
-  min-height: clamp(520px, 74vh, 720px);
+  flex-direction: column;
+  justify-content: center;
+  min-height: clamp(560px, 82dvh, 760px);
   background: var(--cgs-navy-900);
   color: #fff;
   overflow: hidden;
@@ -162,7 +207,10 @@ a:hover { color: var(--cgs-navy-700); }
   position: relative;
   z-index: 1;
   max-width: 720px;
-  padding-block: clamp(56px, 9vw, 104px);
+  margin-block: auto;
+  /* Capped: more top padding than this and the hero copy floats halfway
+     down the viewport and reads as a layout bug. */
+  padding-block: clamp(48px, 6vw, 88px);
 }
 
 .cgs-hero__eyebrow {
@@ -201,18 +249,28 @@ a:hover { color: var(--cgs-navy-700); }
 
 .cgs-hero__actions { display: flex; flex-wrap: wrap; gap: 14px; }
 
+/* Facts sit in their own band across the foot of the hero, so the hero
+   message itself stays at four elements: eyebrow, headline, subtext, CTAs. */
 .cgs-hero__facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px 44px;
-  margin: 44px 0 0;
-  padding: 26px 0 0;
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+  padding-block: 22px;
   border-top: 1px solid rgba(255, 255, 255, .18);
+  background: rgba(10, 30, 92, .34);
+  backdrop-filter: blur(6px);
+}
+.cgs-hero__facts ul {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px 40px;
+  margin: 0;
+  padding: 0;
   list-style: none;
 }
 .cgs-hero__facts li { display: flex; flex-direction: column; gap: 3px; }
 .cgs-hero__facts strong {
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 700;
   color: #fff;
   letter-spacing: -0.01em;
@@ -220,15 +278,15 @@ a:hover { color: var(--cgs-navy-700); }
 .cgs-hero__facts span,
 .cgs-hero__facts a {
   font-size: 13.5px;
-  color: rgba(255, 255, 255, .68);
+  color: rgba(255, 255, 255, .72);
   text-decoration: none;
 }
 .cgs-hero__facts a:hover { color: var(--cgs-cyan-300); }
 
-@media (max-width: 575.98px) {
+@media (max-width: 767.98px) {
   .cgs-hero { min-height: 0; }
   .cgs-hero__actions .cgs-btn { width: 100%; justify-content: center; }
-  .cgs-hero__facts { gap: 18px 28px; }
+  .cgs-hero__facts ul { grid-template-columns: 1fr; gap: 14px; }
 }
 
 /* --- Homepage video band (the brief's 20-second section) ----------------- */
@@ -415,54 +473,59 @@ a:hover { color: var(--cgs-navy-700); }
   min-height: 44px;
 }
 
-.cgs-topbar__contacts,
-.cgs-topbar__socials {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.cgs-topbar__contacts a {
+/* Single contact, so it can carry a little weight instead of being
+   one of four competing links. */
+.cgs-topbar__contact {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
+  font-weight: 600;
+  letter-spacing: .01em;
   white-space: nowrap;
 }
-.cgs-topbar__contacts i { color: var(--cgs-cyan-400); font-size: 13px; }
-
-.cgs-topbar__tag {
-  padding: 2px 6px;
-  border-radius: 3px;
-  background: var(--cgs-cyan-400);
-  color: var(--cgs-navy-900);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .04em;
+.cgs-topbar__contact i {
+  color: var(--cgs-cyan-400);
+  font-size: 12px;
+  transition: transform 160ms var(--ease-out);
 }
+.cgs-topbar__contact:hover i { transform: rotate(-12deg) scale(1.1); }
 
 .cgs-topbar__right {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 18px;
 }
 
 .cgs-topbar__iso {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding-right: 20px;
+  padding-right: 18px;
   border-right: 1px solid rgba(255, 255, 255, .16);
   font-size: 13px;
   white-space: nowrap;
 }
-.cgs-topbar__iso i { color: var(--cgs-accent); }
 
-.cgs-topbar__socials { gap: 14px; }
-.cgs-topbar__socials a { font-size: 14px; opacity: .8; transition: opacity .2s ease; }
-.cgs-topbar__socials a:hover { opacity: 1; }
+.cgs-topbar__socials {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cgs-topbar__socials a {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-size: 13px;
+  color: rgba(255, 255, 255, .78);
+  transition: color 160ms var(--ease-out), background-color 160ms var(--ease-out);
+}
+.cgs-topbar__socials a:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, .12);
+}
+.cgs-topbar__socials a:active { transform: scale(0.94); }
 
 .cgs-topbar__login {
   display: inline-grid;
@@ -775,6 +838,396 @@ a:hover { color: var(--cgs-navy-700); }
 }
 .cgs-float-stack .is-whatsapp { background: #25D366; }
 .cgs-float-stack .is-call     { background: var(--cgs-blue-500); }
+
+/* --- Section heads ------------------------------------------------------- */
+
+.cgs-section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: clamp(32px, 4vw, 52px);
+}
+.cgs-section-head h2 {
+  margin: 0;
+  max-width: 20ch;
+  font-size: clamp(26px, 3.4vw, 40px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+.cgs-section-head--dark h2 { color: #fff; }
+
+.cgs-textlink {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  padding-bottom: 4px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--cgs-blue-500);
+  text-decoration: none;
+  border-bottom: 1.5px solid transparent;
+  transition: border-color 200ms var(--ease-out);
+}
+.cgs-textlink:hover { border-bottom-color: currentColor; }
+.cgs-textlink i { transition: transform 200ms var(--ease-out); }
+.cgs-textlink:hover i { transform: translateX(3px); }
+
+@media (max-width: 767.98px) {
+  .cgs-section-head { flex-direction: column; align-items: flex-start; gap: 14px; }
+}
+
+/* --- Services bento ------------------------------------------------------
+   5 cells for 5 services: one wide feature plus a 2x2. Explicit cell count,
+   so there is never an empty tile at the end. */
+
+.cgs-bento {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.cgs-bento__cell {
+  position: relative;
+  grid-column: span 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 260px;
+  overflow: hidden;
+  border-radius: var(--cgs-radius);
+  background: var(--cgs-navy-900);
+  color: #fff;
+  text-decoration: none;
+  isolation: isolate;
+  transition: transform 260ms var(--ease-out), box-shadow 260ms var(--ease-out);
+}
+.cgs-bento__cell.is-feature { grid-column: span 2; grid-row: span 2; min-height: 536px; }
+.cgs-bento__cell:active { transform: scale(0.99); }
+
+.cgs-bento__media { position: absolute; inset: 0; z-index: -2; }
+.cgs-bento__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 600ms var(--ease-out);
+}
+/* Scrim, so the copy stays legible whatever the photograph does. */
+.cgs-bento__cell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(to top,
+    rgba(10, 30, 92, .94) 0%,
+    rgba(10, 30, 92, .70) 38%,
+    rgba(10, 30, 92, .28) 70%,
+    rgba(10, 30, 92, .16) 100%);
+  transition: background 300ms ease;
+}
+
+.cgs-bento__body {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 22px;
+}
+.cgs-bento__title {
+  font-size: clamp(17px, 1.5vw, 20px);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+.is-feature .cgs-bento__title { font-size: clamp(22px, 2.3vw, 30px); }
+
+.cgs-bento__desc {
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, .78);
+  /* Only the feature cell has room for the blurb; the small cells would
+     be crushed by it. */
+  display: none;
+}
+.is-feature .cgs-bento__desc { display: block; max-width: 46ch; }
+
+.cgs-bento__more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--cgs-cyan-300);
+}
+.cgs-bento__more i { transition: transform 220ms var(--ease-out); }
+
+@media (hover: hover) and (pointer: fine) {
+  .cgs-bento__cell:hover { transform: translateY(-4px); box-shadow: var(--cgs-shadow-lg); }
+  .cgs-bento__cell:hover .cgs-bento__media img { transform: scale(1.06); }
+  .cgs-bento__cell:hover .cgs-bento__more i { transform: translateX(4px); }
+}
+
+@media (max-width: 991.98px) {
+  .cgs-bento { grid-template-columns: repeat(2, 1fr); }
+  .cgs-bento__cell.is-feature { grid-column: span 2; grid-row: span 1; min-height: 320px; }
+}
+@media (max-width: 575.98px) {
+  .cgs-bento { grid-template-columns: 1fr; }
+  .cgs-bento__cell,
+  .cgs-bento__cell.is-feature { grid-column: span 1; min-height: 240px; }
+  .cgs-bento__desc { display: block; }
+}
+
+/* --- The CGS approach ---------------------------------------------------- */
+
+.cgs-approach {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: start;
+}
+.cgs-approach__intro h2 {
+  margin: 0 0 16px;
+  font-size: clamp(26px, 3.4vw, 40px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+.cgs-approach__intro p {
+  margin: 0 0 26px;
+  max-width: 52ch;
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--cgs-slate);
+}
+
+.cgs-approach__list { margin: 0; padding: 0; list-style: none; counter-reset: none; }
+.cgs-approach__list li {
+  display: flex;
+  gap: 22px;
+  padding: 26px 0;
+  border-top: 1px solid var(--cgs-line);
+}
+.cgs-approach__list li:last-child { border-bottom: 1px solid var(--cgs-line); }
+
+.cgs-approach__num {
+  flex-shrink: 0;
+  width: 46px;
+  font-family: var(--cgs-font);
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--cgs-cyan-400);
+  padding-top: 2px;
+}
+.cgs-approach__text { display: flex; flex-direction: column; gap: 7px; }
+.cgs-approach__text strong {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--cgs-ink);
+}
+.cgs-approach__text span {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--cgs-slate);
+  max-width: 56ch;
+}
+
+@media (max-width: 991.98px) {
+  .cgs-approach { grid-template-columns: 1fr; }
+}
+
+/* --- Fleet split --------------------------------------------------------- */
+
+.cgs-split {
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: center;
+}
+
+/* Offset pair: the second image drops and overlaps, so the block reads as a
+   composition rather than a single stock photo in a box. */
+.cgs-split__media {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+.cgs-split__media img {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--cgs-radius);
+  object-fit: cover;
+}
+.cgs-split__media img:first-child { aspect-ratio: 4 / 5; }
+.cgs-split__media img:last-child  { aspect-ratio: 3 / 4; margin-top: clamp(24px, 5vw, 56px); }
+
+.cgs-split__body h2 {
+  margin: 0 0 16px;
+  font-size: clamp(26px, 3.4vw, 40px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+.cgs-split__body > p {
+  margin: 0 0 26px;
+  max-width: 52ch;
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--cgs-slate);
+}
+
+.cgs-split__points { margin: 0 0 28px; padding: 0; list-style: none; }
+.cgs-split__points li {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 15px 0 15px 20px;
+  border-left: 2px solid var(--cgs-line);
+  transition: border-color 220ms var(--ease-out);
+}
+.cgs-split__points li:hover { border-left-color: var(--cgs-cyan-400); }
+.cgs-split__points strong { font-size: 15.5px; font-weight: 700; color: var(--cgs-ink); }
+.cgs-split__points span { font-size: 14.5px; line-height: 1.65; color: var(--cgs-slate); }
+
+@media (max-width: 991.98px) {
+  .cgs-split { grid-template-columns: 1fr; }
+}
+
+/* --- Operations gallery -------------------------------------------------- */
+
+.cgs-gallery-section { padding-bottom: clamp(40px, 5vw, 72px); }
+
+.cgs-gallery {
+  display: flex;
+  gap: 16px;
+  margin: 0;
+  padding: 0 clamp(16px, 3vw, 40px) 12px;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, .28) transparent;
+  overscroll-behavior-x: contain;
+}
+.cgs-gallery li {
+  flex: 0 0 auto;
+  width: clamp(240px, 30vw, 380px);
+  scroll-snap-align: start;
+}
+.cgs-gallery img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--cgs-radius);
+  transition: transform 400ms var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .cgs-gallery li:hover img { transform: scale(1.03); }
+}
+.cgs-gallery::-webkit-scrollbar { height: 6px; }
+.cgs-gallery::-webkit-scrollbar-track { background: rgba(255, 255, 255, .08); border-radius: 3px; }
+.cgs-gallery::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, .28); border-radius: 3px; }
+
+/* --- Sectors ------------------------------------------------------------- */
+
+.cgs-sectors { padding-block: clamp(44px, 5vw, 72px); }
+.cgs-sectors h2 {
+  margin: 0 0 24px;
+  font-size: clamp(20px, 2vw, 24px);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--cgs-ink);
+}
+.cgs-sectors ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cgs-sectors li {
+  padding: 10px 20px;
+  border: 1px solid var(--cgs-line);
+  border-radius: 100px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--cgs-slate);
+  transition: border-color 200ms var(--ease-out), color 200ms ease;
+}
+.cgs-sectors li:hover { border-color: var(--cgs-cyan-400); color: var(--cgs-navy-900); }
+
+/* --- Closing CTA --------------------------------------------------------- */
+
+.cgs-cta {
+  padding-block: clamp(56px, 7vw, 96px);
+  background: var(--cgs-navy-900);
+  color: #fff;
+  text-align: center;
+}
+.cgs-cta h2 {
+  margin: 0 0 14px;
+  font-size: clamp(26px, 3.6vw, 42px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: #fff;
+  text-wrap: balance;
+}
+.cgs-cta p {
+  margin: 0 auto 30px;
+  max-width: 50ch;
+  font-size: 16.5px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, .78);
+}
+.cgs-cta__actions { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+
+@media (max-width: 575.98px) {
+  .cgs-cta__actions .cgs-btn { width: 100%; justify-content: center; }
+}
+
+/* --- Scroll reveal -------------------------------------------------------
+   cgs.js adds .is-visible via IntersectionObserver. The initial state only
+   applies when JS is present (html.js), so a no-JS visitor sees the content
+   rather than a blank page. */
+
+html.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+}
+html.js [data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 520ms var(--ease-out) var(--reveal-delay, 0ms),
+              transform 520ms var(--ease-out) var(--reveal-delay, 0ms);
+}
+
+/* --- Reduced motion ------------------------------------------------------
+   Not "no animation": opacity and colour still aid comprehension. What goes
+   is movement, scaling and anything that travels across the screen. */
+
+@media (prefers-reduced-motion: reduce) {
+  html.js [data-reveal] { opacity: 1; transform: none; }
+  .cgs-btn:hover,
+  .cgs-btn:active,
+  .cgs-bento__cell:hover,
+  .cgs-bento__cell:active { transform: none; }
+  .cgs-bento__cell:hover .cgs-bento__media img,
+  .cgs-gallery li:hover img { transform: none; }
+  .cgs-btn:hover i,
+  .cgs-textlink:hover i,
+  .cgs-topbar__contact:hover i { transform: none; }
+  .cgs-gallery { scroll-behavior: auto; }
+}
 
 /* --- Focus visibility ---------------------------------------------------- */
 

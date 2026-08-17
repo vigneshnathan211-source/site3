@@ -31,53 +31,37 @@ $navItems = [
 ];
 ?>
 
+<?php
+// Only render a social icon when that URL is actually set, so an
+// unconfigured site shows no dead placeholders.
+$activeSocials = array_filter(
+    $socialPlatforms,
+    static fn($meta, $col): bool => !empty($settings[$col]),
+    ARRAY_FILTER_USE_BOTH
+);
+?>
 <!-- ==========================================================
      TOP INFO BAR
-     Hidden below lg — the same details are in the mobile menu,
-     and this row cannot compress without becoming unreadable.
+     One contact and the social icons. The email, the 24/7 line and
+     the address all live in the footer and the mobile menu; crowding
+     four of them in here made the row unreadable and gave the eye
+     nothing to land on.
+     Hidden below lg, where the mobile menu carries the same details.
      ========================================================== -->
 <div class="cgs-topbar d-none d-lg-block">
   <div class="container-fluid px-4">
     <div class="cgs-topbar__inner">
 
-      <ul class="cgs-topbar__contacts">
-        <li>
-          <a href="tel:<?php echo e($phoneTel); ?>">
-            <i class="fa-solid fa-phone" aria-hidden="true"></i>
-            <?php echo e($settings['phone']); ?>
-          </a>
-        </li>
-        <?php if (!empty($settings['phone_247'])): ?>
-        <li>
-          <a href="tel:<?php echo e($phone247Tel); ?>">
-            <i class="fa-solid fa-headset" aria-hidden="true"></i>
-            <span class="cgs-topbar__tag">24/7</span> <?php echo e($settings['phone_247']); ?>
-          </a>
-        </li>
-        <?php endif; ?>
-        <li>
-          <a href="mailto:<?php echo e($settings['email']); ?>">
-            <i class="fa-solid fa-envelope" aria-hidden="true"></i>
-            <?php echo e($settings['email']); ?>
-          </a>
-        </li>
-      </ul>
+      <a class="cgs-topbar__contact" href="tel:<?php echo e($phoneTel); ?>">
+        <i class="fa-solid fa-phone" aria-hidden="true"></i>
+        <span><?php echo e($settings['phone']); ?></span>
+      </a>
 
       <div class="cgs-topbar__right">
         <?php if (!empty($settings['iso_statement'])): ?>
-          <span class="cgs-topbar__iso">
-            <i class="fa-solid fa-certificate" aria-hidden="true"></i>
-            <?php echo e($settings['iso_statement']); ?>
-          </span>
+          <span class="cgs-topbar__iso"><?php echo e($settings['iso_statement']); ?></span>
         <?php endif; ?>
 
-        <?php
-        $activeSocials = array_filter(
-            $socialPlatforms,
-            static fn($meta, $col): bool => !empty($settings[$col]),
-            ARRAY_FILTER_USE_BOTH
-        );
-        ?>
         <?php if ($activeSocials): ?>
         <ul class="cgs-topbar__socials">
           <?php foreach ($activeSocials as $col => $meta): ?>

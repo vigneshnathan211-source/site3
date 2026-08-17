@@ -24,6 +24,12 @@ $bodyClass   = $bodyClass   ?? '';
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- Flags that JS is available, before first paint. The scroll-reveal styles
+     are scoped to html.js, so a visitor without JS gets the content plainly
+     visible instead of a permanently blank page, and a visitor with JS never
+     sees it render then hide. Must stay inline and stay here. -->
+<script>document.documentElement.classList.add('js');</script>
+
 <title><?php echo e($pageTitle); ?></title>
 <meta name="description" content="<?php echo e($pageDesc); ?>">
 <meta name="robots" content="index, follow, max-image-preview:large">
