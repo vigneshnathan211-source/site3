@@ -1,7 +1,7 @@
 <?php
 /*
 |--------------------------------------------------------------------------
-| SITE HEADER — top info bar + sticky navbar + mobile offcanvas
+| SITE HEADER — top info bar + sticky navbar + mobile dropdown menu
 |--------------------------------------------------------------------------
 | Every value comes from $settings / $services (see includes/bootstrap.php),
 | so the client can change a phone number or reorder the services dropdown
@@ -10,6 +10,10 @@
 | The primary nav is defined once, in $navItems below, and rendered three
 | times (desktop, mobile, footer-adjacent). Adding a page means adding one
 | array entry — not editing three lists that drift apart.
+|
+| The mobile menu (#cgsMobileMenu) drops down from the navbar itself, the
+| same interaction language as the desktop Services hover dropdown, rather
+| than a side-drawer/offcanvas panel — see cgs.js for the toggle logic.
 */
 
 $servicesLinks = array_map(
@@ -147,27 +151,34 @@ $activeSocials = array_filter(
         </a>
 
         <button class="cgs-burger d-xl-none" type="button"
-                data-bs-toggle="offcanvas" data-bs-target="#cgsMobileMenu"
-                aria-controls="cgsMobileMenu" aria-label="Open menu">
-          <i class="fa-solid fa-bars-staggered" aria-hidden="true"></i>
+                data-cgs-menu-toggle aria-expanded="false" aria-controls="cgsMobileMenu"
+                aria-label="Open menu">
+          <i class="fa-solid fa-bars-staggered cgs-burger__open" aria-hidden="true"></i>
+          <i class="fa-solid fa-xmark cgs-burger__close" aria-hidden="true"></i>
         </button>
       </div>
 
     </div>
-  </div>
-</header>
 
-<!-- ==========================================================
-     MOBILE MENU
-     ========================================================== -->
-<div class="offcanvas offcanvas-end cgs-offcanvas" tabindex="-1" id="cgsMobileMenu"
-     aria-labelledby="cgsMobileMenuLabel">
-  <div class="offcanvas-header">
-    <h2 class="offcanvas-title" id="cgsMobileMenuLabel">Menu</h2>
-    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-  </div>
+    <!-- ==========================================================
+         MOBILE MENU
+         Drops down from the navbar itself, like the desktop Services
+         hover dropdown just above — not a drawer sliding in from a screen
+         edge. A child of <header> (already position:sticky, so it is a
+         positioning context) so it always sits at the navbar's own
+         bottom edge, top-bar showing or not, with no JS height math.
+         `inert` in the markup is the no-JS-yet baseline: hidden and
+         unreachable by keyboard until cgs.js takes over.
+         ========================================================== -->
+    <div class="cgs-mobile-panel" id="cgsMobileMenu" data-cgs-menu inert>
+      <div class="cgs-mobile-panel__head">
+        <h2>Menu</h2>
+        <button type="button" class="cgs-mobile-panel__close" data-cgs-menu-close aria-label="Close menu">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </div>
 
-  <div class="offcanvas-body">
+      <div class="cgs-mobile-panel__body">
     <ul class="cgs-mobile-nav">
       <?php foreach ($navItems as $i => $item): ?>
         <?php if (empty($item['children'])): ?>
@@ -243,5 +254,12 @@ $activeSocials = array_filter(
       </ul>
       <?php endif; ?>
     </div>
-  </div>
-</div>
+      </div>
+    </div>
+
+    <!-- Dims the page behind the panel; also closes it on click. Fixed
+         (not absolute) so it covers the full viewport regardless of where
+         in the document the header currently sits. -->
+    <div class="cgs-mobile-scrim" data-cgs-menu-scrim aria-hidden="true"></div>
+
+</header>

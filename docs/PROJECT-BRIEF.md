@@ -115,6 +115,15 @@ The Roofer build is the reference, not the target. These things change:
 8. **Credentials are not committed.** Roofer's repo carries a live SMTP password
    and DB credentials in tracked files; CGS keeps placeholders in the tracked
    config and real values only on the server.
+9. **Mobile nav is a dropdown, not an offcanvas.** Roofer's mobile menu is
+   Bootstrap's `offcanvas` component — a full-height drawer sliding in from
+   the screen edge. CGS's mobile menu (`.cgs-mobile-panel` in
+   `includes/header.php`) drops down from the navbar itself instead, the same
+   interaction language as the desktop Services hover dropdown next to it.
+   Client-requested change, 2026-08-17.
+10. **Colour palette additionally validated against Maersk.com**, not just the
+    logo — deep navy as the primary fill, brighter blue reserved for accents,
+    no warm colour. See the Brand section in `CLAUDE.md`.
 
 ## Content status
 

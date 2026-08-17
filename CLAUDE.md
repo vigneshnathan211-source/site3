@@ -99,18 +99,39 @@ Colours are defined once as custom properties in `assets/css/cgs.css`.
 
 | Token | Value | Use |
 |---|---|---|
-| `--cgs-navy-900` | `#0A1E5C` | Top bar, footer, dark sections |
-| `--cgs-blue-500` | `#1E63C4` | Primary buttons, links, active nav |
-| `--cgs-cyan-400` | `#2FA3E0` | Accents, icons, focus rings |
+| `--cgs-navy-900` | `#082238` | Primary buttons, top bar, footer, dark sections |
+| `--cgs-navy-700` | `#0E3A56` | Primary button hover |
+| `--cgs-blue-500` | `#146B96` | Links, active nav |
+| `--cgs-cyan-400` | `#2E9FD6` | Accents, icons, focus rings |
 | `--cgs-ink` | `#0E1726` | Headings and body text |
-| `--cgs-accent` | `#F5A623` | Warm CTA — provisional, may be dropped |
 
-Type: **Plus Jakarta Sans** (Google Fonts), as in the Roofer build.
+Type: **Plus Jakarta Sans** (Google Fonts), as in the Roofer build. Button radius
+is 4px (`--cgs-radius`).
 
-These were eyeball-matched to the rendered logo because the supplied JPEG carries
-a colour profile that shifts its raw pixel values. **Re-derive them from a vector
-when the client provides one** — and note the logo is currently a
-white-background JPEG, so it cannot yet sit on the dark footer.
+These started eyeball-matched to the rendered logo, because the supplied JPEG
+carries a colour profile that shifts its raw pixel values — always a stopgap
+pending a vector. They're now additionally tuned against Maersk.com's real,
+live-sampled palette (2026-08-17: navy `rgb(0,36,61)`, accent blue
+`rgb(66,176,213)`, link blue `rgb(0,115,171)`, 4px button radius) — not copied,
+but used as industry validation that a deep-navy-primary / brighter-blue-accent
+hierarchy with **no warm colour at all** is the right direction for a shipping
+and logistics brand. The former `--cgs-accent` amber token (flagged provisional
+here previously) is dropped for exactly that reason; anything that used it now
+reads `--cgs-cyan-400`. **Still re-derive these properly from a vector when the
+client provides one** — the logo is currently a white-background JPEG, so it
+cannot yet sit on the dark footer.
+
+Primary buttons fill with the dark navy, not the brighter blue — matching
+Maersk's own hierarchy, where the accent blue never appears as a button fill,
+only as a link colour and small UI accents. Keep that hierarchy: one confident
+"this is the action" colour, not the mid-blue doing double duty as both a link
+colour and a button fill.
+
+The main navbar's mobile menu is a **dropdown that expands from the navbar
+itself** (`.cgs-mobile-panel` in `includes/header.php`), the same interaction
+language as the desktop Services hover dropdown next to it — not a side-drawer
+or offcanvas panel. This was a deliberate call away from the Roofer reference,
+which uses Bootstrap's offcanvas for its mobile menu; ours does not.
 
 ## Content rules
 

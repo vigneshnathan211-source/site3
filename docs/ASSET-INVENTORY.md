@@ -25,8 +25,11 @@ the build has something to render, but both are placeholders:
 
 Brand colours in `assets/css/cgs.css` were sampled from this file. The JPEG
 carries a colour profile that shifts the raw pixel values, so the tokens are
-eyeball-matched to the rendered logo — **re-derive them from the vector** when it
-arrives.
+eyeball-matched to the rendered logo, then additionally tuned against
+Maersk.com's real, live-sampled palette (2026-08-17) as industry validation for
+the deep-navy / bright-accent-blue / no-warm-colour direction — see the Brand
+section in `CLAUDE.md` for the exact values and reasoning. **Re-derive them from
+the vector** when it arrives.
 
 ## 2. Video
 

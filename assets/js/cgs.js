@@ -33,6 +33,77 @@
     }, { threshold: 0 }).observe(sentinel);
   }
 
+  /* --- Mobile menu: dropdown, not a side panel ------------------------------
+     Drops down from the navbar (top:100% of .cgs-header in CSS) instead of
+     sliding in from a screen edge — the same interaction language as the
+     desktop Services hover dropdown just above it in the markup.
+
+     No forced focus-move on open: focus stays on the toggle button, so the
+     visitor's very next Tab press naturally lands on the first link inside
+     the now-unhidden panel. This sidesteps a real timing bug found while
+     building a similar panel elsewhere on this site — removing `inert`
+     does not make an element focusable within the same synchronous task
+     (the browser updates the accessibility tree on a later step than
+     layout), so a forced `.focus()` call right after unhiding an inert
+     element can silently land on <body>. Not moving focus at all avoids
+     the bug outright rather than working around its timing.             */
+  var menuToggle = document.querySelector('[data-cgs-menu-toggle]');
+  var menuPanel  = document.querySelector('[data-cgs-menu]');
+  var menuScrim  = document.querySelector('[data-cgs-menu-scrim]');
+  var menuClose  = document.querySelector('[data-cgs-menu-close]');
+
+  if (menuToggle && menuPanel) {
+    var desktopQuery = window.matchMedia('(min-width: 1200px)');
+    var lastMenuFocus = null;
+
+    var openMenu = function () {
+      lastMenuFocus = document.activeElement;
+      menuPanel.classList.add('is-open');
+      if (menuScrim) { menuScrim.classList.add('is-open'); }
+      menuToggle.setAttribute('aria-expanded', 'true');
+      menuToggle.setAttribute('aria-label', 'Close menu');
+      menuPanel.removeAttribute('inert');
+    };
+
+    var closeMenu = function (returnFocus) {
+      menuPanel.classList.remove('is-open');
+      if (menuScrim) { menuScrim.classList.remove('is-open'); }
+      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle.setAttribute('aria-label', 'Open menu');
+      menuPanel.setAttribute('inert', '');
+      if (returnFocus && lastMenuFocus) { lastMenuFocus.focus(); }
+    };
+
+    menuToggle.addEventListener('click', function () {
+      if (menuPanel.classList.contains('is-open')) { closeMenu(false); }
+      else { openMenu(); }
+    });
+
+    if (menuClose) {
+      menuClose.addEventListener('click', function () { closeMenu(true); });
+    }
+
+    if (menuScrim) {
+      menuScrim.addEventListener('click', function () { closeMenu(false); });
+    }
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && menuPanel.classList.contains('is-open')) {
+        closeMenu(true);
+      }
+    });
+
+    /* Resizing past the desktop breakpoint (rotating a tablet, or a real
+       window resize) should not leave the panel stuck open behind the now
+       hover-driven desktop nav. */
+    var handleBreakpointChange = function (event) {
+      if (event.matches && menuPanel.classList.contains('is-open')) { closeMenu(false); }
+    };
+    if (typeof desktopQuery.addEventListener === 'function') {
+      desktopQuery.addEventListener('change', handleBreakpointChange);
+    }
+  }
+
   /* --- Scroll reveal -------------------------------------------------------
      Purpose: sequence. Cells arrive in reading order rather than all at once,
      which makes a grid of five scan as a list instead of a wall. Decorative,

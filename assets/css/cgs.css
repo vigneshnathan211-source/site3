@@ -5,19 +5,31 @@
    CGS-specific lives here; main.css is never edited, so theme components keep
    behaving predictably and this file stays the whole diff.
 
-   Colour tokens are eyeball-matched to the rendered logo — the supplied JPEG
-   carries a colour profile that shifts its raw pixel values. Re-derive them
-   when the client sends a vector.
+   Colour tokens started eyeball-matched to the rendered logo — the supplied
+   JPEG carries a colour profile that shifts its raw pixel values, so that
+   was always a placeholder pending a vector. They are now additionally
+   calibrated against Maersk.com's real, rendered palette (sampled live via
+   computed styles, not screenshotted or guessed): a deep near-black navy
+   for primary surfaces and buttons, a brighter sky-blue reserved for
+   accents rather than fills, 4px button corners, and no warm accent at all.
+   Two container-shipping brands converging on the same blue-and-navy,
+   minimal-accent language independently is the industry's own validation
+   of the direction CGS's logo already pointed in — this tunes toward that
+   consensus, it does not copy Maersk's exact hex values.
+   Still re-derive these properly when the client sends a vector logo.
    ========================================================================== */
 
 :root {
-  /* Brand — the logo's left-to-right gradient, light cyan into deep navy */
-  --cgs-cyan-300:  #5CC0F0;
-  --cgs-cyan-400:  #2FA3E0;   /* lightest point of the mark */
-  --cgs-blue-500:  #1E63C4;   /* primary — buttons, links, active nav */
-  --cgs-blue-600:  #17509F;
-  --cgs-navy-700:  #123A8F;
-  --cgs-navy-900:  #0A1E5C;   /* darkest point of the mark — footer, top bar */
+  /* Brand — the logo's left-to-right gradient, light cyan into deep navy,
+     tuned toward the deeper/cleaner navy-and-sky-blue direction validated by
+     Maersk.com's real palette (rgb(0,36,61) navy, rgb(66,176,213) accent
+     blue, rgb(0,115,171) link blue, sampled 2026-08-17). */
+  --cgs-cyan-300:  #6FC6E9;
+  --cgs-cyan-400:  #2E9FD6;   /* lightest point of the mark; accents, icons, focus rings */
+  --cgs-blue-500:  #146B96;   /* links, active nav — was a brighter purple-blue, now a cleaner ocean blue */
+  --cgs-blue-600:  #0F5378;
+  --cgs-navy-700:  #0E3A56;   /* primary button hover */
+  --cgs-navy-900:  #082238;   /* primary button fill, footer, top bar — deep, near-black navy */
 
   --cgs-gradient:  linear-gradient(100deg, var(--cgs-cyan-400) 0%, var(--cgs-navy-900) 100%);
 
@@ -29,9 +41,11 @@
   --cgs-surface:   #F5F8FC;   /* tinted section backgrounds */
   --cgs-white:     #FFFFFF;
 
-  /* Accent — warm CTA against an all-blue palette. Provisional; drop it and
-     use --cgs-cyan-400 for CTAs if the client wants blue-only. */
-  --cgs-accent:    #F5A623;
+  /* No warm accent. The amber token this used to hold was flagged
+     provisional; Maersk's real site carries zero warm colour anywhere,
+     which settles the question — an all-blue palette is the industry norm
+     here, not a gap to fill. Anything that read var(--cgs-accent) now reads
+     var(--cgs-cyan-400) instead. */
 
   /* Status */
   --cgs-success:   #1E9E6A;
@@ -47,9 +61,9 @@
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 
   /* Rhythm */
-  --cgs-radius:    4px;        /* near-square corners read as industrial */
-  --cgs-shadow:    0 8px 24px rgba(10, 30, 92, 0.08);
-  --cgs-shadow-lg: 0 16px 48px rgba(10, 30, 92, 0.14);
+  --cgs-radius:    4px;        /* near-square corners read as industrial — Maersk's own buttons use the same 4px */
+  --cgs-shadow:    0 8px 24px rgba(8, 34, 56, 0.08);
+  --cgs-shadow-lg: 0 16px 48px rgba(8, 34, 56, 0.14);
   --cgs-section-y: clamp(56px, 7vw, 104px);
 }
 
@@ -113,15 +127,21 @@ a:hover { color: var(--cgs-navy-700); }
 .cgs-btn i { transition: transform 200ms var(--ease-out); }
 .cgs-btn:hover i { transform: translateX(3px); }
 
+/* Primary fill is the deep navy, not the brighter blue — Maersk's own
+   buttons work the same way (rgb(0,36,61) fill, the brighter accent blue
+   never appears as a button fill anywhere on their site). Keeping the
+   brighter --cgs-blue-500 for links and active states instead of buttons
+   gives the page one confident "this is the action" colour rather than
+   the mid-blue doing double duty as both a link colour and a button fill. */
 .cgs-btn--primary {
-  background: var(--cgs-blue-500);
+  background: var(--cgs-navy-900);
   color: #fff;
-  box-shadow: 0 8px 20px rgba(30, 99, 196, .24);
+  box-shadow: 0 8px 20px rgba(8, 34, 56, .28);
 }
 .cgs-btn--primary:hover {
   background: var(--cgs-navy-700);
   color: #fff;
-  box-shadow: 0 12px 28px rgba(18, 58, 143, .32);
+  box-shadow: 0 12px 28px rgba(8, 34, 56, .36);
 }
 
 .cgs-btn--ghost {
@@ -336,7 +356,7 @@ a:hover { color: var(--cgs-navy-700); }
   color: #fff;
   backdrop-filter: blur(4px);
 }
-.cgs-hero__eyebrow i { color: var(--cgs-accent); }
+.cgs-hero__eyebrow i { color: var(--cgs-cyan-400); }
 
 .cgs-hero__title {
   margin: 0 0 20px;
@@ -531,7 +551,7 @@ a:hover { color: var(--cgs-navy-700); }
   font-size: 13px;
   color: #fff;
 }
-.cgs-footer__iso i { color: var(--cgs-accent); }
+.cgs-footer__iso i { color: var(--cgs-cyan-400); }
 
 .cgs-footer__links,
 .cgs-footer__contact,
@@ -616,7 +636,7 @@ a:hover { color: var(--cgs-navy-700); }
 }
 /* Amber, matching the same badge in the footer, so the accreditation reads
    as one mark across the page rather than two different-looking ones. */
-.cgs-topbar__iso i { color: var(--cgs-accent); font-size: 12px; }
+.cgs-topbar__iso i { color: var(--cgs-cyan-400); font-size: 12px; }
 
 .cgs-topbar__socials {
   display: flex;
@@ -827,7 +847,16 @@ a:hover { color: var(--cgs-navy-700); }
   background: #fff;
   color: var(--cgs-navy-900);
   font-size: 19px;
+  cursor: pointer;
+  transition: transform 160ms var(--ease-out), border-color 200ms ease;
 }
+.cgs-burger:active { transform: scale(0.94); }
+.cgs-burger[aria-expanded="true"] { border-color: var(--cgs-navy-900); }
+/* Icon swap: two glyphs stacked, CSS shows one based on aria-expanded — no
+   classList mutation needed in JS, the button's own state drives it. */
+.cgs-burger .cgs-burger__close { display: none; }
+.cgs-burger[aria-expanded="true"] .cgs-burger__open  { display: none; }
+.cgs-burger[aria-expanded="true"] .cgs-burger__close { display: block; }
 
 @media (max-width: 575.98px) {
   .cgs-header__inner { min-height: 72px; }
@@ -836,22 +865,92 @@ a:hover { color: var(--cgs-navy-700); }
   .cgs-logo__text small { font-size: 10.5px; }
 }
 
-/* --- Mobile offcanvas ---------------------------------------------------- */
+/* --- Mobile menu: dropdown, not a side panel -----------------------------
+   Attached to the navbar and drops down from it — the same "menu opens
+   where you triggered it" language as the desktop Services hover dropdown
+   just above (.cgs-submenu), rather than a drawer that slides in from a
+   screen edge and takes over the full viewport height. It is a child of
+   .cgs-header (which is already position:sticky, so it is a positioning
+   context) so `top: 100%` always lands exactly at the navbar's current
+   bottom edge — correct whether the top info bar above it is showing or
+   has scrolled away, with no JS height math needed. */
 
-.cgs-offcanvas { width: min(360px, 88vw); }
-.cgs-offcanvas .offcanvas-header {
-  padding: 20px 24px;
+.cgs-mobile-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1015;
+  max-height: min(80dvh, 640px);
+  overflow-y: auto;
+  background: #fff;
+  border-bottom: 1px solid var(--cgs-line);
+  box-shadow: var(--cgs-shadow-lg);
+  transform-origin: top;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px) scaleY(0.98);
+  pointer-events: none;
+  transition: opacity 220ms var(--ease-out),
+              transform 220ms var(--ease-out),
+              visibility 220ms;
+}
+.cgs-mobile-panel.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scaleY(1);
+  pointer-events: auto;
+}
+
+.cgs-mobile-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
   border-bottom: 1px solid var(--cgs-line);
 }
-.cgs-offcanvas .offcanvas-title {
+.cgs-mobile-panel__head h2 {
   margin: 0;
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 700;
   letter-spacing: .04em;
   text-transform: uppercase;
   color: var(--cgs-navy-900);
 }
-.cgs-offcanvas .offcanvas-body { padding: 20px 24px 32px; }
+.cgs-mobile-panel__close {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background: var(--cgs-surface);
+  color: var(--cgs-navy-900);
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 160ms ease;
+}
+.cgs-mobile-panel__close:hover { background: var(--cgs-line); }
+
+.cgs-mobile-panel__body { padding: 20px 24px 32px; }
+
+/* Light scrim behind the panel, dimming the page rather than covering it —
+   confirms the panel is a temporary overlay without a full-screen takeover.
+   Decorative and pointer-transparent except for its own click-to-close. */
+.cgs-mobile-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 1010;
+  background: rgba(8, 34, 56, .32);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 220ms ease, visibility 220ms;
+}
+.cgs-mobile-scrim.is-open { opacity: 1; visibility: visible; }
+
+@media (min-width: 1200px) {
+  .cgs-mobile-panel, .cgs-mobile-scrim { display: none; }
+}
 
 .cgs-mobile-nav { margin: 0 0 24px; padding: 0; list-style: none; }
 .cgs-mobile-nav > li { border-bottom: 1px solid var(--cgs-line); }
@@ -1338,6 +1437,9 @@ html.js [data-reveal].is-visible {
   .cgs-hero__slide.swiper-slide-active .cgs-hero__media img { animation: none; transform: none; }
   .cgs-hero__nav:active,
   .cgs-hero__toggle:active { transform: none; }
+  .cgs-mobile-panel { transition: opacity 120ms ease, visibility 120ms; transform: none; }
+  .cgs-mobile-panel.is-open { transform: none; }
+  .cgs-burger:active { transform: none; }
   .cgs-btn:hover,
   .cgs-btn:active,
   .cgs-bento__cell:hover,
