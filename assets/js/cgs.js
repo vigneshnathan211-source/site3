@@ -196,32 +196,27 @@
   }
 
   /* --- Services carousel ----------------------------------------------------
-     Purpose: one card layout, repeated. Peeking the next card at every
-     breakpoint hints there is more to drag or click through without a
-     pagination row spelling it out. No autoplay — this is a set to browse
-     at the visitor's own pace, not a story to sit through. */
+     Purpose: one service at a time. Each slide is a full 5-tile bento grid
+     for a single service, not a peeking card, so exactly one slide shows
+     at a width. No autoplay — this is a set to browse at the visitor's own
+     pace, not a story to sit through. */
   var servicesEl = document.querySelector('[data-services-swiper]');
 
   if (servicesEl && typeof window.Swiper === 'function') {
     var servicesSlideCount = servicesEl.querySelectorAll('.swiper-slide').length;
 
     new Swiper(servicesEl, {
-      slidesPerView: 1.15,
-      spaceBetween: 16,
+      slidesPerView: 1,
+      spaceBetween: 24,
       speed: reduceMotion.matches ? 0 : 500,
       grabCursor: true,
       watchSlidesProgress: true,
-      loop: servicesSlideCount > 3,
+      loop: servicesSlideCount > 1,
       a11y: { enabled: true },
       keyboard: { enabled: true, onlyInViewport: true },
       navigation: {
         prevEl: document.querySelector('[data-services-prev]'),
         nextEl: document.querySelector('[data-services-next]')
-      },
-      breakpoints: {
-        576: { slidesPerView: 1.6, spaceBetween: 18 },
-        768: { slidesPerView: 2.3, spaceBetween: 20 },
-        1200: { slidesPerView: 3.15, spaceBetween: 24 }
       }
     });
   }

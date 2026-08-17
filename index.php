@@ -208,8 +208,12 @@ require __DIR__ . '/includes/header.php';
   </section>
 
   <!-- 3 ── SERVICES ─────────────────────────────────────────
-       Swiper: one uniform card layout per service, not a bento grid —
-       every slide is the same shape, browsed by drag or the arrows. -->
+       Swiper: each slide is one service's own 5-tile bento grid — a
+       feature photo cell plus four info cells (description, icon, CTA,
+       position counter). Only the feature cell carries a photograph,
+       since every service has exactly one image in the database; the
+       other four tiles are real title/description/icon/link data, not
+       filler photos. Swipe or use the arrows to move between services. -->
   <section class="cgs-section" id="services">
     <div class="container-fluid px-4">
       <header class="cgs-section-head">
@@ -234,27 +238,48 @@ require __DIR__ . '/includes/header.php';
       <?php if ($services): ?>
       <div class="swiper cgs-services__swiper" data-services-swiper>
         <div class="swiper-wrapper">
-          <?php foreach ($services as $i => $svc): ?>
+          <?php foreach ($services as $i => $svc):
+            $num   = str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT);
+            $total = str_pad((string) count($services), 2, '0', STR_PAD_LEFT);
+          ?>
           <div class="swiper-slide cgs-services__slide">
-            <a class="cgs-service-card" href="<?php echo url($svc['link']); ?>"
-               data-reveal style="--reveal-delay: <?php echo $i * 60; ?>ms">
-              <?php if (!empty($svc['image'])): ?>
-              <span class="cgs-service-card__media">
-                <img src="<?php echo url($svc['image']); ?>"
-                     alt="<?php echo e($svc['alt_text'] ?: $svc['title']); ?>"
-                     loading="lazy" width="800" height="600">
-              </span>
-              <?php endif; ?>
-              <span class="cgs-service-card__body">
-                <span class="cgs-service-card__title"><?php echo e($svc['title']); ?></span>
-                <?php if (!empty($svc['short_desc'])): ?>
-                  <span class="cgs-service-card__desc"><?php echo e($svc['short_desc']); ?></span>
-                <?php endif; ?>
-                <span class="cgs-service-card__more">
-                  Read more <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
+            <div class="cgs-service-bento" data-reveal>
+
+              <a class="cgs-service-card cgs-service-bento__feature" href="<?php echo url($svc['link']); ?>">
+                <?php if (!empty($svc['image'])): ?>
+                <span class="cgs-service-card__media">
+                  <img src="<?php echo url($svc['image']); ?>"
+                       alt="<?php echo e($svc['alt_text'] ?: $svc['title']); ?>"
+                       loading="lazy" width="800" height="600">
                 </span>
-              </span>
-            </a>
+                <?php endif; ?>
+                <span class="cgs-service-card__body">
+                  <span class="cgs-service-card__title"><?php echo e($svc['title']); ?></span>
+                </span>
+              </a>
+
+              <?php if (!empty($svc['short_desc'])): ?>
+              <div class="cgs-service-bento__cell cgs-service-bento__desc">
+                <p><?php echo e($svc['short_desc']); ?></p>
+              </div>
+              <?php endif; ?>
+
+              <?php if (!empty($svc['icon'])): ?>
+              <div class="cgs-service-bento__cell cgs-service-bento__icon">
+                <img src="<?php echo url($svc['icon']); ?>" alt="" aria-hidden="true" loading="lazy" width="44" height="44">
+              </div>
+              <?php endif; ?>
+
+              <a class="cgs-service-bento__cell cgs-service-bento__cta" href="<?php echo url($svc['link']); ?>">
+                Read more <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
+              </a>
+
+              <div class="cgs-service-bento__cell cgs-service-bento__index" aria-hidden="true">
+                <strong><?php echo $num; ?></strong>
+                <span>/ <?php echo $total; ?></span>
+              </div>
+
+            </div>
           </div>
           <?php endforeach; ?>
         </div>

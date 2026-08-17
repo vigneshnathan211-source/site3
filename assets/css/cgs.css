@@ -1097,9 +1097,9 @@ a:hover { color: var(--cgs-navy-700); }
 }
 
 /* --- Services swiper -------------------------------------------------------
-   One card layout, repeated: every slide is the same shape, so five
-   services read as one comparable set rather than one "hero" service and
-   four afterthoughts. */
+   Each slide is one service's own 5-tile bento grid — a photo feature cell
+   plus four info cells. Swiping moves between services; the grid shape
+   itself never changes. */
 
 .cgs-section-head__right { display: flex; align-items: center; gap: 20px; }
 
@@ -1135,12 +1135,21 @@ a:hover { color: var(--cgs-navy-700); }
 .cgs-services__swiper { overflow: hidden; margin-inline: -2px; padding: 2px; }
 .cgs-services__slide { height: auto; }
 
+/* One 5-tile bento per slide: a photo feature cell (2x2) plus four info
+   cells filling the rest of a 4-col grid — same cell count and shape as
+   the original 5-services-in-one-grid bento, just re-purposed to break
+   one service down instead of listing five side by side. */
+.cgs-service-bento {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  height: 100%;
+}
+
 .cgs-service-card {
   position: relative;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  min-height: 360px;
   overflow: hidden;
   border-radius: var(--cgs-radius);
   background: var(--cgs-navy-900);
@@ -1150,6 +1159,8 @@ a:hover { color: var(--cgs-navy-700); }
   transition: transform 260ms var(--ease-out), box-shadow 260ms var(--ease-out);
 }
 .cgs-service-card:active { transform: scale(0.99); }
+
+.cgs-service-bento__feature { grid-column: span 2; grid-row: span 2; min-height: 536px; }
 
 .cgs-service-card__media { position: absolute; inset: 0; z-index: -2; }
 .cgs-service-card__media img {
@@ -1178,28 +1189,12 @@ a:hover { color: var(--cgs-navy-700); }
   padding: 22px;
 }
 .cgs-service-card__title {
-  font-size: clamp(18px, 1.6vw, 21px);
+  font-size: clamp(22px, 2.3vw, 30px);
   font-weight: 700;
   line-height: 1.25;
   letter-spacing: -0.015em;
   text-wrap: balance;
 }
-.cgs-service-card__desc {
-  font-size: 14px;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, .78);
-  max-width: 42ch;
-}
-.cgs-service-card__more {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 4px;
-  font-size: 13.5px;
-  font-weight: 600;
-  color: var(--cgs-cyan-300);
-}
-.cgs-service-card__more i { transition: transform 220ms var(--ease-out); }
 
 @media (hover: hover) and (pointer: fine) {
   /* Without this, the global a:hover rule (color: navy-700) outranks
@@ -1208,7 +1203,83 @@ a:hover { color: var(--cgs-navy-700); }
   .cgs-service-card:hover { transform: translateY(-4px); box-shadow: var(--cgs-shadow-lg); color: #fff; }
   .cgs-service-card:hover::after { background: rgba(14, 58, 86, .78); }
   .cgs-service-card:hover .cgs-service-card__media img { transform: scale(1.06); }
-  .cgs-service-card:hover .cgs-service-card__more i { transform: translateX(4px); }
+}
+
+/* The four info cells. Real title/description/icon/link data, not filler
+   photography — every service has exactly one real image, so the mosaic
+   is built from content, not from repeated or unrelated pictures. */
+.cgs-service-bento__cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--cgs-radius);
+  padding: 22px;
+  min-height: 260px;
+}
+
+.cgs-service-bento__desc {
+  background: var(--cgs-surface);
+  justify-content: center;
+}
+.cgs-service-bento__desc p {
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--cgs-ink);
+  opacity: .82;
+  max-width: 32ch;
+}
+
+.cgs-service-bento__icon {
+  background: #fff;
+  border: 1px solid var(--cgs-line);
+  align-items: center;
+  justify-content: center;
+}
+.cgs-service-bento__icon img { width: 44px; height: 44px; }
+
+.cgs-service-bento__cta {
+  background: var(--cgs-cyan-400);
+  color: var(--cgs-navy-900);
+  text-decoration: none;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  font-weight: 700;
+  font-size: 15px;
+  transition: background-color 220ms var(--ease-out);
+}
+.cgs-service-bento__cta i { transition: transform 220ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .cgs-service-bento__cta:hover { background: var(--cgs-cyan-300); color: var(--cgs-navy-900); }
+  .cgs-service-bento__cta:hover i { transform: translateX(4px); }
+}
+
+.cgs-service-bento__index {
+  background: var(--cgs-navy-700);
+  color: #fff;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 3px;
+}
+.cgs-service-bento__index strong {
+  font-size: clamp(32px, 3vw, 44px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.cgs-service-bento__index span { font-size: 14px; font-weight: 600; opacity: .6; padding-bottom: 3px; }
+
+@media (max-width: 991.98px) {
+  .cgs-service-bento { grid-template-columns: repeat(2, 1fr); }
+  .cgs-service-bento__feature { grid-column: span 2; grid-row: span 1; min-height: 340px; }
+}
+@media (max-width: 575.98px) {
+  .cgs-service-bento { grid-template-columns: 1fr; }
+  .cgs-service-bento__feature,
+  .cgs-service-bento__cell { grid-column: span 1; }
+  .cgs-service-bento__feature { min-height: 280px; }
+  .cgs-service-bento__cell { min-height: 180px; }
 }
 
 @media (max-width: 767.98px) {
@@ -1512,6 +1583,7 @@ html.js [data-reveal].is-visible {
   .cgs-services__arrow:active { transform: none; }
   .cgs-service-card:hover .cgs-service-card__media img,
   .cgs-gallery li:hover img { transform: none; }
+  .cgs-service-bento__cta:hover i { transform: none; }
   .cgs-btn:hover i,
   .cgs-textlink:hover i,
   .cgs-topbar__contact:hover i { transform: none; }
