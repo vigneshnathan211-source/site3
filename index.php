@@ -10,7 +10,8 @@
 |   1. Hero                full-bleed media, copy on the left
 |   2. Video band          full-bleed video (the brief's post-hero section)
 |   3. Services            asymmetric bento, 5 cells for 5 services
-|   4. The CGS approach    numbered editorial rows
+|   4. The CGS approach    dark band, numbered editorial rows
+|   4b. Accent CTA card    single-accent band, "Send us your packing list"
 |   5. Fleet teaser        two-image split
 |   6. Operations gallery  horizontal scroll-snap
 |   7. Sectors             inline chip list
@@ -255,13 +256,15 @@ require __DIR__ . '/includes/header.php';
   </section>
 
   <!-- 4 ── THE CGS APPROACH ─────────────────────────────────
-       Numbered editorial rows. Client copy, from the Project
-       Freight Forwarding email. -->
-  <section class="cgs-section cgs-section--tint">
+       Dark band, numbered editorial rows, closing with a single-accent
+       CTA card — ported from the "Hyer" landing concept's approach and
+       featured-clay sections (landing.php). Client copy, from the
+       Project Freight Forwarding email. -->
+  <section class="cgs-section cgs-section--dark">
     <div class="container-fluid px-4">
       <div class="cgs-approach">
         <div class="cgs-approach__intro">
-          <p class="cgs-eyebrow">The CGS approach</p>
+          <p class="cgs-eyebrow cgs-eyebrow--on-dark">The CGS approach</p>
           <h2>We read the packing list before we quote</h2>
           <p>
             Project freight forwarding is a choice between modes, made against
@@ -269,11 +272,6 @@ require __DIR__ . '/includes/header.php';
             are actually shipping produces a practical answer more often than
             reaching for the most expensive charter.
           </p>
-          <!-- No CTA here on purpose. "Send us your packing list" and
-               "Get a Quote" are the same intent pointing at the same page;
-               two labels for one action is how a page ends up with four
-               buttons that all mean "contact us". The hero, the nav and the
-               closing band already carry it. -->
         </div>
 
         <ol class="cgs-approach__list">
@@ -287,6 +285,21 @@ require __DIR__ . '/includes/header.php';
           </li>
           <?php endforeach; ?>
         </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="cgs-accent-cta">
+    <div class="container-fluid px-4">
+      <div class="cgs-accent-cta__inner" data-reveal>
+        <h2>Send us your packing list</h2>
+        <p>
+          Dimensions and a deadline are enough to start. We come back with the
+          mode, the route and what it costs.
+        </p>
+        <a href="<?php echo url('contact.php'); ?>" class="cgs-btn cgs-btn--on-dark">
+          Get a Quote <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
+        </a>
       </div>
     </div>
   </section>

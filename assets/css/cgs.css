@@ -84,6 +84,23 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.01em;
 }
 
+/* Home page only: tightened to the "Hyer" landing concept's editorial type
+   system — closer line-height and tracking on headings so they read as a
+   considered display cut, text-wrap: balance so multi-word headlines break
+   evenly instead of leaving a widow, and a slightly closer line-height on
+   body copy. Scoped to #main-content so the shared header and footer keep
+   the rhythm every other page uses. */
+body.page-home #main-content h1,
+body.page-home #main-content h2,
+body.page-home #main-content h3 {
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+body.page-home #main-content p {
+  line-height: 1.65;
+}
+
 a { color: var(--cgs-blue-500); }
 a:hover { color: var(--cgs-navy-700); }
 
@@ -1255,6 +1272,51 @@ a:hover { color: var(--cgs-navy-700); }
 @media (max-width: 991.98px) {
   .cgs-approach { grid-template-columns: 1fr; }
 }
+
+/* Dark-band variant, ported from the "Hyer" landing concept's approach
+   section: same hairline-row list, re-coloured for the navy ground the
+   light-mode tokens above are not readable against. */
+.cgs-section--dark .cgs-approach__intro p { color: rgba(255, 255, 255, .68); }
+.cgs-section--dark .cgs-approach__list li,
+.cgs-section--dark .cgs-approach__list li:last-child { border-color: rgba(255, 255, 255, .16); }
+.cgs-section--dark .cgs-approach__num { color: var(--cgs-cyan-300); }
+.cgs-section--dark .cgs-approach__text strong { color: #fff; }
+.cgs-section--dark .cgs-approach__text span { color: rgba(255, 255, 255, .6); }
+
+/* --- Accent CTA card ------------------------------------------------------
+   Single-use, single-accent card ("Send us your packing list"), ported from
+   the "Hyer" landing concept's featured clay card. Full-bleed on the site's
+   one accent colour — deliberately the only place cyan is used as a fill
+   rather than a text/icon accent, so it stays a one-off, not a pattern. */
+.cgs-accent-cta { background: var(--cgs-cyan-400); }
+.cgs-accent-cta__inner {
+  padding-block: clamp(48px, 6vw, 72px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  max-width: 640px;
+}
+.cgs-accent-cta__inner h2 {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: var(--cgs-navy-900);
+  text-wrap: balance;
+}
+.cgs-accent-cta__inner p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(8, 34, 56, .78);
+}
+.cgs-accent-cta .cgs-btn--on-dark {
+  background: var(--cgs-navy-900);
+  color: #fff;
+}
+.cgs-accent-cta .cgs-btn--on-dark:hover { background: var(--cgs-navy-700); color: #fff; }
 
 /* --- Fleet split --------------------------------------------------------- */
 
