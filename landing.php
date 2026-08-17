@@ -82,7 +82,10 @@ $sectors = ['Oil and gas', 'Offshore vessels', 'Heavy lift', 'Energy', 'Construc
      NAV — three links, a circular button opens the rest.
      ========================================================== -->
 <header class="hy-nav">
-  <a class="hy-nav__word" href="<?php echo url('landing.php'); ?>">CARRIAGE GLOBAL</a>
+  <a class="hy-nav__brand" href="<?php echo url('landing.php'); ?>">
+    <img src="<?php echo url($settings['logo']); ?>" alt="" width="36" height="36">
+    <span class="hy-nav__word">CARRIAGE GLOBAL</span>
+  </a>
 
   <nav class="hy-nav__links" aria-label="Primary">
     <a href="#services">Services</a>

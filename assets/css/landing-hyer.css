@@ -18,21 +18,25 @@
      number that does not survive real viewports. Rebuilt as a clamp() that
      keeps the same *feeling* (huge, tight, two lines max) without breaking
      on a laptop screen.
-   - Palette: used verbatim — Deep Ink, Pure White, Clay Ember as the single
-     accent, Cool Ash, Pebble, Midnight Hull, Charcoal Deck. Introducing the
-     CGS brand blue here would give the page two chromatic colors instead of
-     one, which is the exact restraint the reference is built around.
+   - Palette: the reference's own monochrome-plus-one-accent (Deep Ink, Pure
+     White, Clay Ember, Cool Ash, Pebble, Midnight Hull) has been dropped in
+     favour of the real CGS site palette from assets/css/cgs.css — the
+     client asked for the actual brand colours here, not the aviation
+     reference's palette. Token *names* are unchanged (--hy-ink, --hy-clay,
+     etc.) so the ~50 call sites below didn't need touching, only what each
+     one points to. The structural system (extreme tracking, hairline
+     dividers, full-pill buttons, alternating bands) is still the reference's.
    ========================================================================== */
 
 body.page-hyer {
-  --hy-ink:      #000d10;   /* primary text, buttons, strokes */
+  --hy-ink:      #082238;   /* was aviation "Deep Ink" #000d10 — now --cgs-navy-900 */
   --hy-white:    #ffffff;
-  --hy-clay:     #bc7155;   /* single warm accent — one featured card, nothing else */
-  --hy-ash:      #8e8e95;
-  --hy-pebble:   #d5d3d4;   /* hairlines only */
-  --hy-midnight: #0f0f1c;
-  --hy-charcoal: #151623;
-  --hy-hero-bg:  #f6f5f2;   /* pale hero ground — off-white, not pure white */
+  --hy-clay:     #2E9FD6;   /* was aviation "Clay Ember" #bc7155 — now --cgs-cyan-400, the one accent */
+  --hy-ash:      #7A869A;   /* was #8e8e95 — now --cgs-muted */
+  --hy-pebble:   #E4E8EF;   /* was #d5d3d4 — now --cgs-line, hairlines only */
+  --hy-midnight: #082238;   /* was #0f0f1c — now --cgs-navy-900, matching the dark bands elsewhere on the site */
+  --hy-charcoal: #0E3A56;   /* was #151623 — now --cgs-navy-700; unused, kept for parity */
+  --hy-hero-bg:  #F5F8FC;   /* was warm off-white #f6f5f2 — now --cgs-surface */
 
   --hy-font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
@@ -163,6 +167,12 @@ body.page-hyer .hy-nav.is-stuck {
   border-bottom-color: var(--hy-pebble);
 }
 
+body.page-hyer .hy-nav__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+body.page-hyer .hy-nav__brand img { width: 36px; height: 36px; object-fit: contain; flex-shrink: 0; }
 body.page-hyer .hy-nav__word {
   font-size: 17px;
   font-weight: 700;
@@ -346,8 +356,7 @@ body.page-hyer .hy-hero__actions {
   margin-top: 8px;
 }
 
-/* Photograph: bleeds off the right edge, grayscale so the single clay accent
-   later on the page reads as the only color statement. A slow, one-time
+/* Photograph: bleeds off the right edge, full color. A slow, one-time
    scale-down on load (not a loop) gives the hero a single moment of motion
    without becoming a background animation nobody asked for. */
 body.page-hyer .hy-hero__media {
@@ -362,7 +371,6 @@ body.page-hyer .hy-hero__media img {
   height: 100%;
   object-fit: cover;
   object-position: center 35%;
-  filter: grayscale(1) contrast(1.05);
   animation: hy-hero-settle 1400ms cubic-bezier(0.23, 1, 0.32, 1) both;
 }
 @keyframes hy-hero-settle {
@@ -529,7 +537,6 @@ body.page-hyer .hy-crops figure { margin: 0; }
 body.page-hyer .hy-crops__media { aspect-ratio: 4 / 3; overflow: hidden; background: var(--hy-hero-bg); }
 body.page-hyer .hy-crops__media img {
   width: 100%; height: 100%; object-fit: cover;
-  filter: grayscale(1) contrast(1.05);
   transition: transform 500ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 @media (hover: hover) and (pointer: fine) {
@@ -586,14 +593,14 @@ body.page-hyer .hy-footer__bg {
 }
 body.page-hyer .hy-footer__bg img {
   width: 100%; height: 100%; object-fit: cover;
-  filter: grayscale(1) brightness(.55) contrast(1.1);
+  filter: brightness(.55) contrast(1.1);
   opacity: .5;
 }
 body.page-hyer .hy-footer__bg::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, var(--hy-ink) 0%, rgba(0,13,16,.86) 40%, var(--hy-ink) 100%);
+  background: linear-gradient(180deg, var(--hy-ink) 0%, rgba(8,34,56,.86) 40%, var(--hy-ink) 100%);
 }
 
 body.page-hyer .hy-footer__inner { position: relative; z-index: 1; padding-block: clamp(64px, 9vw, 120px) 32px; }
