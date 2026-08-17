@@ -1,0 +1,659 @@
+/* =============================================================================
+   CGS — "Hyer" landing concept
+   -----------------------------------------------------------------------------
+   A standalone design exploration applying the system documented at
+   https://styles.refero.design/style/f61cf515-ccd5-4494-bdd1-be9fe4d7258c
+   (a monochromatic editorial-luxury language built for a private aviation
+   brand) to Carriage Global. Not the site's day-to-day visual language —
+   assets/css/cgs.css owns that. This file is scoped to body.page-hyer so
+   nothing here can leak onto any other page.
+
+   Fidelity notes (what changed from the reference, and why):
+   - Typeface: the reference specifies HelveticaNowDisplay, a licensed font
+     this project does not hold a license for. Plus Jakarta Sans is already
+     loaded site-wide, so it stands in here — weight 700 pushed with extra
+     negative tracking to approximate the "architectural, not decorative"
+     display cut the reference relies on.
+   - Hero type scale: the reference's 187px display size is a print-era
+     number that does not survive real viewports. Rebuilt as a clamp() that
+     keeps the same *feeling* (huge, tight, two lines max) without breaking
+     on a laptop screen.
+   - Palette: used verbatim — Deep Ink, Pure White, Clay Ember as the single
+     accent, Cool Ash, Pebble, Midnight Hull, Charcoal Deck. Introducing the
+     CGS brand blue here would give the page two chromatic colors instead of
+     one, which is the exact restraint the reference is built around.
+   ========================================================================== */
+
+body.page-hyer {
+  --hy-ink:      #000d10;   /* primary text, buttons, strokes */
+  --hy-white:    #ffffff;
+  --hy-clay:     #bc7155;   /* single warm accent — one featured card, nothing else */
+  --hy-ash:      #8e8e95;
+  --hy-pebble:   #d5d3d4;   /* hairlines only */
+  --hy-midnight: #0f0f1c;
+  --hy-charcoal: #151623;
+  --hy-hero-bg:  #f6f5f2;   /* pale hero ground — off-white, not pure white */
+
+  --hy-font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --hy-unit:    4px;
+  --hy-gap-el:  16px;
+  --hy-gap-sec: clamp(56px, 8vw, 96px);
+  --hy-pad-card: 22px;
+  --hy-max: 1200px;
+
+  background: var(--hy-white);
+  color: var(--hy-ink);
+  font-family: var(--hy-font);
+  font-weight: 400;
+  overflow-x: hidden;
+}
+
+body.page-hyer * { box-sizing: border-box; }
+
+body.page-hyer .hy-wrap {
+  max-width: var(--hy-max);
+  margin-inline: auto;
+  padding-inline: clamp(20px, 4vw, 40px);
+}
+
+body.page-hyer h1,
+body.page-hyer h2,
+body.page-hyer h3 {
+  margin: 0;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--hy-ink);
+  text-wrap: balance;
+}
+
+body.page-hyer p { margin: 0; }
+
+body.page-hyer a { color: inherit; text-decoration: none; }
+
+/* Every visible focus outline in this concept is ink-on-clay-safe: a ring
+   plus offset works whether the element sits on white, ink or clay. */
+body.page-hyer :where(a, button):focus-visible {
+  outline: 2.5px solid var(--hy-ink);
+  outline-offset: 3px;
+}
+body.page-hyer .hy-dark :where(a, button):focus-visible,
+body.page-hyer .hy-clay :where(a, button):focus-visible {
+  outline-color: var(--hy-white);
+}
+
+/* --- Pills ---------------------------------------------------------------
+   Every interactive control in this system is a full pill. Press feedback
+   is scale(0.97), never a color-only change — the button must feel pressed,
+   not just look different. */
+
+body.page-hyer .hy-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 17px 30px;
+  border-radius: 1000px;
+  border: 1.5px solid transparent;
+  font-family: var(--hy-font);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1),
+              background-color 200ms ease,
+              border-color 200ms ease,
+              color 200ms ease;
+}
+body.page-hyer .hy-pill:active { transform: scale(0.97); }
+body.page-hyer .hy-pill i { font-size: 13px; transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1); }
+body.page-hyer .hy-pill:hover i { transform: translateX(3px); }
+
+body.page-hyer .hy-pill--ink {
+  background: var(--hy-ink);
+  color: var(--hy-white);
+}
+body.page-hyer .hy-pill--ink:hover { background: #1a2a2f; color: var(--hy-white); }
+
+body.page-hyer .hy-pill--ghost-ink {
+  background: transparent;
+  border-color: var(--hy-ink);
+  color: var(--hy-ink);
+}
+body.page-hyer .hy-pill--ghost-ink:hover { background: var(--hy-ink); color: var(--hy-white); }
+
+body.page-hyer .hy-pill--ghost-white {
+  background: transparent;
+  border-color: rgba(255, 255, 255, .55);
+  color: var(--hy-white);
+}
+body.page-hyer .hy-pill--ghost-white:hover { background: var(--hy-white); color: var(--hy-ink); }
+
+@media (hover: hover) and (pointer: fine) {
+  body.page-hyer .hy-pill:hover { transform: translateY(-1px); }
+  body.page-hyer .hy-pill:active { transform: translateY(-1px) scale(0.97); }
+}
+
+/* --- Nav -------------------------------------------------------------------
+   A persistent light glass scrim rather than a true transparent bar: the
+   page alternates pale, white and midnight bands behind it, and ink text
+   needs to stay legible against all three without a second theming system
+   tracking which band is currently behind the bar. */
+
+body.page-hyer .hy-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 84px;
+  padding-inline: clamp(20px, 4vw, 40px);
+  background: rgba(246, 245, 242, .68);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border-bottom: 1px solid transparent;
+  transition: border-color 240ms ease, background-color 240ms ease;
+}
+body.page-hyer .hy-nav.is-stuck {
+  background: rgba(255, 255, 255, .82);
+  border-bottom-color: var(--hy-pebble);
+}
+
+body.page-hyer .hy-nav__word {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+body.page-hyer .hy-nav__links {
+  display: flex;
+  align-items: center;
+  gap: clamp(20px, 3vw, 40px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+body.page-hyer .hy-nav__links a {
+  position: relative;
+  font-size: 14.5px;
+  font-weight: 600;
+  padding-bottom: 3px;
+}
+body.page-hyer .hy-nav__links a::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 1.5px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 220ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+body.page-hyer .hy-nav__links a:hover::after { transform: scaleX(1); }
+
+body.page-hyer .hy-nav__right { display: flex; align-items: center; gap: 20px; }
+
+/* Below ~860px the three links plus the inline CTA pill do not fit next to
+   the wordmark without wrapping or clipping. Collapse to wordmark + circular
+   button only — every link and the contact details already live in the
+   full-screen overlay, so nothing is lost, only relocated. */
+@media (max-width: 860px) {
+  body.page-hyer .hy-nav__links,
+  body.page-hyer .hy-nav__right .hy-pill { display: none; }
+  body.page-hyer .hy-nav { padding-inline: clamp(16px, 5vw, 28px); }
+  body.page-hyer .hy-nav__word { font-size: 15px; }
+}
+
+/* Circular menu trigger, opens the full-screen overlay. */
+body.page-hyer .hy-nav__burger {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1.5px solid var(--hy-ink);
+  background: transparent;
+  color: var(--hy-ink);
+  cursor: pointer;
+  transition: background-color 200ms ease, color 200ms ease, transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+body.page-hyer .hy-nav__burger:active { transform: scale(0.94); }
+@media (hover: hover) and (pointer: fine) {
+  body.page-hyer .hy-nav__burger:hover { background: var(--hy-ink); color: var(--hy-white); }
+}
+body.page-hyer .hy-nav__burger svg { width: 16px; height: 16px; }
+body.page-hyer .hy-nav__burger .hy-icon-close { display: none; }
+body.page-hyer .hy-nav__burger[aria-expanded="true"] .hy-icon-open  { display: none; }
+body.page-hyer .hy-nav__burger[aria-expanded="true"] .hy-icon-close { display: block; }
+
+/* --- Full-screen menu overlay ---------------------------------------------
+   Purpose: the top nav only has room for three links, so this is where the
+   rest of the site and the contact details live. Ink ground, huge stacked
+   type — the overlay is the one place in this system allowed to be loud,
+   because it only appears on request. */
+
+body.page-hyer .hy-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 100px clamp(20px, 4vw, 40px) 40px;
+  background: var(--hy-ink);
+  color: var(--hy-white);
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 320ms cubic-bezier(0.23, 1, 0.32, 1), visibility 320ms;
+}
+body.page-hyer .hy-overlay.is-open { visibility: visible; opacity: 1; }
+
+body.page-hyer .hy-overlay__links {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+body.page-hyer .hy-overlay__links li { border-top: 1px solid rgba(255, 255, 255, .16); }
+body.page-hyer .hy-overlay__links li:last-child { border-bottom: 1px solid rgba(255, 255, 255, .16); }
+body.page-hyer .hy-overlay__links a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 2px;
+  font-size: clamp(30px, 6vw, 56px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+body.page-hyer .hy-overlay__links a i {
+  font-size: 20px;
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity 220ms cubic-bezier(0.23, 1, 0.32, 1), transform 220ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+@media (hover: hover) and (pointer: fine) {
+  body.page-hyer .hy-overlay__links a:hover i { opacity: 1; transform: translateX(0); }
+}
+
+body.page-hyer .hy-overlay__foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px 48px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(255, 255, 255, .16);
+  font-size: 14px;
+  color: rgba(255, 255, 255, .68);
+}
+body.page-hyer .hy-overlay__foot a { color: var(--hy-white); font-weight: 600; }
+body.page-hyer .hy-overlay__foot dt { font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: rgba(255,255,255,.44); margin-bottom: 6px; }
+body.page-hyer .hy-overlay__foot dd { margin: 0; }
+
+/* Locks page scroll while the overlay is open, without the layout jump a
+   naive overflow:hidden on <body> causes when the scrollbar disappears. */
+body.page-hyer.hy-lock { overflow: hidden; }
+
+@media (prefers-reduced-motion: reduce) {
+  body.page-hyer .hy-overlay,
+  body.page-hyer .hy-overlay__links a i { transition: none; }
+}
+
+/* --- Hero ------------------------------------------------------------------
+   Editorial manifesto hero: the headline is the design. Asymmetric — huge
+   type top-left, the photograph bleeds off the bottom-right corner instead
+   of sitting in a box. */
+
+body.page-hyer .hy-hero {
+  position: relative;
+  padding-top: 140px;
+  padding-bottom: 0;
+  background: var(--hy-hero-bg);
+  overflow: hidden;
+}
+
+body.page-hyer .hy-hero__grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 28px;
+  padding-bottom: 40px;
+}
+
+body.page-hyer .hy-hero__title {
+  /* Two lines by deliberate <br>, not by width overflow — text-wrap:balance
+     would otherwise fight the manual break and can reflow to three lines on
+     the widths in between the clamp's bounds. */
+  font-size: clamp(40px, 7vw, 104px);
+  letter-spacing: clamp(-0.035em, -0.045em, -0.03em);
+  text-wrap: wrap;
+}
+
+body.page-hyer .hy-hero__lead {
+  max-width: 52ch;
+  font-size: clamp(16px, 1.6vw, 19px);
+  line-height: 1.6;
+  color: var(--hy-ink);
+  opacity: .72;
+}
+
+body.page-hyer .hy-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+/* Photograph: bleeds off the right edge, grayscale so the single clay accent
+   later on the page reads as the only color statement. A slow, one-time
+   scale-down on load (not a loop) gives the hero a single moment of motion
+   without becoming a background animation nobody asked for. */
+body.page-hyer .hy-hero__media {
+  position: relative;
+  margin-inline: clamp(-20px, -4vw, -40px) calc(clamp(20px, 4vw, 40px) * -1);
+  aspect-ratio: 16 / 8;
+  max-height: 58vh;
+  overflow: hidden;
+}
+body.page-hyer .hy-hero__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 35%;
+  filter: grayscale(1) contrast(1.05);
+  animation: hy-hero-settle 1400ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+@keyframes hy-hero-settle {
+  from { transform: scale(1.06); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+body.page-hyer .hy-hero__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, var(--hy-hero-bg) 0%, transparent 18%);
+}
+
+@media (min-width: 900px) {
+  body.page-hyer .hy-hero__grid { grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); align-items: end; }
+  body.page-hyer .hy-hero__copy { grid-column: 1; padding-bottom: 24px; }
+  body.page-hyer .hy-hero__media {
+    grid-column: 2;
+    grid-row: 1 / span 1;
+    align-self: end;
+    aspect-ratio: 4 / 5;
+    max-height: 64vh;
+    margin-inline: 0 calc(clamp(20px, 4vw, 40px) * -1);
+  }
+  body.page-hyer .hy-hero__media::after { background: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.page-hyer .hy-hero__media img { animation: none; }
+}
+
+/* --- Section scaffolding --------------------------------------------------- */
+
+body.page-hyer .hy-band { padding-block: var(--hy-gap-sec); }
+body.page-hyer .hy-dark { background: var(--hy-midnight); color: var(--hy-white); }
+body.page-hyer .hy-dark h2, body.page-hyer .hy-dark h3 { color: var(--hy-white); }
+
+/* --- Intro: right-weighted single column ----------------------------------- */
+
+body.page-hyer .hy-intro { display: grid; grid-template-columns: minmax(0,1fr); }
+body.page-hyer .hy-intro__col {
+  grid-column: 1;
+  max-width: 62ch;
+}
+body.page-hyer .hy-intro__col h2 {
+  font-size: clamp(24px, 3vw, 34px);
+  margin-bottom: 18px;
+}
+body.page-hyer .hy-intro__col p {
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--hy-ink);
+  opacity: .76;
+}
+@media (min-width: 900px) {
+  body.page-hyer .hy-intro { grid-template-columns: minmax(0,4fr) minmax(0,8fr); }
+  body.page-hyer .hy-intro__col { grid-column: 2; margin-left: auto; }
+}
+
+/* --- 2x2 feature grid -------------------------------------------------------
+   Standard Card: white, 0 radius, no shadow — hairline dividers are the only
+   thing separating one cell from the next. Exactly 4 cells for 4 items. */
+
+body.page-hyer .hy-features {
+  margin-top: 56px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border-top: 1px solid var(--hy-pebble);
+  border-left: 1px solid var(--hy-pebble);
+}
+body.page-hyer .hy-features__cell {
+  padding: var(--hy-pad-card);
+  padding-block: 40px;
+  border-right: 1px solid var(--hy-pebble);
+  border-bottom: 1px solid var(--hy-pebble);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: background-color 240ms ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  body.page-hyer .hy-features__cell:hover { background: var(--hy-hero-bg); }
+}
+body.page-hyer .hy-features__icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1.5px solid var(--hy-ink);
+  border-radius: 50%;
+  font-size: 16px;
+}
+body.page-hyer .hy-features__cell h3 { font-size: 19px; letter-spacing: -0.015em; }
+body.page-hyer .hy-features__cell p { font-size: 14.5px; line-height: 1.6; color: var(--hy-ash); max-width: 42ch; }
+body.page-hyer .hy-features__cell a {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13.5px;
+  font-weight: 700;
+}
+body.page-hyer .hy-features__cell a i { font-size: 11px; transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1); }
+body.page-hyer .hy-features__cell:hover a i { transform: translateX(3px); }
+
+@media (max-width: 767.98px) {
+  body.page-hyer .hy-features { grid-template-columns: 1fr; }
+}
+
+/* --- Approach rows (dark band) ---------------------------------------------- */
+
+body.page-hyer .hy-approach__head { max-width: 46ch; margin-bottom: 48px; }
+body.page-hyer .hy-approach__head h2 { font-size: clamp(26px, 3.4vw, 42px); margin-bottom: 16px; }
+body.page-hyer .hy-approach__head p { font-size: 16px; line-height: 1.7; color: rgba(255,255,255,.68); }
+
+body.page-hyer .hy-approach__list { margin: 0; padding: 0; list-style: none; }
+body.page-hyer .hy-approach__list li {
+  display: grid;
+  grid-template-columns: 60px minmax(0,1fr);
+  gap: 24px;
+  padding: 28px 0;
+  border-top: 1px solid rgba(255, 255, 255, .16);
+}
+body.page-hyer .hy-approach__list li:last-child { border-bottom: 1px solid rgba(255, 255, 255, .16); }
+body.page-hyer .hy-approach__num { font-size: 14px; font-weight: 700; color: var(--hy-clay); letter-spacing: -0.01em; }
+body.page-hyer .hy-approach__list h3 { font-size: 19px; margin-bottom: 8px; }
+body.page-hyer .hy-approach__list p { font-size: 15px; line-height: 1.7; color: rgba(255,255,255,.6); max-width: 58ch; }
+
+body.page-hyer .hy-approach__cta { margin-top: 44px; }
+
+/* --- Featured clay card (single use per page) ------------------------------- */
+
+body.page-hyer .hy-clay {
+  background: var(--hy-clay);
+  color: var(--hy-white);
+}
+body.page-hyer .hy-clay__inner {
+  padding: clamp(40px, 6vw, 59px) clamp(24px, 6vw, 53px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+body.page-hyer .hy-clay__inner h2 {
+  color: var(--hy-white);
+  font-size: clamp(28px, 4.2vw, 52px);
+  max-width: 16ch;
+}
+body.page-hyer .hy-clay__inner p {
+  font-size: 16px;
+  line-height: 1.7;
+  max-width: 50ch;
+  color: rgba(255,255,255,.86);
+}
+
+/* --- Imagery band: isolated crops ------------------------------------------- */
+
+body.page-hyer .hy-crops {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(20px, 3vw, 32px);
+}
+body.page-hyer .hy-crops figure { margin: 0; }
+body.page-hyer .hy-crops__media { aspect-ratio: 4 / 3; overflow: hidden; background: var(--hy-hero-bg); }
+body.page-hyer .hy-crops__media img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: grayscale(1) contrast(1.05);
+  transition: transform 500ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+@media (hover: hover) and (pointer: fine) {
+  body.page-hyer .hy-crops figure:hover img { transform: scale(1.035); }
+}
+body.page-hyer .hy-crops figcaption {
+  margin-top: 14px;
+  font-size: 13.5px;
+  color: var(--hy-ash);
+}
+
+@media (max-width: 767.98px) {
+  body.page-hyer .hy-crops { grid-template-columns: 1fr; }
+}
+
+/* --- Sectors strip ------------------------------------------------------------ */
+
+body.page-hyer .hy-sectors { padding-block: 48px; border-top: 1px solid var(--hy-pebble); border-bottom: 1px solid var(--hy-pebble); }
+body.page-hyer .hy-sectors__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0;
+}
+body.page-hyer .hy-sectors__label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--hy-ash);
+  padding-right: 28px;
+  margin-right: 4px;
+  border-right: 1px solid var(--hy-pebble);
+}
+body.page-hyer .hy-sectors__row span:not(.hy-sectors__label) {
+  font-size: 15px;
+  font-weight: 600;
+  padding-inline: 20px;
+  border-right: 1px solid var(--hy-pebble);
+}
+body.page-hyer .hy-sectors__row span:last-child { border-right: none; }
+
+/* --- Footer ------------------------------------------------------------------- */
+
+body.page-hyer .hy-footer {
+  position: relative;
+  background: var(--hy-ink);
+  color: rgba(255,255,255,.7);
+  overflow: hidden;
+}
+body.page-hyer .hy-footer__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+body.page-hyer .hy-footer__bg img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: grayscale(1) brightness(.55) contrast(1.1);
+  opacity: .5;
+}
+body.page-hyer .hy-footer__bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, var(--hy-ink) 0%, rgba(0,13,16,.86) 40%, var(--hy-ink) 100%);
+}
+
+body.page-hyer .hy-footer__inner { position: relative; z-index: 1; padding-block: clamp(64px, 9vw, 120px) 32px; }
+
+body.page-hyer .hy-footer__word {
+  font-size: clamp(40px, 9vw, 108px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  color: var(--hy-white);
+  margin-bottom: 56px;
+}
+
+body.page-hyer .hy-footer__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 32px;
+  padding-top: 40px;
+  border-top: 1px solid rgba(255,255,255,.16);
+}
+body.page-hyer .hy-footer__grid dt {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: rgba(255,255,255,.42);
+  margin-bottom: 12px;
+}
+body.page-hyer .hy-footer__grid dd { margin: 0 0 8px; font-size: 14.5px; }
+body.page-hyer .hy-footer__grid a:hover { color: var(--hy-white); }
+
+body.page-hyer .hy-footer__bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,.16);
+  font-size: 13px;
+  color: rgba(255,255,255,.44);
+}
+
+/* --- Scroll reveal -----------------------------------------------------------
+   Same contract as the main site: content is real, not decoration, so it can
+   never depend solely on an animation firing. landing-hyer.js adds .is-visible
+   via IntersectionObserver with a timeout safety net identical in spirit to
+   assets/js/cgs.js. */
+
+html.js body.page-hyer [data-hy-reveal] {
+  opacity: 0;
+  transform: translateY(16px);
+}
+html.js body.page-hyer [data-hy-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 560ms cubic-bezier(0.23, 1, 0.32, 1) var(--hy-delay, 0ms),
+              transform 560ms cubic-bezier(0.23, 1, 0.32, 1) var(--hy-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js body.page-hyer [data-hy-reveal] { opacity: 1; transform: none; }
+  body.page-hyer .hy-hero__media img { animation: none; }
+  body.page-hyer .hy-crops figure:hover img { transform: none; }
+}
