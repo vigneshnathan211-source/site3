@@ -14,37 +14,42 @@
      Sentinel + IntersectionObserver, not a scroll listener: a scroll handler
      runs layout work on every frame, and this only needs to fire once each
      way the boundary is crossed. */
-  var nav = document.querySelector('.hy-nav');
-  if (nav && 'IntersectionObserver' in window) {
+  var header = document.querySelector('.hy-header');
+  if (header && 'IntersectionObserver' in window) {
     var sentinel = document.createElement('div');
     sentinel.setAttribute('aria-hidden', 'true');
     sentinel.style.cssText = 'position:absolute;top:0;left:0;width:1px;height:1px;pointer-events:none;';
     document.body.prepend(sentinel);
     new IntersectionObserver(function (entries) {
-      nav.classList.toggle('is-stuck', !entries[0].isIntersecting);
+      header.classList.toggle('is-stuck', !entries[0].isIntersecting);
     }).observe(sentinel);
   }
 
-  /* --- Full-screen menu overlay ----------------------------------------------
+  /* --- Menu dropdown -----------------------------------------------------
      Purpose: the top nav only carries three links; this is where the rest of
-     the site lives. Focus is trapped while open and returned to the trigger
-     on close, and Escape closes it, so a keyboard user is never dropped
-     into a page with no visible way back. */
+     the site lives. Opens on hover for a pointer that has hover (a short
+     close-delay survives the gap between the burger and the panel below
+     it), and on click/tap otherwise. Focus is trapped while open and
+     returned to the trigger on close, and Escape closes it, so a keyboard
+     user is never dropped into a page with no visible way back. */
   var burger  = document.querySelector('[data-hy-burger]');
   var overlay = document.querySelector('[data-hy-overlay]');
+  var canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
   if (burger && overlay) {
     var closeBtn = overlay.querySelector('[data-hy-close]');
     var lastFocused = null;
+    var closeTimer = null;
 
     var getFocusable = function () {
       return overlay.querySelectorAll('a[href], button:not([disabled])');
     };
 
     var openOverlay = function () {
+      clearTimeout(closeTimer);
+      if (overlay.classList.contains('is-open')) { return; }
       lastFocused = document.activeElement;
       overlay.classList.add('is-open');
-      document.body.classList.add('hy-lock');
       burger.setAttribute('aria-expanded', 'true');
       burger.setAttribute('aria-label', 'Close menu');
       overlay.removeAttribute('inert');
@@ -55,28 +60,51 @@
          Forcing a reflow (offsetHeight) does not help; only waiting a
          frame does. rAF is enough in testing, but a dialog opening is rare
          enough that the extra margin of a second frame costs nothing and
-         removes any doubt across browsers. */
-      requestAnimationFrame(function () {
+         removes any doubt across browsers. Skipped on hover-open: a mouse
+         user did not ask for focus to jump, and moving it out from under
+         them mid-hover would be disorienting. */
+      if (!canHover) {
         requestAnimationFrame(function () {
-          var focusable = getFocusable();
-          if (focusable.length) { focusable[0].focus(); }
+          requestAnimationFrame(function () {
+            var focusable = getFocusable();
+            if (focusable.length) { focusable[0].focus(); }
+          });
         });
-      });
+      }
     };
 
     var closeOverlay = function () {
       overlay.classList.remove('is-open');
-      document.body.classList.remove('hy-lock');
       burger.setAttribute('aria-expanded', 'false');
       burger.setAttribute('aria-label', 'Open menu');
       overlay.setAttribute('inert', '');
-      if (lastFocused) { lastFocused.focus(); }
+      if (lastFocused && !canHover) { lastFocused.focus(); }
+    };
+
+    var scheduleClose = function () {
+      clearTimeout(closeTimer);
+      closeTimer = setTimeout(closeOverlay, 220);
     };
 
     burger.addEventListener('click', function () {
       var isOpen = overlay.classList.contains('is-open');
       if (isOpen) { closeOverlay(); } else { openOverlay(); }
     });
+
+    if (canHover) {
+      burger.addEventListener('mouseenter', openOverlay);
+      burger.addEventListener('mouseleave', scheduleClose);
+      overlay.addEventListener('mouseenter', function () { clearTimeout(closeTimer); });
+      overlay.addEventListener('mouseleave', scheduleClose);
+      burger.addEventListener('focus', openOverlay);
+      overlay.addEventListener('focusout', function () {
+        requestAnimationFrame(function () {
+          if (!overlay.contains(document.activeElement) && document.activeElement !== burger) {
+            closeOverlay();
+          }
+        });
+      });
+    }
 
     if (closeBtn) { closeBtn.addEventListener('click', closeOverlay); }
 
@@ -97,6 +125,12 @@
         event.preventDefault();
         first.focus();
       }
+    });
+
+    document.addEventListener('click', function (event) {
+      if (!overlay.classList.contains('is-open')) { return; }
+      if (overlay.contains(event.target) || burger.contains(event.target)) { return; }
+      closeOverlay();
     });
 
     /* Inert until first opened, so it never intercepts Tab or a click while

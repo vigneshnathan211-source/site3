@@ -34,6 +34,14 @@ $pageDesc  = 'A design concept for Carriage Global (S) Pte Ltd, applying an edit
 /* Four of the five services, for an even 2x2 grid. */
 $featureServices = array_slice($services, 0, 4);
 
+/* Same filter header.php uses: an icon renders only when that social URL is
+   actually set in $settings, so an unconfigured platform shows nothing. */
+$activeSocials = array_filter(
+    $socialPlatforms,
+    static fn($meta, $col): bool => !empty($settings[$col]),
+    ARRAY_FILTER_USE_BOTH
+);
+
 /* Stroke icon per service, matching the reference's minimal stroke-based
    iconography rather than reusing one glyph across four different cells. */
 $serviceIcons = [
@@ -79,62 +87,97 @@ $sectors = ['Oil and gas', 'Offshore vessels', 'Heavy lift', 'Energy', 'Construc
 <a class="cgs-skip-link" href="#hy-main" style="position:absolute;left:-9999px;top:0;z-index:2000;padding:12px 20px;background:#000d10;color:#fff;text-decoration:none;">Skip to main content</a>
 
 <!-- ==========================================================
-     NAV — three links, a circular button opens the rest.
+     HEADER — thin contact/social topbar, then the nav. Both
+     fixed in one wrapper so the topbar can collapse on scroll
+     while the nav stays anchored to the viewport edge.
      ========================================================== -->
-<header class="hy-nav">
-  <a class="hy-nav__brand" href="<?php echo url('landing.php'); ?>">
-    <img src="<?php echo url($settings['logo']); ?>" alt="" width="36" height="36">
-    <span class="hy-nav__word">CARRIAGE GLOBAL</span>
-  </a>
+<div class="hy-header" data-hy-header>
 
-  <nav class="hy-nav__links" aria-label="Primary">
-    <a href="#services">Services</a>
-    <a href="#fleet">Fleet</a>
-    <a href="<?php echo url('contact.php'); ?>">Contact</a>
-  </nav>
-
-  <div class="hy-nav__right">
-    <a href="<?php echo url('contact.php'); ?>" class="hy-pill hy-pill--ink" style="padding:12px 22px; font-size:13.5px;">
-      Get a Quote
-    </a>
-    <button class="hy-nav__burger" type="button" data-hy-burger aria-expanded="false" aria-controls="hy-overlay" aria-label="Open menu">
-      <svg class="hy-icon-open" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      <svg class="hy-icon-close" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-    </button>
+  <div class="hy-topbar">
+    <ul class="hy-topbar__contacts">
+      <li>
+        <a href="tel:<?php echo e($phoneTel); ?>">
+          <i class="fa-solid fa-phone" aria-hidden="true"></i><?php echo e($settings['phone']); ?>
+        </a>
+      </li>
+      <li>
+        <a href="mailto:<?php echo e($settings['email']); ?>">
+          <i class="fa-solid fa-envelope" aria-hidden="true"></i><?php echo e($settings['email']); ?>
+        </a>
+      </li>
+    </ul>
+    <div class="hy-topbar__right">
+      <?php if ($activeSocials): ?>
+      <ul class="hy-topbar__socials">
+        <?php foreach ($activeSocials as $col => $meta): ?>
+        <li>
+          <a href="<?php echo e($settings[$col]); ?>" target="_blank" rel="noopener"
+             aria-label="<?php echo e($meta[1]); ?>">
+            <i class="<?php echo e($meta[0]); ?>" aria-hidden="true"></i>
+          </a>
+        </li>
+        <?php endforeach; ?>
+      </ul>
+      <?php endif; ?>
+    </div>
   </div>
-</header>
 
-<!-- ==========================================================
-     FULL-SCREEN MENU OVERLAY
-     ========================================================== -->
-<div class="hy-overlay" id="hy-overlay" data-hy-overlay role="dialog" aria-modal="true" aria-label="Site menu">
-  <button type="button" data-hy-close class="hy-nav__burger" style="position:absolute; top:20px; right:clamp(20px,4vw,40px); border-color:rgba(255,255,255,.4); color:#fff;" aria-label="Close menu">
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-  </button>
+  <!-- NAV — three links, a circular button opens the rest. -->
+  <header class="hy-nav">
+    <a class="hy-nav__brand" href="<?php echo url('landing.php'); ?>">
+      <img src="<?php echo url($settings['logo']); ?>" alt="" width="36" height="36">
+      <span class="hy-nav__word">CARRIAGE GLOBAL</span>
+    </a>
 
-  <ul class="hy-overlay__links">
-    <li><a href="<?php echo url('index.php'); ?>">Home <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></li>
-    <li><a href="#services">Services <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></li>
-    <li><a href="#fleet">Fleet <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></li>
-    <li><a href="<?php echo url('resources.php'); ?>">Resources <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></li>
-    <li><a href="<?php echo url('contact.php'); ?>">Contact <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></li>
-  </ul>
+    <nav class="hy-nav__links" aria-label="Primary">
+      <a href="#services">Services</a>
+      <a href="#fleet">Fleet</a>
+      <a href="<?php echo url('contact.php'); ?>">Contact</a>
+    </nav>
 
-  <dl class="hy-overlay__foot">
-    <div>
-      <dt>Singapore</dt>
-      <dd><a href="tel:<?php echo e($phoneTel); ?>"><?php echo e($settings['phone']); ?></a></dd>
-      <dd><a href="mailto:<?php echo e($settings['email']); ?>"><?php echo e($settings['email']); ?></a></dd>
+    <div class="hy-nav__right">
+      <a href="<?php echo url('contact.php'); ?>" class="hy-pill hy-pill--ink" style="padding:12px 22px; font-size:13.5px;">
+        Get a Quote
+      </a>
+      <button class="hy-nav__burger" type="button" data-hy-burger aria-expanded="false" aria-controls="hy-overlay" aria-label="Open menu">
+        <svg class="hy-icon-open" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <svg class="hy-icon-close" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
     </div>
-    <div>
-      <dt>24/7 operations</dt>
-      <dd><a href="tel:<?php echo e($phone247Tel); ?>"><?php echo e($settings['phone_247']); ?></a></dd>
+
+    <!-- MENU DROPDOWN — anchored under the nav, opens on hover
+         (pointer devices) or click/tap (touch), not a full-page
+         takeover. -->
+    <div class="hy-overlay" id="hy-overlay" data-hy-overlay role="menu" aria-label="Site menu">
+      <button type="button" data-hy-close class="hy-nav__burger" style="position:absolute; top:16px; right:16px; width:34px; height:34px; border-color:rgba(255,255,255,.4); color:#fff;" aria-label="Close menu">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" width="14" height="14"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+
+      <ul class="hy-overlay__links">
+        <li><a href="<?php echo url('index.php'); ?>">Home <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></li>
+        <li><a href="#services">Services <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></li>
+        <li><a href="#fleet">Fleet <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></li>
+        <li><a href="<?php echo url('resources.php'); ?>">Resources <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></li>
+        <li><a href="<?php echo url('contact.php'); ?>">Contact <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></li>
+      </ul>
+
+      <dl class="hy-overlay__foot">
+        <div>
+          <dt>Singapore</dt>
+          <dd><a href="tel:<?php echo e($phoneTel); ?>"><?php echo e($settings['phone']); ?></a></dd>
+          <dd><a href="mailto:<?php echo e($settings['email']); ?>"><?php echo e($settings['email']); ?></a></dd>
+        </div>
+        <div>
+          <dt>24/7 operations</dt>
+          <dd><a href="tel:<?php echo e($phone247Tel); ?>"><?php echo e($settings['phone_247']); ?></a></dd>
+        </div>
+        <div>
+          <dt>Certification</dt>
+          <dd><?php echo e($settings['iso_statement']); ?></dd>
+        </div>
+      </dl>
     </div>
-    <div>
-      <dt>Certification</dt>
-      <dd><?php echo e($settings['iso_statement']); ?></dd>
-    </div>
-  </dl>
+  </header>
 </div>
 
 <main id="hy-main">
@@ -323,7 +366,10 @@ $sectors = ['Oil and gas', 'Offshore vessels', 'Heavy lift', 'Energy', 'Construc
   </div>
 
   <div class="hy-wrap hy-footer__inner">
-    <p class="hy-footer__word">Carriage Global.</p>
+    <div class="hy-footer__brand">
+      <img src="<?php echo url($settings['logo']); ?>" alt="<?php echo e($settings['company_name']); ?>" width="56" height="56">
+      <p class="hy-footer__word">Carriage Global.</p>
+    </div>
 
     <dl class="hy-footer__grid">
       <div>

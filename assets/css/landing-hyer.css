@@ -139,18 +139,67 @@ body.page-hyer .hy-pill--ghost-white:hover { background: var(--hy-white); color:
   body.page-hyer .hy-pill:active { transform: translateY(-1px) scale(0.97); }
 }
 
-/* --- Nav -------------------------------------------------------------------
-   A persistent light glass scrim rather than a true transparent bar: the
-   page alternates pale, white and midnight bands behind it, and ink text
-   needs to stay legible against all three without a second theming system
-   tracking which band is currently behind the bar. */
+/* --- Header (topbar + nav) --------------------------------------------------
+   Both bars live in one fixed wrapper so the topbar can collapse out of flow
+   on scroll and the nav rises to meet the viewport edge, without either bar
+   needing to know the other's height. */
 
-body.page-hyer .hy-nav {
+body.page-hyer .hy-header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 200;
+}
+
+body.page-hyer .hy-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 10px clamp(20px, 4vw, 40px);
+  background: var(--hy-ink);
+  color: rgba(255, 255, 255, .78);
+  font-size: 12.5px;
+  overflow: hidden;
+  max-height: 40px;
+  transition: max-height 240ms cubic-bezier(0.23, 1, 0.32, 1),
+              padding-block 240ms cubic-bezier(0.23, 1, 0.32, 1),
+              opacity 200ms ease;
+}
+body.page-hyer .hy-header.is-stuck .hy-topbar {
+  max-height: 0;
+  padding-block: 0;
+  opacity: 0;
+}
+
+body.page-hyer .hy-topbar__contacts,
+body.page-hyer .hy-topbar__socials {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+body.page-hyer .hy-topbar__contacts a { color: inherit; font-weight: 500; }
+body.page-hyer .hy-topbar__contacts a:hover,
+body.page-hyer .hy-topbar__socials a:hover { color: var(--hy-white); }
+body.page-hyer .hy-topbar__contacts i { color: var(--hy-clay); margin-right: 6px; font-size: 11px; }
+body.page-hyer .hy-topbar__socials a { color: inherit; font-size: 13px; opacity: .82; transition: opacity 160ms ease; }
+body.page-hyer .hy-topbar__socials a:hover { opacity: 1; }
+body.page-hyer .hy-topbar__right { display: flex; align-items: center; gap: 20px; }
+
+@media (max-width: 700px) {
+  body.page-hyer .hy-topbar { display: none; }
+}
+
+/* A persistent light glass scrim rather than a true transparent bar: the
+   page alternates pale, white and midnight bands behind it, and ink text
+   needs to stay legible against all three without a second theming system
+   tracking which band is currently behind the bar. */
+
+body.page-hyer .hy-nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -161,8 +210,9 @@ body.page-hyer .hy-nav {
   -webkit-backdrop-filter: blur(14px) saturate(160%);
   border-bottom: 1px solid transparent;
   transition: border-color 240ms ease, background-color 240ms ease;
+  position: relative;
 }
-body.page-hyer .hy-nav.is-stuck {
+body.page-hyer .hy-header.is-stuck .hy-nav {
   background: rgba(255, 255, 255, .82);
   border-bottom-color: var(--hy-pebble);
 }
@@ -218,7 +268,7 @@ body.page-hyer .hy-nav__right { display: flex; align-items: center; gap: 20px; }
   body.page-hyer .hy-nav__word { font-size: 15px; }
 }
 
-/* Circular menu trigger, opens the full-screen overlay. */
+/* Circular menu trigger, opens the menu dropdown. */
 body.page-hyer .hy-nav__burger {
   display: grid;
   place-items: center;
@@ -240,30 +290,45 @@ body.page-hyer .hy-nav__burger .hy-icon-close { display: none; }
 body.page-hyer .hy-nav__burger[aria-expanded="true"] .hy-icon-open  { display: none; }
 body.page-hyer .hy-nav__burger[aria-expanded="true"] .hy-icon-close { display: block; }
 
-/* --- Full-screen menu overlay ---------------------------------------------
+/* --- Menu dropdown -----------------------------------------------------
    Purpose: the top nav only has room for three links, so this is where the
-   rest of the site and the contact details live. Ink ground, huge stacked
-   type — the overlay is the one place in this system allowed to be loud,
-   because it only appears on request. */
+   rest of the site and the contact details live. Anchored to the nav bar
+   itself (not a full-screen takeover) so opening it never reads as leaving
+   the page. Hover-opens on a pointer that has hover; the burger's click
+   toggle remains the only way in on touch. */
 
 body.page-hyer .hy-overlay {
-  position: fixed;
-  inset: 0;
+  position: absolute;
+  top: 100%;
+  right: 0;
   z-index: 300;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 100px clamp(20px, 4vw, 40px) 40px;
+  width: min(380px, calc(100vw - 32px));
+  margin-top: 10px;
+  padding: 28px clamp(20px, 3vw, 28px) 24px;
   background: var(--hy-ink);
   color: var(--hy-white);
+  border: 1px solid rgba(255, 255, 255, .14);
+  box-shadow: 0 24px 48px rgba(8, 34, 56, .28);
   visibility: hidden;
   opacity: 0;
-  transition: opacity 320ms cubic-bezier(0.23, 1, 0.32, 1), visibility 320ms;
+  transform-origin: top right;
+  transform: scale(.96) translateY(-6px);
+  transition: opacity 200ms cubic-bezier(0.23, 1, 0.32, 1),
+              transform 200ms cubic-bezier(0.23, 1, 0.32, 1),
+              visibility 200ms;
 }
-body.page-hyer .hy-overlay.is-open { visibility: visible; opacity: 1; }
+body.page-hyer .hy-overlay.is-open {
+  visibility: visible;
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+/* A short close-delay (set in JS) keeps the panel open while the pointer
+   travels from the burger down into the panel itself; without it, the gap
+   between trigger and panel makes hover feel like it closes by accident. */
 
 body.page-hyer .hy-overlay__links {
-  margin: 0;
+  margin: 0 0 20px;
   padding: 0;
   list-style: none;
 }
@@ -273,16 +338,16 @@ body.page-hyer .hy-overlay__links a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 2px;
-  font-size: clamp(30px, 6vw, 56px);
+  padding: 13px 2px;
+  font-size: 17px;
   font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.01em;
 }
 body.page-hyer .hy-overlay__links a i {
-  font-size: 20px;
+  font-size: 13px;
   opacity: 0;
-  transform: translateX(-8px);
-  transition: opacity 220ms cubic-bezier(0.23, 1, 0.32, 1), transform 220ms cubic-bezier(0.23, 1, 0.32, 1);
+  transform: translateX(-6px);
+  transition: opacity 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 @media (hover: hover) and (pointer: fine) {
   body.page-hyer .hy-overlay__links a:hover i { opacity: 1; transform: translateX(0); }
@@ -291,19 +356,15 @@ body.page-hyer .hy-overlay__links a i {
 body.page-hyer .hy-overlay__foot {
   display: flex;
   flex-wrap: wrap;
-  gap: 24px 48px;
-  padding-top: 28px;
+  gap: 18px 32px;
+  padding-top: 20px;
   border-top: 1px solid rgba(255, 255, 255, .16);
-  font-size: 14px;
+  font-size: 13px;
   color: rgba(255, 255, 255, .68);
 }
 body.page-hyer .hy-overlay__foot a { color: var(--hy-white); font-weight: 600; }
-body.page-hyer .hy-overlay__foot dt { font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: rgba(255,255,255,.44); margin-bottom: 6px; }
+body.page-hyer .hy-overlay__foot dt { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: rgba(255,255,255,.44); margin-bottom: 5px; }
 body.page-hyer .hy-overlay__foot dd { margin: 0; }
-
-/* Locks page scroll while the overlay is open, without the layout jump a
-   naive overflow:hidden on <body> causes when the scrollbar disappears. */
-body.page-hyer.hy-lock { overflow: hidden; }
 
 @media (prefers-reduced-motion: reduce) {
   body.page-hyer .hy-overlay,
@@ -605,12 +666,31 @@ body.page-hyer .hy-footer__bg::after {
 
 body.page-hyer .hy-footer__inner { position: relative; z-index: 1; padding-block: clamp(64px, 9vw, 120px) 32px; }
 
+body.page-hyer .hy-footer__brand {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 56px;
+}
+body.page-hyer .hy-footer__brand img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  flex-shrink: 0;
+  background: var(--hy-white);
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, .16);
+}
 body.page-hyer .hy-footer__word {
   font-size: clamp(40px, 9vw, 108px);
   font-weight: 700;
   letter-spacing: -0.035em;
   color: var(--hy-white);
-  margin-bottom: 56px;
+  margin: 0;
+}
+@media (max-width: 560px) {
+  body.page-hyer .hy-footer__brand { gap: 14px; margin-bottom: 40px; }
+  body.page-hyer .hy-footer__brand img { width: 40px; height: 40px; padding: 6px; }
 }
 
 body.page-hyer .hy-footer__grid {
