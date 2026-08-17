@@ -1129,18 +1129,16 @@ a:hover { color: var(--cgs-navy-700); }
   object-fit: cover;
   transition: transform 600ms var(--ease-out);
 }
-/* Scrim, so the copy stays legible whatever the photograph does. */
+/* Flat scrim (not a gradient), so the copy stays legible whatever the
+   photograph does. Shifts hue on hover — navy to the brand blue — as the
+   hover cue, rather than a lift/shadow doing all the work alone. */
 .cgs-bento__cell::after {
   content: "";
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(to top,
-    rgba(10, 30, 92, .94) 0%,
-    rgba(10, 30, 92, .70) 38%,
-    rgba(10, 30, 92, .28) 70%,
-    rgba(10, 30, 92, .16) 100%);
-  transition: background 300ms ease;
+  background: rgba(8, 34, 56, .68);
+  transition: background-color 300ms ease;
 }
 
 .cgs-bento__body {
@@ -1181,7 +1179,11 @@ a:hover { color: var(--cgs-navy-700); }
 .cgs-bento__more i { transition: transform 220ms var(--ease-out); }
 
 @media (hover: hover) and (pointer: fine) {
-  .cgs-bento__cell:hover { transform: translateY(-4px); box-shadow: var(--cgs-shadow-lg); }
+  /* Without this, the global a:hover rule (color: navy-700) outranks
+     .cgs-bento__cell's own color: #fff and the title silently goes
+     near-invisible against the dark scrim the moment you hover it. */
+  .cgs-bento__cell:hover { transform: translateY(-4px); box-shadow: var(--cgs-shadow-lg); color: #fff; }
+  .cgs-bento__cell:hover::after { background: rgba(14, 58, 86, .78); }
   .cgs-bento__cell:hover .cgs-bento__media img { transform: scale(1.06); }
   .cgs-bento__cell:hover .cgs-bento__more i { transform: translateX(4px); }
 }
