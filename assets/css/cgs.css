@@ -203,6 +203,114 @@ a:hover { color: var(--cgs-navy-700); }
     linear-gradient(to top, rgba(10, 30, 92, .55) 0%, transparent 45%);
 }
 
+/* --- Hero carousel ------------------------------------------------------- */
+
+.cgs-hero__swiper {
+  position: relative;
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: inherit;
+}
+.cgs-hero__swiper .swiper-wrapper { align-items: stretch; }
+
+.cgs-hero__slide {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: clamp(520px, 74dvh, 700px);
+  height: auto;
+  overflow: hidden;
+}
+
+/* Slide copy animates in on the active slide only. `transform` and `opacity`
+   exclusively: they skip layout and paint and run on the GPU. */
+.cgs-hero__slide [data-hero-anim] {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 620ms var(--ease-out), transform 620ms var(--ease-out);
+}
+.cgs-hero__slide.swiper-slide-active [data-hero-anim] { opacity: 1; transform: translateY(0); }
+/* Short stagger so the block resolves in reading order rather than as one
+   slab. 70ms steps: long enough to read as sequence, short enough not to
+   feel like waiting. */
+.cgs-hero__slide.swiper-slide-active [data-hero-anim]:nth-child(1) { transition-delay: 120ms; }
+.cgs-hero__slide.swiper-slide-active [data-hero-anim]:nth-child(2) { transition-delay: 190ms; }
+.cgs-hero__slide.swiper-slide-active [data-hero-anim]:nth-child(3) { transition-delay: 260ms; }
+.cgs-hero__slide.swiper-slide-active [data-hero-anim]:nth-child(4) { transition-delay: 330ms; }
+
+/* Slow drift on the active slide's photograph. Purely atmospheric, so it is
+   the first thing dropped under reduced motion. */
+.cgs-hero__slide.swiper-slide-active .cgs-hero__media img {
+  animation: cgs-hero-drift 14s var(--ease-in-out) forwards;
+}
+@keyframes cgs-hero-drift {
+  from { transform: scale(1.06); }
+  to   { transform: scale(1); }
+}
+
+/* Controls sit on the slide, above the facts band. */
+.cgs-hero__controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: clamp(20px, 3vw, 32px);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* Bullets left, the three buttons grouped right. Keeping prev and next
+   adjacent means the pair reads as one control, not two stray arrows. */
+.cgs-hero__buttons { display: flex; align-items: center; gap: 10px; }
+.cgs-hero__toggle { margin-left: 6px; }
+
+.cgs-hero__nav,
+.cgs-hero__toggle {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, .34);
+  border-radius: 50%;
+  background: rgba(10, 30, 92, .38);
+  color: #fff;
+  font-size: 15px;
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+  transition: background-color 200ms var(--ease-out),
+              border-color 200ms var(--ease-out),
+              transform 160ms var(--ease-out);
+}
+.cgs-hero__nav:active,
+.cgs-hero__toggle:active { transform: scale(0.94); }
+
+@media (hover: hover) and (pointer: fine) {
+  .cgs-hero__nav:hover,
+  .cgs-hero__toggle:hover { background: var(--cgs-blue-500); border-color: transparent; }
+}
+
+.cgs-hero__pagination { display: flex; align-items: center; gap: 8px; }
+.cgs-hero__bullet {
+  width: 28px;
+  height: 4px;
+  padding: 0;
+  border: none;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, .34);
+  cursor: pointer;
+  transition: background-color 260ms var(--ease-out), width 260ms var(--ease-out);
+}
+.cgs-hero__bullet.is-active { width: 46px; background: var(--cgs-cyan-400); }
+
+/* Swiper's own arrow glyphs and default bullets are replaced by ours. */
+.cgs-hero__swiper .swiper-button-next::after,
+.cgs-hero__swiper .swiper-button-prev::after { content: none; }
+
 .cgs-hero__inner {
   position: relative;
   z-index: 1;
@@ -211,6 +319,7 @@ a:hover { color: var(--cgs-navy-700); }
   /* Capped: more top padding than this and the hero copy floats halfway
      down the viewport and reads as a layout bug. */
   padding-block: clamp(48px, 6vw, 88px);
+  padding-bottom: clamp(96px, 10vw, 132px); /* clears the controls row */
 }
 
 .cgs-hero__eyebrow {
@@ -497,11 +606,17 @@ a:hover { color: var(--cgs-navy-700); }
 }
 
 .cgs-topbar__iso {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   padding-right: 18px;
   border-right: 1px solid rgba(255, 255, 255, .16);
   font-size: 13px;
   white-space: nowrap;
 }
+/* Amber, matching the same badge in the footer, so the accreditation reads
+   as one mark across the page rather than two different-looking ones. */
+.cgs-topbar__iso i { color: var(--cgs-accent); font-size: 12px; }
 
 .cgs-topbar__socials {
   display: flex;
@@ -1217,6 +1332,12 @@ html.js [data-reveal].is-visible {
 
 @media (prefers-reduced-motion: reduce) {
   html.js [data-reveal] { opacity: 1; transform: none; }
+  /* Hero: copy appears without travelling, and the photo drift stops.
+     Autoplay is disabled in JS, so slides only change on request. */
+  .cgs-hero__slide [data-hero-anim] { opacity: 1; transform: none; transition: none; }
+  .cgs-hero__slide.swiper-slide-active .cgs-hero__media img { animation: none; transform: none; }
+  .cgs-hero__nav:active,
+  .cgs-hero__toggle:active { transform: none; }
   .cgs-btn:hover,
   .cgs-btn:active,
   .cgs-bento__cell:hover,

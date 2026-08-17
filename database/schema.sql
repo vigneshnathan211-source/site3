@@ -86,6 +86,28 @@ CREATE TABLE IF NOT EXISTS `settings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- -----------------------------------------------------------------------------
+-- hero_slides — the homepage hero carousel. One row per slide, so the client
+-- can reorder, retire or add slides from the admin without a developer.
+-- If the table is empty the hero falls back to the single `settings` hero,
+-- which keeps the homepage working during setup.
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `hero_slides` (
+  `id`          INT(11) NOT NULL AUTO_INCREMENT,
+  `eyebrow`     VARCHAR(150) DEFAULT NULL,
+  `heading`     VARCHAR(255) NOT NULL,
+  `subheading`  TEXT         DEFAULT NULL,
+  `image`       VARCHAR(255) NOT NULL,
+  `alt_text`    VARCHAR(255) DEFAULT NULL,
+  `cta_label`   VARCHAR(100) DEFAULT NULL,
+  `cta_link`    VARCHAR(255) DEFAULT NULL,
+  `sort_order`  INT(11)      DEFAULT 0,
+  `status`      ENUM('active','inactive') DEFAULT 'active',
+  `created_at`  TIMESTAMP NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `status_sort` (`status`, `sort_order`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+-- -----------------------------------------------------------------------------
 -- services — the 5 service detail pages. Drives the Services dropdown,
 -- the homepage service grid, the footer service list and services.php.
 -- `link` is a flat root-level filename, matching how the pages are deployed.
@@ -274,6 +296,29 @@ CREATE TABLE IF NOT EXISTS `leads` (
 -- =============================================================================
 
 INSERT IGNORE INTO `settings` (`id`) VALUES (1);
+
+-- Hero slides. Headings and subheadings are PLACEHOLDER: the client has
+-- supplied no homepage copy. The capability each slide describes is real.
+INSERT IGNORE INTO `hero_slides`
+  (`id`, `eyebrow`, `heading`, `subheading`, `image`, `alt_text`, `cta_label`, `cta_link`, `sort_order`, `status`) VALUES
+(1, 'Project cargo, heavy lift, break bulk',
+    'Cargo that does not fit a container, moved anyway',
+    'Heavy lift, break bulk and project cargo by sea, air and road, planned from your packing list.',
+    'assets/img/bg/hero-bg.jpg',
+    'Project cargo lifted onto a barge alongside a geared vessel in Singapore',
+    'Get a Quote', 'contact.php', 1, 'active'),
+(2, 'Chartering',
+    'Self-geared and semi-geared vessels',
+    'Feeder ships, barges, landing craft and deep-sea mother vessels, matched to weight, volume and route.',
+    'assets/img/services/heavy-lift-chartering.jpg',
+    'Crane lifting a large fabricated module at a Singapore port',
+    'Get a Quote', 'contact.php', 2, 'active'),
+(3, 'Our fleet',
+    'Our own trailers, our own lashing crew',
+    'Fleet, in-house lashing and an open yard for storage and re-working, under one operation.',
+    'assets/img/services/project-freight-forwarding.jpg',
+    'Oversized vessel section secured on a Carriage Global low-bed trailer',
+    'Get a Quote', 'contact.php', 3, 'active');
 
 INSERT IGNORE INTO `services` (`id`, `title`, `slug`, `link`, `short_desc`, `icon`, `sort_order`, `status`) VALUES
 (1, 'Project Freight Forwarding',            'project-freight-forwarding', 'project-freight-forwarding.php', 'Mode selection driven by packing-list analysis — the practical, cost-effective route rather than the most expensive charter.', 'assets/img/icons/s-icons1.svg', 1, 'active'),

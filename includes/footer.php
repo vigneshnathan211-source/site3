@@ -60,7 +60,7 @@
           <li><a href="<?php echo url('index.php'); ?>">Home</a></li>
           <li><a href="<?php echo url('our-fleet.php'); ?>">Our Fleet</a></li>
           <li><a href="<?php echo url('services.php'); ?>">Services</a></li>
-          <li><a href="<?php echo url('resources.php'); ?>">Resources</a></li>
+          <li><a href="<?php echo url('projects.php'); ?>">Projects</a></li>
           <li><a href="<?php echo url('contact.php'); ?>">Contact Us</a></li>
         </ul>
       </div>

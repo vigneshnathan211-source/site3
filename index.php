@@ -31,6 +31,24 @@ $pageDesc  = 'Carriage Global (S) Pte Ltd moves heavy lift, break bulk and proje
            . 'cargo by sea, air and road from Singapore. ISO 9001:2015 certified.';
 $bodyClass = 'page-home';
 
+/* Hero slides. Falls back to the single `settings` hero when the table is
+   empty, so the homepage still renders correctly during setup. */
+$heroSlides = db_all(
+    $pdo,
+    "SELECT * FROM hero_slides WHERE status = 'active' ORDER BY sort_order ASC, id ASC"
+);
+if (!$heroSlides) {
+    $heroSlides = [[
+        'eyebrow'    => 'Project cargo, heavy lift, break bulk',
+        'heading'    => $settings['hero_heading'],
+        'subheading' => $settings['hero_subheading'],
+        'image'      => $settings['hero_bg_image'],
+        'alt_text'   => 'Carriage Global project cargo operation',
+        'cta_label'  => 'Get a Quote',
+        'cta_link'   => 'contact.php',
+    ]];
+}
+
 /* Featured operations photography. Falls back to the files on disk until the
    client has uploaded and tagged their own through the admin gallery. */
 $galleryRows = db_all(
@@ -75,39 +93,88 @@ require __DIR__ . '/includes/header.php';
 
 <main id="main-content">
 
-  <!-- 1 ── HERO ─────────────────────────────────────────────
-       Four text elements max: eyebrow, headline, subtext, CTAs.
-       The facts row sits below the fold-line divider, not stacked
-       into the hero message itself. -->
-  <section class="cgs-hero">
-    <div class="cgs-hero__media">
-      <img src="<?php echo url($settings['hero_bg_image']); ?>"
-           alt="Project cargo lifted onto a barge alongside a geared vessel in Singapore"
-           width="1600" height="1200" fetchpriority="high">
-    </div>
+  <!-- 1 ── HERO CAROUSEL ────────────────────────────────────
+       Slides come from the hero_slides table so the client can reorder
+       or retire them from the admin.
 
-    <div class="container-fluid px-4">
-      <div class="cgs-hero__inner">
-        <p class="cgs-hero__eyebrow">
-          <i class="fa-solid fa-anchor" aria-hidden="true"></i>
-          Project cargo, heavy lift, break bulk
-        </p>
+       Only the copy and the photograph change between slides. The CTA
+       label, the facts band and the layout stay put, so the carousel
+       never moves a target the visitor is reaching for.
 
-        <h1 class="cgs-hero__title"><?php echo e($settings['hero_heading']); ?></h1>
+       Marked aria-roledescription="carousel" with each slide labelled
+       "n of N"; aria-live is set to "off" while autoplay runs and
+       flipped to "polite" once the visitor takes manual control, so a
+       screen reader is not interrupted every few seconds. -->
+  <section class="cgs-hero" aria-roledescription="carousel" aria-label="Carriage Global capabilities">
+    <div class="swiper cgs-hero__swiper" data-hero-swiper>
+      <div class="swiper-wrapper">
+        <?php foreach ($heroSlides as $i => $slide): ?>
+        <div class="swiper-slide cgs-hero__slide"
+             role="group"
+             aria-roledescription="slide"
+             aria-label="<?php echo ($i + 1) . ' of ' . count($heroSlides); ?>">
 
-        <p class="cgs-hero__lead"><?php echo e($settings['hero_subheading']); ?></p>
+          <div class="cgs-hero__media">
+            <img src="<?php echo url($slide['image']); ?>"
+                 alt="<?php echo e($slide['alt_text'] ?: $slide['heading']); ?>"
+                 width="1600" height="1200"
+                 <?php echo $i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'; ?>>
+          </div>
 
-        <div class="cgs-hero__actions">
-          <a href="<?php echo url('contact.php'); ?>" class="cgs-btn cgs-btn--primary">
-            Get a Quote <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
-          </a>
-          <a href="<?php echo url('services.php'); ?>" class="cgs-btn cgs-btn--on-dark">
-            Our Services
-          </a>
+          <div class="container-fluid px-4">
+            <div class="cgs-hero__inner">
+              <?php if (!empty($slide['eyebrow'])): ?>
+              <p class="cgs-hero__eyebrow" data-hero-anim>
+                <i class="fa-solid fa-anchor" aria-hidden="true"></i>
+                <?php echo e($slide['eyebrow']); ?>
+              </p>
+              <?php endif; ?>
+
+              <?php /* One h1 per document: the first slide carries it, the rest are h2. */ ?>
+              <?php if ($i === 0): ?>
+                <h1 class="cgs-hero__title" data-hero-anim><?php echo e($slide['heading']); ?></h1>
+              <?php else: ?>
+                <h2 class="cgs-hero__title" data-hero-anim><?php echo e($slide['heading']); ?></h2>
+              <?php endif; ?>
+
+              <?php if (!empty($slide['subheading'])): ?>
+                <p class="cgs-hero__lead" data-hero-anim><?php echo e($slide['subheading']); ?></p>
+              <?php endif; ?>
+
+              <div class="cgs-hero__actions" data-hero-anim>
+                <a href="<?php echo url($slide['cta_link'] ?: 'contact.php'); ?>" class="cgs-btn cgs-btn--primary">
+                  <?php echo e($slide['cta_label'] ?: 'Get a Quote'); ?>
+                  <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
+                </a>
+                <a href="<?php echo url('services.php'); ?>" class="cgs-btn cgs-btn--on-dark">
+                  Our Services
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <?php endforeach; ?>
+      </div>
+
+      <?php if (count($heroSlides) > 1): ?>
+      <div class="container-fluid px-4 cgs-hero__controls">
+        <div class="cgs-hero__pagination" data-hero-pagination></div>
+        <div class="cgs-hero__buttons">
+          <button class="cgs-hero__nav" data-hero-prev type="button" aria-label="Previous slide">
+            <i class="fa-solid fa-angle-left" aria-hidden="true"></i>
+          </button>
+          <button class="cgs-hero__nav" data-hero-next type="button" aria-label="Next slide">
+            <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
+          </button>
+          <button class="cgs-hero__toggle" data-hero-toggle type="button" aria-label="Pause slideshow">
+            <i class="fa-solid fa-pause" aria-hidden="true"></i>
+          </button>
         </div>
       </div>
+      <?php endif; ?>
     </div>
 
+    <!-- Static across all slides: the facts do not belong to any one of them. -->
     <div class="cgs-hero__facts">
       <div class="container-fluid px-4">
         <ul>

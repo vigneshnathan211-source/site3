@@ -26,7 +26,7 @@ $navItems = [
         'match'    => array_merge(['services.php'], array_column($services, 'link')),
         'children' => $servicesLinks,
     ],
-    ['label' => 'Resources',  'href' => 'resources.php', 'match' => ['resources.php']],
+    ['label' => 'Projects',   'href' => 'projects.php',  'match' => ['projects.php', 'project-single.php']],
     ['label' => 'Contact Us', 'href' => 'contact.php',   'match' => ['contact.php']],
 ];
 ?>
@@ -59,7 +59,10 @@ $activeSocials = array_filter(
 
       <div class="cgs-topbar__right">
         <?php if (!empty($settings['iso_statement'])): ?>
-          <span class="cgs-topbar__iso"><?php echo e($settings['iso_statement']); ?></span>
+          <span class="cgs-topbar__iso">
+            <i class="fa-solid fa-certificate" aria-hidden="true"></i>
+            <?php echo e($settings['iso_statement']); ?>
+          </span>
         <?php endif; ?>
 
         <?php if ($activeSocials): ?>

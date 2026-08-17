@@ -55,6 +55,7 @@ $bodyClass   = $bodyClass   ?? '';
 <link rel="stylesheet" href="<?php echo url('assets/css/plugins/aos.css'); ?>">
 <link rel="stylesheet" href="<?php echo url('assets/css/plugins/owlcarousel.min.css'); ?>">
 <link rel="stylesheet" href="<?php echo url('assets/css/plugins/magnific-popup.css'); ?>">
+<link rel="stylesheet" href="<?php echo url('assets/css/plugins/swiper-bundle.min.css'); ?>">
 <!-- Brand layer — always last, so it wins over the plugin defaults -->
 <link rel="stylesheet" href="<?php echo url('assets/css/cgs.css'); ?>">
 

@@ -24,8 +24,14 @@ place. See *Deviations from the Roofer theme* below for what changes.
 | 1 | Home | `index.php` | Hero, then a 20-second video section, then services, fleet teaser, gallery, CTA |
 | 2 | Our Fleet | `our-fleet.php` | Three blocks: fleet · in-house lashing · open yard for cargo storage and re-working |
 | 3 | Services | `services.php` | Overview grid linking to the five detail pages; dropdown parent in the nav |
-| 4 | Resources | `resources.php` | Five topics (below), accordion sections with `#slug` anchors |
+| 4 | Projects | `projects.php` | Replaced Resources in the nav on the client's instruction, 2026-08-17. Not built yet. |
 | 5 | Contact Us | `contact.php` | Enquiry form, SG + MY offices, map |
+
+> **Resources is currently unrouted.** `requirements.txt` specifies a Resources
+> page with five topics, and the `resources` table and its seeds are still in
+> `database/schema.sql`, but nothing links to it since Projects took its nav
+> slot. Either it comes back somewhere (footer, or a child of Projects), or it
+> is dropped and the table should go with it. See open question 11.
 
 ### Service detail pages (children of Services)
 
@@ -149,3 +155,12 @@ verifiable claims a logistics buyer will check.
    Packing, Door-to-Door and Sea Freight are on the old site but not in the new
    five. Dropped, or folded into other pages?
 10. **Analytics.** Reuse a GTM container, or set up a new one?
+11. **Resources vs Projects.** Projects replaced Resources in the nav on
+    2026-08-17. Is Resources dropped entirely, or does it move somewhere else?
+    Its five topics were an explicit client requirement, and two of them
+    (certificates, general T&Cs) are documents a logistics buyer looks for.
+12. **What is a "project"?** Two readings, and they need different builds:
+    a photo gallery of past moves (the existing `gallery` table already
+    covers it), or written case studies with cargo, mode, route and outcome
+    (needs a `projects` table and, more to the point, needs the client to
+    approve naming the cargo and the client involved).
