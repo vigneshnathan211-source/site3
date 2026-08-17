@@ -1,0 +1,4 @@
+# Branded error page for any missing file or bad URL, instead of the
+# server's default "Not Found" response. 404.php sets its own 404 status
+# code, so this does not turn a real miss into a fake 200.
+ErrorDocument 404 /404.php

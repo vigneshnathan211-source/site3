@@ -1520,3 +1520,53 @@ html.js [data-reveal].is-visible {
   outline: 3px solid var(--cgs-cyan-400);
   outline-offset: 2px;
 }
+
+/* --- 404 ------------------------------------------------------------------- */
+
+.cgs-404 {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  background: var(--cgs-navy-900);
+  color: #fff;
+  padding-block: clamp(96px, 14vw, 160px);
+}
+.cgs-404__inner { max-width: 640px; }
+.cgs-404__inner h1 {
+  margin: 12px 0 20px;
+  font-size: clamp(32px, 4.6vw, 52px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: #fff;
+  text-wrap: balance;
+}
+.cgs-404__inner > p {
+  margin: 0 0 32px;
+  max-width: 52ch;
+  font-size: 16px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, .68);
+}
+.cgs-404__actions { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 48px; }
+
+.cgs-404__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 28px;
+  margin: 0;
+  padding-top: 28px;
+  border-top: 1px solid rgba(255, 255, 255, .16);
+  list-style: none;
+}
+.cgs-404__links a {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, .78);
+  text-decoration: none;
+}
+.cgs-404__links a:hover { color: var(--cgs-cyan-300); }
+
+@media (max-width: 767.98px) {
+  .cgs-404__actions .cgs-btn { width: 100%; justify-content: center; }
+}
