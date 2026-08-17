@@ -1,0 +1,18 @@
+#home page section will have a 20sec video section after hero
+#this is a toal 9 page site with admin dashbaord for ccms
+
+Home
+Our fleet-In house Lashing-Open yard for cargo storage and re working.
+Services
+Resources ( cbm versus freight ton)-incoterms-freight service liability insurance versus cargo insurance -our certificates-cgs general terms and conditions.
+Contact us
+
+And Services tab will have individual pages for all services 
+Such as
+1)Project freight forwarding.
+2)Chartering heavy lift and semi geared vessels 
+3) chartering tug and barge 
+4) Roll on and Off 
+5)Air freight
+
+Old SIte:https://zvv.cra.mybluehost.me/

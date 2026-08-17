@@ -1,0 +1,784 @@
+/* =============================================================================
+   CGS — brand layer
+   -----------------------------------------------------------------------------
+   Loaded AFTER assets/css/main.css (the Roofer theme system). Everything
+   CGS-specific lives here; main.css is never edited, so theme components keep
+   behaving predictably and this file stays the whole diff.
+
+   Colour tokens are eyeball-matched to the rendered logo — the supplied JPEG
+   carries a colour profile that shifts its raw pixel values. Re-derive them
+   when the client sends a vector.
+   ========================================================================== */
+
+:root {
+  /* Brand — the logo's left-to-right gradient, light cyan into deep navy */
+  --cgs-cyan-300:  #5CC0F0;
+  --cgs-cyan-400:  #2FA3E0;   /* lightest point of the mark */
+  --cgs-blue-500:  #1E63C4;   /* primary — buttons, links, active nav */
+  --cgs-blue-600:  #17509F;
+  --cgs-navy-700:  #123A8F;
+  --cgs-navy-900:  #0A1E5C;   /* darkest point of the mark — footer, top bar */
+
+  --cgs-gradient:  linear-gradient(100deg, var(--cgs-cyan-400) 0%, var(--cgs-navy-900) 100%);
+
+  /* Neutrals */
+  --cgs-ink:       #0E1726;   /* headings and body text */
+  --cgs-slate:     #4A5568;   /* secondary text */
+  --cgs-muted:     #7A869A;
+  --cgs-line:      #E4E8EF;   /* hairlines, card borders */
+  --cgs-surface:   #F5F8FC;   /* tinted section backgrounds */
+  --cgs-white:     #FFFFFF;
+
+  /* Accent — warm CTA against an all-blue palette. Provisional; drop it and
+     use --cgs-cyan-400 for CTAs if the client wants blue-only. */
+  --cgs-accent:    #F5A623;
+
+  /* Status */
+  --cgs-success:   #1E9E6A;
+  --cgs-danger:    #D64550;
+
+  /* Type — Plus Jakarta Sans, as the Roofer build uses */
+  --cgs-font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Rhythm */
+  --cgs-radius:    4px;        /* near-square corners read as industrial */
+  --cgs-shadow:    0 8px 24px rgba(10, 30, 92, 0.08);
+  --cgs-shadow-lg: 0 16px 48px rgba(10, 30, 92, 0.14);
+  --cgs-section-y: clamp(56px, 7vw, 104px);
+}
+
+/* --- Base ---------------------------------------------------------------- */
+
+body {
+  font-family: var(--cgs-font);
+  color: var(--cgs-ink);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--cgs-font);
+  color: var(--cgs-ink);
+  letter-spacing: -0.01em;
+}
+
+a { color: var(--cgs-blue-500); }
+a:hover { color: var(--cgs-navy-700); }
+
+/* Skip link — keyboard users land on it first, invisible until focused */
+.cgs-skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 2000;
+  padding: 12px 20px;
+  background: var(--cgs-navy-900);
+  color: #fff;
+  text-decoration: none;
+}
+.cgs-skip-link:focus { left: 0; }
+
+/* --- Buttons ------------------------------------------------------------- */
+
+.cgs-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 26px;
+  border: none;
+  border-radius: var(--cgs-radius);
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1;
+  text-decoration: none;
+  transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease;
+}
+.cgs-btn:hover { transform: translateY(-2px); }
+
+.cgs-btn--primary {
+  background: var(--cgs-blue-500);
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(30, 99, 196, .28);
+}
+.cgs-btn--primary:hover { background: var(--cgs-navy-700); color: #fff; }
+
+.cgs-btn--ghost {
+  background: transparent;
+  color: var(--cgs-navy-900);
+  border: 1.5px solid var(--cgs-line);
+}
+.cgs-btn--ghost:hover { border-color: var(--cgs-blue-500); color: var(--cgs-blue-500); }
+
+.cgs-btn--on-dark {
+  background: #fff;
+  color: var(--cgs-navy-900);
+}
+
+/* --- Section scaffolding ------------------------------------------------- */
+
+.cgs-section       { padding-block: var(--cgs-section-y); }
+.cgs-section--tint { background: var(--cgs-surface); }
+.cgs-section--dark { background: var(--cgs-navy-900); color: #fff; }
+.cgs-section--dark h2,
+.cgs-section--dark h3 { color: #fff; }
+
+.cgs-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--cgs-blue-500);
+}
+.cgs-eyebrow--on-dark { color: var(--cgs-cyan-300); }
+
+/* --- Hero ---------------------------------------------------------------- */
+
+.cgs-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: clamp(520px, 74vh, 720px);
+  background: var(--cgs-navy-900);
+  color: #fff;
+  overflow: hidden;
+}
+
+.cgs-hero__media { position: absolute; inset: 0; }
+.cgs-hero__media img { width: 100%; height: 100%; object-fit: cover; }
+/* Scrim: heavy on the left where the copy sits, clearing to the right so the
+   photograph is still readable as a photograph. */
+.cgs-hero__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(10, 30, 92, .92) 0%, rgba(10, 30, 92, .74) 38%, rgba(10, 30, 92, .34) 66%, rgba(10, 30, 92, .12) 100%),
+    linear-gradient(to top, rgba(10, 30, 92, .55) 0%, transparent 45%);
+}
+
+.cgs-hero__inner {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  padding-block: clamp(56px, 9vw, 104px);
+}
+
+.cgs-hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 20px;
+  padding: 7px 15px;
+  border: 1px solid rgba(255, 255, 255, .24);
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  color: #fff;
+  backdrop-filter: blur(4px);
+}
+.cgs-hero__eyebrow i { color: var(--cgs-accent); }
+
+.cgs-hero__title {
+  margin: 0 0 20px;
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  color: #fff;
+  text-wrap: balance;
+}
+
+.cgs-hero__lead {
+  margin: 0 0 32px;
+  max-width: 58ch;
+  font-size: clamp(15.5px, 1.7vw, 18px);
+  line-height: 1.7;
+  color: rgba(255, 255, 255, .84);
+}
+
+.cgs-hero__actions { display: flex; flex-wrap: wrap; gap: 14px; }
+
+.cgs-hero__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 44px;
+  margin: 44px 0 0;
+  padding: 26px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, .18);
+  list-style: none;
+}
+.cgs-hero__facts li { display: flex; flex-direction: column; gap: 3px; }
+.cgs-hero__facts strong {
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+.cgs-hero__facts span,
+.cgs-hero__facts a {
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, .68);
+  text-decoration: none;
+}
+.cgs-hero__facts a:hover { color: var(--cgs-cyan-300); }
+
+@media (max-width: 575.98px) {
+  .cgs-hero { min-height: 0; }
+  .cgs-hero__actions .cgs-btn { width: 100%; justify-content: center; }
+  .cgs-hero__facts { gap: 18px 28px; }
+}
+
+/* --- Homepage video band (the brief's 20-second section) ----------------- */
+
+.cgs-video-band {
+  position: relative;
+  background: var(--cgs-navy-900);
+}
+.cgs-video-band video {
+  display: block;
+  width: 100%;
+  height: clamp(320px, 56vw, 640px);
+  object-fit: cover;
+}
+/* Overlay ignores pointer events so the video's own controls stay reachable
+   when autoplay is refused or reduced motion is on; the CTA re-enables them. */
+.cgs-video-band__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding-block: clamp(28px, 5vw, 64px);
+  /* Tall, dense scrim: the footage is bright sky at the bottom edge, where the
+     copy sits, so a light gradient leaves the eyebrow unreadable. */
+  background: linear-gradient(to top,
+    rgba(10, 30, 92, .94) 0%,
+    rgba(10, 30, 92, .80) 22%,
+    rgba(10, 30, 92, .40) 52%,
+    rgba(10, 30, 92, .05) 80%,
+    transparent 100%);
+  color: #fff;
+  pointer-events: none;
+}
+.cgs-video-band__overlay a { pointer-events: auto; }
+.cgs-video-band__overlay h2 {
+  margin: 0 0 22px;
+  max-width: 20ch;
+  font-size: clamp(24px, 3.6vw, 40px);
+  font-weight: 800;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  color: #fff;
+  text-wrap: balance;
+}
+.cgs-video-band__overlay .cgs-eyebrow { margin-bottom: 10px; }
+
+/* Respect a reduced-motion preference: pause rather than autoplay.
+   Pair this with JS that calls video.pause() on the same media query —
+   CSS alone cannot stop playback. */
+@media (prefers-reduced-motion: reduce) {
+  .cgs-video-band video { animation: none; }
+}
+
+/* --- Cards --------------------------------------------------------------- */
+
+.cgs-card {
+  height: 100%;
+  background: #fff;
+  border: 1px solid var(--cgs-line);
+  border-radius: var(--cgs-radius);
+  overflow: hidden;
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.cgs-card:hover {
+  transform: translateY(-4px);
+  border-color: transparent;
+  box-shadow: var(--cgs-shadow-lg);
+}
+.cgs-card__media { aspect-ratio: 16 / 10; overflow: hidden; }
+.cgs-card__media img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .5s ease;
+}
+.cgs-card:hover .cgs-card__media img { transform: scale(1.05); }
+.cgs-card__body { padding: 24px; }
+
+/* --- Header / footer chrome --------------------------------------------- */
+
+.cgs-topbar {
+  background: var(--cgs-navy-900);
+  color: rgba(255, 255, 255, .82);
+  font-size: 14px;
+}
+.cgs-topbar a { color: rgba(255, 255, 255, .82); text-decoration: none; }
+.cgs-topbar a:hover { color: #fff; }
+
+.cgs-footer {
+  background: var(--cgs-navy-900);
+  color: rgba(255, 255, 255, .72);
+  font-size: 14.5px;
+}
+.cgs-footer h3 {
+  margin: 0 0 18px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.cgs-footer a { color: rgba(255, 255, 255, .72); text-decoration: none; transition: color .2s ease; }
+.cgs-footer a:hover { color: var(--cgs-cyan-300); }
+
+/* Type-only lockup, used until a knockout logo exists */
+.cgs-footer__wordmark { margin: 0 0 18px; line-height: 1.15; }
+.cgs-footer__wordmark strong {
+  display: block;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+.cgs-footer__wordmark small {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--cgs-cyan-400);
+}
+.cgs-footer__logo { margin-bottom: 18px; height: auto; max-width: 180px; }
+
+.cgs-footer__blurb { margin: 0 0 16px; line-height: 1.75; max-width: 42ch; }
+
+.cgs-footer__iso {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 20px;
+  padding: 7px 14px;
+  border: 1px solid rgba(255, 255, 255, .16);
+  border-radius: var(--cgs-radius);
+  font-size: 13px;
+  color: #fff;
+}
+.cgs-footer__iso i { color: var(--cgs-accent); }
+
+.cgs-footer__links,
+.cgs-footer__contact,
+.cgs-footer__socials { margin: 0; padding: 0; list-style: none; }
+
+.cgs-footer__links li { margin-bottom: 11px; }
+
+.cgs-footer__contact li {
+  display: flex;
+  gap: 11px;
+  margin-bottom: 13px;
+  line-height: 1.6;
+}
+.cgs-footer__contact i { padding-top: 4px; color: var(--cgs-cyan-400); font-size: 13px; }
+
+.cgs-footer__socials { display: flex; gap: 10px; }
+.cgs-footer__socials a {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .08);
+  color: #fff;
+  font-size: 14px;
+  transition: background-color .2s ease;
+}
+.cgs-footer__socials a:hover { background: var(--cgs-blue-500); color: #fff; }
+
+.cgs-footer__bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  justify-content: space-between;
+  padding: 22px 0;
+  border-top: 1px solid rgba(255, 255, 255, .12);
+  font-size: 13.5px;
+}
+.cgs-footer__bar p { margin: 0; }
+
+/* --- Top info bar -------------------------------------------------------- */
+
+.cgs-topbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 44px;
+}
+
+.cgs-topbar__contacts,
+.cgs-topbar__socials {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cgs-topbar__contacts a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.cgs-topbar__contacts i { color: var(--cgs-cyan-400); font-size: 13px; }
+
+.cgs-topbar__tag {
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: var(--cgs-cyan-400);
+  color: var(--cgs-navy-900);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+
+.cgs-topbar__right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.cgs-topbar__iso {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding-right: 20px;
+  border-right: 1px solid rgba(255, 255, 255, .16);
+  font-size: 13px;
+  white-space: nowrap;
+}
+.cgs-topbar__iso i { color: var(--cgs-accent); }
+
+.cgs-topbar__socials { gap: 14px; }
+.cgs-topbar__socials a { font-size: 14px; opacity: .8; transition: opacity .2s ease; }
+.cgs-topbar__socials a:hover { opacity: 1; }
+
+.cgs-topbar__login {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .1);
+  font-size: 12px;
+  transition: background-color .2s ease;
+}
+.cgs-topbar__login:hover { background: var(--cgs-blue-500); }
+
+/* --- Main navbar --------------------------------------------------------- */
+
+.cgs-header {
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+  background: #fff;
+  border-bottom: 1px solid var(--cgs-line);
+  transition: box-shadow .25s ease;
+}
+/* .is-stuck is toggled in cgs.js once the page scrolls past the top bar */
+.cgs-header.is-stuck { box-shadow: 0 4px 20px rgba(10, 30, 92, .1); }
+
+.cgs-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 84px;
+}
+
+/* Logo — the supplied file is a white-background JPEG, so it gets no
+   surrounding fill and sits on the white bar. Revisit once a transparent
+   PNG/SVG arrives (see docs/ASSET-INVENTORY.md). */
+.cgs-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.cgs-logo img { width: 56px; height: 56px; object-fit: contain; }
+.cgs-logo__text { display: flex; flex-direction: column; line-height: 1.15; }
+.cgs-logo__text strong {
+  font-size: clamp(17px, 2vw, 20px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--cgs-navy-900);
+}
+.cgs-logo__text small {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--cgs-muted);
+}
+
+.cgs-nav ul {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cgs-nav li { position: relative; }
+.cgs-nav > ul > li > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 30px 16px;
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--cgs-ink);
+  text-decoration: none;
+  transition: color .2s ease;
+}
+.cgs-nav > ul > li > a::after {
+  content: "";
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 0;
+  height: 3px;
+  background: var(--cgs-gradient);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .25s ease;
+}
+.cgs-nav > ul > li > a:hover,
+.cgs-nav > ul > li > a.is-active { color: var(--cgs-blue-500); }
+.cgs-nav > ul > li > a:hover::after,
+.cgs-nav > ul > li > a.is-active::after { transform: scaleX(1); }
+.cgs-nav > ul > li > a i { font-size: 11px; transition: transform .25s ease; }
+.cgs-nav .has-dropdown:hover > a i { transform: rotate(180deg); }
+
+/* Dropdown. Kept in the layout (not display:none) so it can transition,
+   and hidden from assistive tech + pointer events until opened. */
+.cgs-submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 288px;
+  padding: 10px 0 !important;
+  background: #fff;
+  border: 1px solid var(--cgs-line);
+  border-radius: var(--cgs-radius);
+  box-shadow: var(--cgs-shadow-lg);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: opacity .22s ease, transform .22s ease, visibility .22s;
+  flex-direction: column;
+  align-items: stretch !important;
+  gap: 0 !important;
+}
+.cgs-nav .has-dropdown:hover > .cgs-submenu,
+.cgs-nav .has-dropdown:focus-within > .cgs-submenu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.cgs-submenu a {
+  display: block;
+  padding: 11px 22px;
+  font-size: 14.5px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--cgs-slate);
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+}
+.cgs-submenu a:hover,
+.cgs-submenu a.is-active {
+  background: var(--cgs-surface);
+  color: var(--cgs-blue-500);
+  border-left-color: var(--cgs-cyan-400);
+}
+
+/* Header right-hand side */
+.cgs-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.cgs-header__call {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.cgs-header__call-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--cgs-surface);
+  color: var(--cgs-blue-500);
+  font-size: 15px;
+  transition: background-color .2s ease, color .2s ease;
+}
+.cgs-header__call:hover .cgs-header__call-icon {
+  background: var(--cgs-blue-500);
+  color: #fff;
+}
+.cgs-header__call-text { display: flex; flex-direction: column; line-height: 1.25; }
+.cgs-header__call-text small { font-size: 11.5px; color: var(--cgs-muted); }
+.cgs-header__call-text strong { font-size: 15px; color: var(--cgs-navy-900); }
+
+.cgs-burger {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid var(--cgs-line);
+  border-radius: var(--cgs-radius);
+  background: #fff;
+  color: var(--cgs-navy-900);
+  font-size: 19px;
+}
+
+@media (max-width: 575.98px) {
+  .cgs-header__inner { min-height: 72px; }
+  .cgs-logo img { width: 44px; height: 44px; }
+  .cgs-logo__text strong { font-size: 16px; }
+  .cgs-logo__text small { font-size: 10.5px; }
+}
+
+/* --- Mobile offcanvas ---------------------------------------------------- */
+
+.cgs-offcanvas { width: min(360px, 88vw); }
+.cgs-offcanvas .offcanvas-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--cgs-line);
+}
+.cgs-offcanvas .offcanvas-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--cgs-navy-900);
+}
+.cgs-offcanvas .offcanvas-body { padding: 20px 24px 32px; }
+
+.cgs-mobile-nav { margin: 0 0 24px; padding: 0; list-style: none; }
+.cgs-mobile-nav > li { border-bottom: 1px solid var(--cgs-line); }
+.cgs-mobile-nav > li > a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 2px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--cgs-ink);
+  text-decoration: none;
+}
+.cgs-mobile-nav > li > a.is-active { color: var(--cgs-blue-500); }
+.cgs-mobile-nav__toggle i { font-size: 12px; transition: transform .25s ease; }
+.cgs-mobile-nav__toggle[aria-expanded="true"] i { transform: rotate(180deg); }
+
+.cgs-mobile-nav__sub {
+  margin: 0 0 12px;
+  padding: 0 0 0 14px;
+  list-style: none;
+  border-left: 2px solid var(--cgs-line);
+}
+.cgs-mobile-nav__sub a {
+  display: block;
+  padding: 10px 0;
+  font-size: 14.5px;
+  color: var(--cgs-slate);
+  text-decoration: none;
+}
+.cgs-mobile-nav__sub a.is-active { color: var(--cgs-blue-500); font-weight: 600; }
+
+.cgs-mobile-cta { display: flex; flex-direction: column; gap: 10px; }
+.cgs-mobile-cta__email {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 4px;
+  font-size: 13.5px;
+  color: var(--cgs-slate);
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.cgs-mobile-foot {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--cgs-line);
+}
+.cgs-mobile-foot__addr {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--cgs-slate);
+}
+.cgs-mobile-foot__addr i { color: var(--cgs-cyan-400); padding-top: 3px; }
+.cgs-mobile-foot__iso { margin: 0 0 14px; font-size: 12.5px; color: var(--cgs-muted); }
+.cgs-mobile-foot__socials {
+  display: flex;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cgs-mobile-foot__socials a {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--cgs-surface);
+  color: var(--cgs-navy-900);
+  font-size: 14px;
+  text-decoration: none;
+  transition: background-color .2s ease, color .2s ease;
+}
+.cgs-mobile-foot__socials a:hover { background: var(--cgs-blue-500); color: #fff; }
+
+/* --- Floating contact stack --------------------------------------------- */
+
+.cgs-float-stack {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.cgs-float-stack a {
+  width: 52px; height: 52px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 22px;
+  box-shadow: var(--cgs-shadow);
+}
+.cgs-float-stack .is-whatsapp { background: #25D366; }
+.cgs-float-stack .is-call     { background: var(--cgs-blue-500); }
+
+/* --- Focus visibility ---------------------------------------------------- */
+
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 3px solid var(--cgs-cyan-400);
+  outline-offset: 2px;
+}

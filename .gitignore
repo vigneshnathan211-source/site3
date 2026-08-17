@@ -1,0 +1,29 @@
+# Credentials. These two files hold live DB and SMTP passwords, so the real
+# ones are never tracked — copy the .example templates and fill them in on
+# each machine/server instead.
+/admin/config/db.php
+/admin/config/mail_config.php
+
+# Client-uploaded media (managed through the admin, restored from backup)
+/uploads/*
+!/uploads/.gitkeep
+!/uploads/gallery/.gitkeep
+!/uploads/pages/.gitkeep
+
+# Source material — large, unoptimised, not deployed
+/client_assets/
+
+# Reference theme — kept locally for lookup, not part of the build
+/reference/
+
+# OS / editor noise
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# Logs and dumps
+*.log
+/database/*.backup.sql
