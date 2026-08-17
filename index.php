@@ -208,41 +208,56 @@ require __DIR__ . '/includes/header.php';
   </section>
 
   <!-- 3 ── SERVICES ─────────────────────────────────────────
-       Bento: 5 cells for 5 services. The first is the wide feature
-       cell, the remaining four fill a 2x2. Not five equal cards. -->
+       Swiper: one uniform card layout per service, not a bento grid —
+       every slide is the same shape, browsed by drag or the arrows. -->
   <section class="cgs-section" id="services">
     <div class="container-fluid px-4">
       <header class="cgs-section-head">
         <h2>What we move, and how</h2>
-        <a href="<?php echo url('services.php'); ?>" class="cgs-textlink">
-          All services <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
-        </a>
+        <div class="cgs-section-head__right">
+          <a href="<?php echo url('services.php'); ?>" class="cgs-textlink">
+            All services <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
+          </a>
+          <?php if (count($services) > 1): ?>
+          <div class="cgs-services__arrows">
+            <button class="cgs-services__arrow" data-services-prev type="button" aria-label="Previous service">
+              <i class="fa-solid fa-angle-left" aria-hidden="true"></i>
+            </button>
+            <button class="cgs-services__arrow" data-services-next type="button" aria-label="Next service">
+              <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
+            </button>
+          </div>
+          <?php endif; ?>
+        </div>
       </header>
 
       <?php if ($services): ?>
-      <div class="cgs-bento">
-        <?php foreach ($services as $i => $svc): ?>
-          <a class="cgs-bento__cell <?php echo $i === 0 ? 'is-feature' : ''; ?>"
-             href="<?php echo url($svc['link']); ?>"
-             data-reveal style="--reveal-delay: <?php echo $i * 60; ?>ms">
-            <?php if (!empty($svc['image'])): ?>
-            <span class="cgs-bento__media">
-              <img src="<?php echo url($svc['image']); ?>"
-                   alt="<?php echo e($svc['alt_text'] ?: $svc['title']); ?>"
-                   loading="lazy" width="800" height="600">
-            </span>
-            <?php endif; ?>
-            <span class="cgs-bento__body">
-              <span class="cgs-bento__title"><?php echo e($svc['title']); ?></span>
-              <?php if (!empty($svc['short_desc'])): ?>
-                <span class="cgs-bento__desc"><?php echo e($svc['short_desc']); ?></span>
-              <?php endif; ?>
-              <span class="cgs-bento__more">
-                Read more <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
+      <div class="swiper cgs-services__swiper" data-services-swiper>
+        <div class="swiper-wrapper">
+          <?php foreach ($services as $i => $svc): ?>
+          <div class="swiper-slide cgs-services__slide">
+            <a class="cgs-service-card" href="<?php echo url($svc['link']); ?>"
+               data-reveal style="--reveal-delay: <?php echo $i * 60; ?>ms">
+              <?php if (!empty($svc['image'])): ?>
+              <span class="cgs-service-card__media">
+                <img src="<?php echo url($svc['image']); ?>"
+                     alt="<?php echo e($svc['alt_text'] ?: $svc['title']); ?>"
+                     loading="lazy" width="800" height="600">
               </span>
-            </span>
-          </a>
-        <?php endforeach; ?>
+              <?php endif; ?>
+              <span class="cgs-service-card__body">
+                <span class="cgs-service-card__title"><?php echo e($svc['title']); ?></span>
+                <?php if (!empty($svc['short_desc'])): ?>
+                  <span class="cgs-service-card__desc"><?php echo e($svc['short_desc']); ?></span>
+                <?php endif; ?>
+                <span class="cgs-service-card__more">
+                  Read more <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
+                </span>
+              </span>
+            </a>
+          </div>
+          <?php endforeach; ?>
+        </div>
       </div>
       <?php endif; ?>
     </div>

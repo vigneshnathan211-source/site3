@@ -195,6 +195,37 @@
     }
   }
 
+  /* --- Services carousel ----------------------------------------------------
+     Purpose: one card layout, repeated. Peeking the next card at every
+     breakpoint hints there is more to drag or click through without a
+     pagination row spelling it out. No autoplay — this is a set to browse
+     at the visitor's own pace, not a story to sit through. */
+  var servicesEl = document.querySelector('[data-services-swiper]');
+
+  if (servicesEl && typeof window.Swiper === 'function') {
+    var servicesSlideCount = servicesEl.querySelectorAll('.swiper-slide').length;
+
+    new Swiper(servicesEl, {
+      slidesPerView: 1.15,
+      spaceBetween: 16,
+      speed: reduceMotion.matches ? 0 : 500,
+      grabCursor: true,
+      watchSlidesProgress: true,
+      loop: servicesSlideCount > 3,
+      a11y: { enabled: true },
+      keyboard: { enabled: true, onlyInViewport: true },
+      navigation: {
+        prevEl: document.querySelector('[data-services-prev]'),
+        nextEl: document.querySelector('[data-services-next]')
+      },
+      breakpoints: {
+        576: { slidesPerView: 1.6, spaceBetween: 18 },
+        768: { slidesPerView: 2.3, spaceBetween: 20 },
+        1200: { slidesPerView: 3.15, spaceBetween: 24 }
+      }
+    });
+  }
+
   /* --- Keyboard access for the desktop dropdown ----------------------------
      Hover opens it for pointer users and :focus-within covers tabbing, but
      neither gives a keyboard user a way to close it without tabbing all the
