@@ -255,7 +255,14 @@ a:hover { color: var(--cgs-navy-700); }
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: clamp(520px, 74dvh, 700px);
+  /* Matches .cgs-hero's own min-height exactly. A percentage height here
+     (100%) does not reliably resolve against .swiper-wrapper — Swiper's
+     wrapper only gets a definite height once its content does, which is
+     circular through a flex-grow ancestor — so the slide (and the image
+     inside it) came up short of the hero's actual bottom edge, leaving a
+     visible strip of the section's navy background below the photograph.
+     Sizing both to the same clamp() sidesteps the percentage chain. */
+  min-height: clamp(560px, 82dvh, 760px);
   height: auto;
   overflow: hidden;
 }
