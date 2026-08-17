@@ -157,42 +157,35 @@ require __DIR__ . '/includes/header.php';
         <?php endforeach; ?>
       </div>
 
-      <?php if (count($heroSlides) > 1): ?>
-      <div class="container-fluid px-4 cgs-hero__controls">
-        <div class="cgs-hero__pagination" data-hero-pagination></div>
-        <div class="cgs-hero__buttons">
-          <button class="cgs-hero__nav" data-hero-prev type="button" aria-label="Previous slide">
-            <i class="fa-solid fa-angle-left" aria-hidden="true"></i>
-          </button>
-          <button class="cgs-hero__nav" data-hero-next type="button" aria-label="Next slide">
-            <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
-          </button>
-          <button class="cgs-hero__toggle" data-hero-toggle type="button" aria-label="Pause slideshow">
-            <i class="fa-solid fa-pause" aria-hidden="true"></i>
-          </button>
-        </div>
-      </div>
-      <?php endif; ?>
     </div>
 
-    <!-- Static across all slides: the facts do not belong to any one of them. -->
+    <!-- Floating card, static across all slides: the facts do not belong to
+         any one of them. Icons pop in once on load, not on every slide
+         change — this band never re-animates while the carousel rotates. -->
     <div class="cgs-hero__facts">
-      <div class="container-fluid px-4">
-        <ul>
-          <li>
+      <ul>
+        <li>
+          <span class="cgs-hero__facts-icon" aria-hidden="true"><i class="fa-solid fa-certificate"></i></span>
+          <span class="cgs-hero__facts-text">
             <strong>ISO 9001:2015</strong>
             <span>Quality management certified</span>
-          </li>
-          <li>
+          </span>
+        </li>
+        <li>
+          <span class="cgs-hero__facts-icon" aria-hidden="true"><i class="fa-solid fa-location-dot"></i></span>
+          <span class="cgs-hero__facts-text">
             <strong>Singapore and Johor Bahru</strong>
             <span>Two offices, one operations team</span>
-          </li>
-          <li>
+          </span>
+        </li>
+        <li>
+          <span class="cgs-hero__facts-icon" aria-hidden="true"><i class="fa-solid fa-headset"></i></span>
+          <span class="cgs-hero__facts-text">
             <strong>24/7 operations line</strong>
             <span><a href="tel:<?php echo e($phone247Tel); ?>"><?php echo e($settings['phone_247']); ?></a></span>
-          </li>
-        </ul>
-      </div>
+          </span>
+        </li>
+      </ul>
     </div>
   </section>
 

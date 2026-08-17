@@ -142,17 +142,18 @@
   /* --- Hero carousel -------------------------------------------------------
      Purpose: storytelling. Three capabilities get the hero slot in rotation
      instead of one winning it permanently. Only the copy and the photograph
-     move; the CTA, the facts band and the layout are fixed, so autoplay never
+     move; the CTA, the facts card and the layout are fixed, so autoplay never
      shifts a target the visitor is reaching for.
 
-     Autoplay pauses on hover, on keyboard focus, and while the tab is hidden.
-     Under reduced motion it does not start at all and the visitor gets a
-     static first slide plus working arrows.                                  */
+     No visible pagination/arrow/pause controls by request. Autoplay still
+     pauses on hover, on keyboard focus, and while the tab or section is
+     off-screen, and it never starts at all under reduced motion — the
+     automatic-only mitigations WCAG 2.2.2 allows in place of a manual
+     control, though a manual one is the more robust option if this changes. */
   var heroEl = document.querySelector('[data-hero-swiper]');
 
   if (heroEl && typeof window.Swiper === 'function') {
     var slideCount = heroEl.querySelectorAll('.swiper-slide').length;
-    var toggleBtn  = heroEl.querySelector('[data-hero-toggle]');
     var autoplayOn = slideCount > 1 && !reduceMotion.matches;
 
     var heroSwiper = new Swiper(heroEl, {
@@ -167,25 +168,7 @@
       autoplay: autoplayOn
         ? { delay: 6000, disableOnInteraction: false, pauseOnMouseEnter: true }
         : false,
-      pagination: {
-        el: heroEl.querySelector('[data-hero-pagination]'),
-        clickable: true,
-        bulletClass: 'cgs-hero__bullet',
-        bulletActiveClass: 'is-active',
-        renderBullet: function (index, className) {
-          return '<button type="button" class="' + className +
-                 '" aria-label="Go to slide ' + (index + 1) + '"></button>';
-        }
-      },
-      navigation: {
-        prevEl: heroEl.querySelector('[data-hero-prev]'),
-        nextEl: heroEl.querySelector('[data-hero-next]')
-      },
-      a11y: {
-        enabled: true,
-        prevSlideMessage: 'Previous slide',
-        nextSlideMessage: 'Next slide'
-      },
+      a11y: { enabled: true },
       keyboard: { enabled: true, onlyInViewport: true }
     });
 
@@ -194,38 +177,11 @@
     if ('IntersectionObserver' in window && autoplayOn) {
       new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
-          if (!heroSwiper.autoplay || toggleBtn && toggleBtn.dataset.paused === 'true') { return; }
+          if (!heroSwiper.autoplay) { return; }
           if (entry.isIntersecting) { heroSwiper.autoplay.start(); }
           else { heroSwiper.autoplay.stop(); }
         });
       }, { threshold: 0.2 }).observe(heroEl);
-    }
-
-    /* Explicit pause control. An auto-advancing carousel with no way to stop
-       it fails WCAG 2.2.2, and someone reading slowly needs the off switch. */
-    if (toggleBtn) {
-      if (!autoplayOn) {
-        toggleBtn.hidden = true;
-      } else {
-        toggleBtn.dataset.paused = 'false';
-        toggleBtn.addEventListener('click', function () {
-          var paused = toggleBtn.dataset.paused === 'true';
-          if (paused) {
-            heroSwiper.autoplay.start();
-            toggleBtn.dataset.paused = 'false';
-            toggleBtn.setAttribute('aria-label', 'Pause slideshow');
-            toggleBtn.innerHTML = '<i class="fa-solid fa-pause" aria-hidden="true"></i>';
-          } else {
-            heroSwiper.autoplay.stop();
-            toggleBtn.dataset.paused = 'true';
-            toggleBtn.setAttribute('aria-label', 'Play slideshow');
-            toggleBtn.innerHTML = '<i class="fa-solid fa-play" aria-hidden="true"></i>';
-            /* Once the visitor has taken control, slide changes should be
-               announced rather than silently swapped under them. */
-            heroEl.setAttribute('aria-live', 'polite');
-          }
-        });
-      }
     }
 
     /* Stop autoplay while anything inside the hero has keyboard focus, so a
@@ -234,7 +190,6 @@
       heroEl.addEventListener('focusin', function () { heroSwiper.autoplay.stop(); });
       heroEl.addEventListener('focusout', function (event) {
         if (heroEl.contains(event.relatedTarget)) { return; }
-        if (toggleBtn && toggleBtn.dataset.paused === 'true') { return; }
         heroSwiper.autoplay.start();
       });
     }
