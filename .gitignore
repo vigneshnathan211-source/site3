@@ -27,3 +27,6 @@ desktop.ini
 # Logs and dumps
 *.log
 /database/*.backup.sql
+
+# Playwright MCP scratch output (screenshots taken during verification)
+/.playwright-mcp/

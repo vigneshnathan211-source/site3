@@ -106,6 +106,19 @@ layer; **CGS overrides go in `assets/css/cgs.css`, never by editing `main.css`**
 keeping it pristine means the theme's components stay predictable and the
 override file stays reviewable.
 
+**FontAwesome is missing two of its four weights.** `assets/css/fonts/` has
+`fa-solid-900.woff2`, `fa-regular-400.woff2`, `fa-brands-400.woff2` and
+`fa-v4compatibility.woff2` — but `fontawesome.css` is the full Pro 6.4.2
+stylesheet, which defines classes for weights (`fa-light`, `fa-thin`,
+`fa-duotone`) that have no matching woff2 file here. `fa-light` in particular
+renders as invisible/missing-glyph boxes. Confirmed separately: even
+`fa-regular` only covers a small icon subset — most glyphs beyond the ones
+already in use (`fa-regular fa-envelope` etc.) render as tofu boxes too,
+because the bundled `fa-regular-400.woff2` is a trimmed subset, not the full
+Pro cut. **Stick to `fa-solid` unless a specific `fa-regular` icon has already
+been verified to render**, or source the missing woff2 files from a full Pro
+license export.
+
 The Roofer theme's own photography (`reference/roofer/assets/img/all-images/`) is
 roofing-specific and must **not** ship. Only its `icons/` SVGs were carried over,
 and even those should be swapped for logistics-appropriate icons.
