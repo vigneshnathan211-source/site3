@@ -1778,12 +1778,33 @@ html.js .cgs-split__media.is-visible img { opacity: 1; transform: none; }
 /* --- Closing CTA --------------------------------------------------------- */
 
 .cgs-cta {
-  padding-block: clamp(56px, 7vw, 96px);
-  background: var(--cgs-navy-900);
+  padding-block: clamp(40px, 5vw, 64px);
+  background: #fff;
+}
+.cgs-cta__card {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  padding: clamp(48px, 8vw, 96px) clamp(24px, 4vw, 48px);
+  border-radius: clamp(20px, 2.4vw, 32px);
+  background: var(--cgs-blue-500);
   color: #fff;
   text-align: center;
 }
-.cgs-cta h2 {
+/* Dotted halftone texture — denser toward the corners, faded out over the
+   middle where the copy sits, so it reads as ambient texture rather than
+   noise behind the text. */
+.cgs-cta__card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(rgba(255, 255, 255, .4) 1.5px, transparent 1.5px);
+  background-size: 15px 15px;
+  -webkit-mask-image: radial-gradient(120% 100% at 50% 50%, transparent 28%, #000 85%);
+          mask-image: radial-gradient(120% 100% at 50% 50%, transparent 28%, #000 85%);
+}
+.cgs-cta__card h2 {
   margin: 0 0 14px;
   font-size: clamp(26px, 3.6vw, 42px);
   font-weight: 800;
@@ -1792,12 +1813,12 @@ html.js .cgs-split__media.is-visible img { opacity: 1; transform: none; }
   color: #fff;
   text-wrap: balance;
 }
-.cgs-cta p {
+.cgs-cta__card p {
   margin: 0 auto 30px;
   max-width: 50ch;
   font-size: 16.5px;
   line-height: 1.7;
-  color: rgba(255, 255, 255, .78);
+  color: rgba(255, 255, 255, .82);
 }
 .cgs-cta__actions { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
 

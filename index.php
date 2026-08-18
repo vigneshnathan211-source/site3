@@ -576,21 +576,25 @@ require __DIR__ . '/includes/header.php';
 
   <!-- 7 ── CTA ──────────────────────────────────────────────
        One CTA intent on this page: "Get a Quote". Same label in the
-       nav, the hero and here. -->
+       nav, the hero and here. Rounded sea-blue card inset on a white
+       section, with a dotted halftone texture behind the copy — not
+       full-bleed navy anymore. -->
   <section class="cgs-cta">
     <div class="container-fluid px-4">
-      <h2>Tell us what needs to move</h2>
-      <p>
-        Send the dimensions and the deadline. We will come back with the mode,
-        the route and what it costs.
-      </p>
-      <div class="cgs-cta__actions">
-        <a href="<?php echo url('contact.php'); ?>" class="cgs-btn cgs-btn--on-dark">
-          Get a Quote <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
-        </a>
-        <a href="tel:<?php echo e($phoneTel); ?>" class="cgs-btn cgs-btn--outline-light">
-          <i class="fa-solid fa-phone" aria-hidden="true"></i> <?php echo e($settings['phone']); ?>
-        </a>
+      <div class="cgs-cta__card">
+        <h2>Tell us what needs to move</h2>
+        <p>
+          Send the dimensions and the deadline. We will come back with the mode,
+          the route and what it costs.
+        </p>
+        <div class="cgs-cta__actions">
+          <a href="<?php echo url('contact.php'); ?>" class="cgs-btn cgs-btn--on-dark">
+            Get a Quote <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
+          </a>
+          <a href="tel:<?php echo e($phoneTel); ?>" class="cgs-btn cgs-btn--outline-light">
+            <i class="fa-solid fa-phone" aria-hidden="true"></i> <?php echo e($settings['phone']); ?>
+          </a>
+        </div>
       </div>
     </div>
   </section>
