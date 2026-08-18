@@ -1544,6 +1544,98 @@ html.js [data-service-slide].is-active { display: grid; }
 }
 .cgs-accent-cta .cgs-btn--on-dark:hover { background: var(--cgs-navy-700); color: #fff; }
 
+/* Reusable tint background — a section that wants to stand apart from the
+   plain-white sections around it without going full dark. */
+.cgs-section--tint { background: var(--cgs-surface); }
+
+/* --- Core values ----------------------------------------------------------
+   Five-item grid, numbered like the approach list further up but in the
+   light palette — a deliberate visual echo, not a repeat of the same
+   dark band twice in a row. */
+.cgs-values__grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: var(--cgs-line);
+  border: 1px solid var(--cgs-line);
+  border-radius: var(--cgs-radius);
+  overflow: hidden;
+}
+.cgs-values__grid li {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 26px 22px;
+  background: #fff;
+}
+.cgs-values__num {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--cgs-cyan-400);
+}
+.cgs-values__grid strong {
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--cgs-ink);
+}
+.cgs-values__grid p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--cgs-slate);
+}
+@media (max-width: 991.98px) {
+  .cgs-values__grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 575.98px) {
+  .cgs-values__grid { grid-template-columns: 1fr; }
+}
+
+/* --- Special services -------------------------------------------------- */
+.cgs-special__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.cgs-special__card {
+  padding: 28px 26px;
+  background: #fff;
+  border: 1px solid var(--cgs-line);
+  border-radius: var(--cgs-radius);
+}
+.cgs-special__icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  margin-bottom: 18px;
+  border-radius: 50%;
+  background: var(--cgs-surface);
+  color: var(--cgs-blue-500);
+  font-size: 18px;
+}
+.cgs-special__card h3 {
+  margin: 0 0 8px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--cgs-ink);
+}
+.cgs-special__card p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--cgs-slate);
+}
+@media (max-width: 767.98px) {
+  .cgs-special__grid { grid-template-columns: 1fr; }
+}
+
 /* --- Fleet split --------------------------------------------------------- */
 
 .cgs-split {
@@ -1740,6 +1832,48 @@ html.js .cgs-split__media.is-visible img { opacity: 1; transform: none; }
 
 @media (max-width: 575.98px) {
   .cgs-cta__actions .cgs-btn { width: 100%; justify-content: center; }
+}
+
+/* --- FAQ ------------------------------------------------------------------
+   Native <details>/<summary> — the disclosure behaviour (one control,
+   keyboard and screen-reader support, no JS) comes free from the element,
+   so nothing in cgs.js drives this. */
+.cgs-faq__list { display: flex; flex-direction: column; gap: 10px; }
+.cgs-faq__item {
+  border: 1px solid var(--cgs-line);
+  border-radius: var(--cgs-radius);
+  padding: 0 22px;
+}
+.cgs-faq__question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--cgs-ink);
+  cursor: pointer;
+  list-style: none;
+}
+.cgs-faq__question::-webkit-details-marker { display: none; }
+.cgs-faq__question i {
+  flex-shrink: 0;
+  color: var(--cgs-blue-500);
+  transition: transform 220ms var(--ease-out);
+}
+.cgs-faq__item[open] .cgs-faq__question i { transform: rotate(45deg); }
+.cgs-faq__answer { padding: 0 0 20px; }
+.cgs-faq__answer p {
+  margin: 0 0 12px;
+  font-size: 14.5px;
+  line-height: 1.75;
+  color: var(--cgs-slate);
+}
+.cgs-faq__answer p:last-child { margin-bottom: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cgs-faq__question i { transition: none; }
 }
 
 /* --- Scroll reveal -------------------------------------------------------

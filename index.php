@@ -13,10 +13,13 @@
 |   3b. Partners           logo marquee, continuous auto-scroll
 |   4. The CGS approach    dark band, numbered editorial rows
 |   4b. Accent CTA card    single-accent band, "Send us your packing list"
+|   4c. Core values        five-item grid, light
+|   4d. Special services   three-card grid, tinted
 |   5. Fleet teaser        two-image split
 |   6. Operations gallery  contained carousel, arrows either side + autoplay
 |   7. Sectors             inline chip list
 |   8. CTA                 centred band on navy
+|   9. FAQ                 accordion, verbatim from the old site
 |
 | Copy status: the approach section is verbatim from the client's Project
 | Freight Forwarding email (docs/CONTENT.md); the service blurbs and the
@@ -109,6 +112,63 @@ $partners = [
     ['name' => 'MacGregor',                'logo' => 'assets/img/partners/macgregor.png'],
     ['name' => 'Favelle Favco',            'logo' => 'assets/img/partners/favelle-favco.png'],
     ['name' => 'Louis Dreyfus Armateurs',  'logo' => 'assets/img/partners/louis-dreyfus-armateurs.png'],
+];
+
+/* Core values. Verbatim from the old site (docs/CONTENT.md). */
+$coreValues = [
+    ['title' => 'Exceed customer expectations', 'body' => 'We are committed to exceeding the expectations of our customers.'],
+    ['title' => 'Value our people',              'body' => 'We respect each other, recognizing geographic and cultural differences.'],
+    ['title' => 'Work safely',                   'body' => 'We work in a manner that is safe for ourselves and the people around us.'],
+    ['title' => 'Act with integrity and ethics',  'body' => 'We conduct business with integrity and trust.'],
+    ['title' => 'Embrace teamwork',               'body' => 'We collaborate with our customers, supplier partners, liners, ship owners to achieve success.'],
+];
+
+/* Special services. Old-site ancillary services (docs/CONTENT.md,
+   docs/PROJECT-BRIEF.md open question 9) — not among the five service
+   pages, shown here as a capabilities strip pending the client's call on
+   whether they get full pages of their own. Verbatim descriptions. */
+$specialServices = [
+    [
+        'icon'  => 'fa-triangle-exclamation',
+        'title' => 'Dangerous goods',
+        'body'  => 'A hazardous material is a general name for flammable, explosive, strongly corrosive, toxic, and radioactive materials. Such as gasoline, explosives, strong acid, strong alkali, benzene, naphthalene, etc.',
+    ],
+    [
+        'icon'  => 'fa-right-left',
+        'title' => 'Door to door',
+        'body'  => 'Door to Door Container and Oversize/Breakbulk Cargo service from Singapore-Batam, and Vice-Versa. Daily Service from Monday to Friday from Singapore to Batam and vice versa.',
+    ],
+    [
+        'icon'  => 'fa-box',
+        'title' => 'Customized packing',
+        'body'  => 'We provide customized packing and special projects packing solutions including Heat Shrink Wrapping, Plastic Crates Wooden crates, and pallets, as well as cargo choking and lashing services.',
+    ],
+];
+
+/* Homepage FAQ. Verbatim from the old site's accordion (docs/CONTENT.md),
+   extracted from the live DOM since the old site is a WordPress/Beaver
+   Builder accordion that only renders answer text once expanded. */
+$faqs = [
+    [
+        'q' => 'Which mode of the shipment should be advisable in terms of cost saving without having to compromise on safety and time constraints?',
+        'a' => "There are various modes of shipment, Loading on Flat rack, Un containerized mode of shipment on Container vessel, On Mafi and Breakbulk, a combination of Road, Rail and Breakbulk or Combination of Road, Barge and Breakbulk/Un containerised option on Container vessel and many other combinations.\n\nClient's requirement to arrive on time with shortest transit time, obviously without compromising on safety and within a budget. Cargo, Hose Reel, weight 125 tons, Diameter 12.5m x Length 14.5m. Ex Yard with limited water front draft level of 1.2m.",
+    ],
+    [
+        'q' => 'What is included in our oversize/over weight/ transportation plan?',
+        'a' => 'Many aspects must be co ordinated when transporting oversize/overweight cargo. Each and every aspect should be addressed in the freight transportation plan. Each plan is tailor-made to the scope of the project and should include: custom permits, road permits and type of equipment needed; feasibility study; access to the loading and discharging locations; road and route survey, escort as it varies State by State depending upon project requirement; and potential repositioning of utility lines, trees, signage etc.',
+    ],
+    [
+        'q' => 'Why carefully choosing a right project freight forwarder is important?',
+        'a' => 'Only qualified and experienced project freight forwarders can come up with the right advice to save cost without having to compromise on safety. The correct procedure will vary based on freight characteristics and the usage of the right type of equipment, be it barge, type of trailer, lifting versus jack up and skidding, lifting versus jack down cargo on pre-placed concrete stools or a prefabricated frame on the barge, or a combination of both. Using the wrong type of equipment can be very expensive — lifting is not always the right solution; jack up and skidding is the other option to consider depending upon cargo location, infrastructure availability, feasibility, and many other factors. Experience is the key player here.',
+    ],
+    [
+        'q' => 'Can we air freight a Length of 2.28m x Diameter of 2.714m without a charter flight from Ex Norway to Batam within a week? A question raised by one of our in-house clients.',
+        'a' => "The answer is no, you cannot — but if you were to rotate the reel, which is unlikely in most cases due to the sensitive cable coil around the reel, or trim excess reel from the bottom and top, fabricate a cradle, in short, modify the dimensions to bring down the height to 2.42m to accommodate, you'd save yourself from the massive cost of chartering a flight and going on a liner schedule.\n\nWe offered a multi-modal transport solution: land transport from Norway to Luxembourg, followed by air transport from Luxembourg to Singapore, trucking from SATS to Jurong Port by road, barge from Singapore to Batu Ampar, Batam, and the last step by road to the final destination at a private jetty where a cable-laying vessel was waiting to receive this cable reel. The entire scope was concluded at USD110,000+, including road survey, obtaining escort and permits, liaising with suppliers, fabricator, airport authorities, airline ground planner, airlines to select the right time of freighter, barge operator, etc.",
+    ],
+    [
+        'q' => 'Can we provide DAP, DDP, and DDU to the end user through the shipper does not have any establishment at the country of destination?',
+        'a' => "Yes. We can assist using our license wherever CGS has its own offices, such as in Malaysia (including East Malaysia), Batam (Indonesia), Brunei, and Singapore. Outside these regions, we use our carefully selected in-house project freight forwarders, such as in Norway, Finland, the Netherlands, the Middle East, and India, to offer a complete destination, door-to-door solution — including, but not limited to, using our own company license.\n\nWe worked with Zodiac Milpro, based in Spain and Canada, to send their 15-metre boat from Spain to Langkawi for an exhibition, mobilised back to Singapore for another sea trial presentation, then sent to the UK for a third sea trial before heading back to the country of origin, Spain.",
+    ],
 ];
 
 require __DIR__ . '/includes/head.php';
@@ -392,6 +452,50 @@ require __DIR__ . '/includes/header.php';
     </div>
   </section>
 
+  <!-- 4c ── CORE VALUES ─────────────────────────────────────
+       Verbatim from the old site (docs/CONTENT.md). Five-item grid,
+       numbered like the approach list above it but in the page's light
+       palette. -->
+  <section class="cgs-section cgs-values">
+    <div class="container-fluid px-4">
+      <header class="cgs-section-head">
+        <h2>What we stand for</h2>
+      </header>
+      <ul class="cgs-values__grid">
+        <?php foreach ($coreValues as $n => $value): ?>
+        <li data-reveal style="--reveal-delay: <?php echo $n * 60; ?>ms">
+          <span class="cgs-values__num"><?php echo str_pad((string) ($n + 1), 2, '0', STR_PAD_LEFT); ?></span>
+          <strong><?php echo e($value['title']); ?></strong>
+          <p><?php echo e($value['body']); ?></p>
+        </li>
+        <?php endforeach; ?>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 4d ── SPECIAL SERVICES ────────────────────────────────
+       Old-site ancillary services (docs/CONTENT.md, docs/PROJECT-BRIEF.md
+       open question 9) — not among the five service pages, shown here as a
+       capabilities strip pending the client's call on whether they get full
+       pages of their own. No "read more" links: the old site's pointed to
+       pages we don't have. -->
+  <section class="cgs-section cgs-section--tint cgs-special">
+    <div class="container-fluid px-4">
+      <header class="cgs-section-head">
+        <h2>Special services</h2>
+      </header>
+      <div class="cgs-special__grid">
+        <?php foreach ($specialServices as $n => $svc): ?>
+        <div class="cgs-special__card" data-reveal style="--reveal-delay: <?php echo $n * 70; ?>ms">
+          <span class="cgs-special__icon"><i class="fa-solid <?php echo e($svc['icon']); ?>" aria-hidden="true"></i></span>
+          <h3><?php echo e($svc['title']); ?></h3>
+          <p><?php echo e($svc['body']); ?></p>
+        </div>
+        <?php endforeach; ?>
+      </div>
+    </div>
+  </section>
+
   <!-- 5 ── FLEET TEASER ─────────────────────────────────────
        Two-image split. In-house trailers, lashing crew and open yard are
        confirmed accurate by the client — no longer placeholder. -->
@@ -507,6 +611,36 @@ require __DIR__ . '/includes/header.php';
       </div>
     </div>
   </section>
+
+  <!-- 9 ── FAQ ──────────────────────────────────────────────
+       Native <details>/<summary> accordion — no JS needed, accessible by
+       default. Verbatim Q&A from the old site (docs/CONTENT.md), pulled
+       from its live DOM since the source page only renders answer text
+       once a question is expanded. -->
+  <?php if ($faqs): ?>
+  <section class="cgs-section cgs-faq">
+    <div class="container-fluid px-4">
+      <header class="cgs-section-head">
+        <h2>Frequently asked questions</h2>
+      </header>
+      <div class="cgs-faq__list">
+        <?php foreach ($faqs as $n => $faq): ?>
+        <details class="cgs-faq__item"<?php echo $n === 0 ? ' open' : ''; ?>>
+          <summary class="cgs-faq__question">
+            <span><?php echo e($faq['q']); ?></span>
+            <i class="fa-solid fa-plus" aria-hidden="true"></i>
+          </summary>
+          <div class="cgs-faq__answer">
+            <?php foreach (explode("\n\n", $faq['a']) as $para): ?>
+            <p><?php echo e($para); ?></p>
+            <?php endforeach; ?>
+          </div>
+        </details>
+        <?php endforeach; ?>
+      </div>
+    </div>
+  </section>
+  <?php endif; ?>
 
 </main>
 

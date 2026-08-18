@@ -187,9 +187,17 @@ General T&Cs as a PDF or Word file).
 
 ## Homepage
 
-**NOT SUPPLIED.** Needs: hero headline and sub-headline, a short "who we are"
-paragraph, and whatever framing goes around the 20-second video. The old-site
-about statement and core values are the best available raw material.
+Hero headline/sub-headline and the video-band framing are still **NOT
+SUPPLIED** — those stay placeholder copy pending the client.
+
+Core values, special services and FAQ sections were added 2026-08-18, all
+verbatim from the old site (`https://zvv.cra.mybluehost.me/`) — the core
+values and special-services text came straight off the rendered page; the
+FAQ answers had to be pulled from the live accordion DOM, since the source
+page only renders each answer once its question is expanded, so a plain
+page fetch only ever returns the five questions. Same live-source caveat as
+the partner logos (open question 13): confirm with the client before
+go-live, don't assume the old site is current.
 
 ## Contact page
 

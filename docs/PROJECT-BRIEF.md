@@ -162,7 +162,11 @@ verifiable claims a logistics buyer will check.
    Hostinger account as the Roofer site?
 9. **Old-site services.** Cross Border Trucking, Dangerous Goods, Customized
    Packing, Door-to-Door and Sea Freight are on the old site but not in the new
-   five. Dropped, or folded into other pages?
+   five. Three of them (Dangerous Goods, Door to Door, Customized Packing) now
+   show as a "Special services" strip on the homepage (2026-08-18), verbatim
+   old-site copy, no dedicated pages or links — still needs the client's call
+   on whether that's enough or they warrant full service pages of their own.
+   Cross Border Trucking and Sea Freight remain unaddressed.
 10. **Analytics.** Reuse a GTM container, or set up a new one?
 11. **Resources vs Projects.** Projects replaced Resources in the nav on
     2026-08-17. Is Resources dropped entirely, or does it move somewhere else?
