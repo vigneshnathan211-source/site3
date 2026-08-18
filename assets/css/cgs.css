@@ -1620,7 +1620,9 @@ html.js .cgs-split__media.is-visible img { opacity: 1; transform: none; }
 
 /* --- Operations gallery -------------------------------------------------- */
 
-.cgs-gallery-section { padding-bottom: clamp(40px, 5vw, 72px); }
+/* Overrides the shared .cgs-section--dark navy fill with sea blue, just for
+   this section — the approach section further up keeps navy. */
+.cgs-gallery-section { background: var(--cgs-blue-500); padding-bottom: clamp(40px, 5vw, 72px); }
 
 /* Arrows flank the frame; the frame itself is the Swiper instance. Arrows
    are flex-shrink: 0 so they keep their own footprint regardless of how
