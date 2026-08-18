@@ -1776,7 +1776,15 @@ html.js .cgs-split__media.is-visible img { opacity: 1; transform: none; }
   }
 }
 
-/* --- Closing CTA --------------------------------------------------------- */
+/* --- Closing CTA ---------------------------------------------------------
+   Dark navy card, copy on the left and the actions on the right — a
+   deliberate switch from the previous centred cyan card. Two quiet SVG
+   flourishes (a hairline squiggle top-left, dashed orbit rings behind the
+   actions) stand in for the amber accents of the reference this was
+   modelled on: this brand runs no warm colour at all, so the rings use
+   --cgs-cyan-400 instead and the button stays the existing white
+   --cgs-btn--on-dark fill, which is already built to read on any dark
+   ground. */
 
 .cgs-cta {
   padding-block: clamp(40px, 5vw, 64px);
@@ -1786,25 +1794,49 @@ html.js .cgs-split__media.is-visible img { opacity: 1; transform: none; }
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  padding: clamp(48px, 8vw, 96px) clamp(24px, 4vw, 48px);
-  border-radius: clamp(20px, 2.4vw, 32px);
-  background: var(--cgs-cyan-400);
-  color: var(--cgs-navy-900);
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: clamp(24px, 4vw, 48px);
+  padding: clamp(40px, 6vw, 56px) clamp(28px, 5vw, 64px);
+  border-radius: clamp(20px, 2.4vw, 28px);
+  background: radial-gradient(130% 160% at 100% 100%, var(--cgs-blue-500) 0%, var(--cgs-navy-900) 55%);
+  color: #fff;
+  box-shadow: 0 30px 70px -24px rgba(8, 34, 56, .55);
 }
-/* Dotted halftone texture — denser toward the corners, faded out over the
-   middle where the copy sits, so it reads as ambient texture rather than
-   noise behind the text. Navy dots, not white: --cgs-cyan-400 is light
-   enough that white dots all but disappear on it. */
-.cgs-cta__card::before {
+.cgs-cta__card::before,
+.cgs-cta__card::after {
   content: '';
   position: absolute;
-  inset: 0;
-  z-index: -1;
-  background-image: radial-gradient(rgba(8, 34, 56, .5) 1.5px, transparent 1.5px);
-  background-size: 15px 15px;
-  -webkit-mask-image: radial-gradient(120% 100% at 50% 50%, transparent 28%, #000 85%);
-          mask-image: radial-gradient(120% 100% at 50% 50%, transparent 28%, #000 85%);
+  z-index: 0;
+  pointer-events: none;
+}
+/* Hairline squiggle, top-left corner. */
+.cgs-cta__card::before {
+  top: -8px;
+  left: -8px;
+  width: clamp(120px, 14vw, 170px);
+  height: clamp(72px, 8vw, 100px);
+  opacity: .3;
+  background-repeat: no-repeat;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='100' viewBox='0 0 170 100'%3E%3Cpath d='M4 62 C22 16 46 16 58 44 C68 68 90 68 100 42 C107 24 107 10 96 6' stroke='white' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+/* Dashed orbit rings, sitting behind the actions column. */
+.cgs-cta__card::after {
+  right: clamp(-30px, 3vw, 0px);
+  bottom: clamp(-60px, -6vw, -30px);
+  width: clamp(180px, 20vw, 260px);
+  height: clamp(180px, 20vw, 260px);
+  opacity: .55;
+  background-repeat: no-repeat;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'%3E%3Ccircle cx='130' cy='130' r='118' fill='none' stroke='%232E9FD6' stroke-width='1.5' stroke-dasharray='2 7'/%3E%3Ccircle cx='130' cy='130' r='84' fill='none' stroke='%232E9FD6' stroke-width='1.5' stroke-dasharray='2 6'/%3E%3C/svg%3E");
+}
+.cgs-cta__copy {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 380px;
+  max-width: 56ch;
 }
 .cgs-cta__card h2 {
   margin: 0 0 14px;
@@ -1812,33 +1844,27 @@ html.js .cgs-split__media.is-visible img { opacity: 1; transform: none; }
   font-weight: 800;
   line-height: 1.15;
   letter-spacing: -0.025em;
-  color: var(--cgs-navy-900);
+  color: #fff;
   text-wrap: balance;
 }
 .cgs-cta__card p {
-  margin: 0 auto 30px;
+  margin: 0;
   max-width: 50ch;
   font-size: 16.5px;
   line-height: 1.7;
-  color: rgba(8, 34, 56, .78);
+  color: rgba(255, 255, 255, .8);
 }
-.cgs-cta__actions { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
-/* --cgs-btn--on-dark keeps its opaque white fill regardless of what's
-   behind it, so it stays readable — but --outline-light's white border and
-   text were built for a navy backdrop and vanish on this lighter one. */
-.cgs-cta__card .cgs-btn--outline-light {
-  color: var(--cgs-navy-900);
-  border-color: rgba(8, 34, 56, .35);
-}
-@media (hover: hover) and (pointer: fine) {
-  .cgs-cta__card .cgs-btn--outline-light:hover {
-    background: rgba(8, 34, 56, .08);
-    border-color: var(--cgs-navy-900);
-    color: var(--cgs-navy-900);
-  }
+.cgs-cta__actions {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  flex-shrink: 0;
 }
 
 @media (max-width: 575.98px) {
+  .cgs-cta__actions { flex-basis: 100%; width: 100%; }
   .cgs-cta__actions .cgs-btn { width: 100%; justify-content: center; }
 }
 
