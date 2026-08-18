@@ -1814,7 +1814,7 @@ html.js .cgs-split__media.is-visible img { opacity: 1; transform: none; }
   gap: clamp(24px, 4vw, 48px);
   padding: clamp(40px, 6vw, 56px) clamp(28px, 5vw, 64px);
   border-radius: clamp(20px, 2.4vw, 28px);
-  background: radial-gradient(130% 160% at 100% 100%, var(--cgs-teal-500) 0%, var(--cgs-navy-900) 55%);
+  background: radial-gradient(130% 160% at 100% 100%, var(--cgs-navy-900) 0%, var(--cgs-teal-500) 55%);
   color: #fff;
   box-shadow: 0 30px 70px -24px rgba(8, 34, 56, .55);
 }
