@@ -473,7 +473,7 @@ a:hover { color: var(--cgs-navy-700); }
 .cgs-footer a:hover { color: var(--cgs-cyan-300); }
 
 /* Type-only lockup, used until a knockout logo exists */
-.cgs-footer__wordmark { margin: 0 0 18px; line-height: 1.15; }
+.cgs-footer__wordmark { margin: 0 0 6px; line-height: 1.15; }
 .cgs-footer__wordmark strong {
   display: block;
   font-size: 24px;
@@ -488,7 +488,17 @@ a:hover { color: var(--cgs-navy-700); }
   text-transform: uppercase;
   color: var(--cgs-cyan-400);
 }
-.cgs-footer__logo { margin-bottom: 18px; height: auto; max-width: 180px; }
+.cgs-footer__logo { margin-bottom: 6px; height: auto; max-width: 180px; }
+
+/* Registration number, right under the logo/wordmark — company identity,
+   not a Singapore-office contact detail, so it moved out of that list. */
+.cgs-footer__uen {
+  margin: 0 0 16px;
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: .04em;
+  color: rgba(255, 255, 255, .5);
+}
 
 .cgs-footer__blurb { margin: 0 0 16px; line-height: 1.75; max-width: 42ch; }
 

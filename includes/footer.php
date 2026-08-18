@@ -27,6 +27,10 @@
           </p>
         <?php endif; ?>
 
+        <?php if (!empty($settings['uen'])): ?>
+          <p class="cgs-footer__uen">UEN <?php echo e($settings['uen']); ?></p>
+        <?php endif; ?>
+
         <p class="cgs-footer__blurb">
           Integrated customized logistics services for the oil and gas, offshore,
           heavy lift, energy, construction and mining sectors, managing and
@@ -98,12 +102,6 @@
             <i class="fa-solid fa-envelope" aria-hidden="true"></i>
             <a href="mailto:<?php echo e($settings['email']); ?>"><?php echo e($settings['email']); ?></a>
           </li>
-          <?php if (!empty($settings['uen'])): ?>
-          <li>
-            <i class="fa-solid fa-building" aria-hidden="true"></i>
-            <span>UEN <?php echo e($settings['uen']); ?></span>
-          </li>
-          <?php endif; ?>
         </ul>
       </div>
 
