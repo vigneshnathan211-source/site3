@@ -404,8 +404,12 @@ a:hover { color: var(--cgs-navy-700); }
   pointer-events: none;
 }
 .cgs-video-band > .container-fluid { position: relative; z-index: 1; }
+/* Smaller and centred, not full-bleed: a plain video, no overlay copy or
+   scrim needed on top of it, so the frame itself can just be modest. */
 .cgs-video-band__frame {
   position: relative;
+  max-width: 860px;
+  margin-inline: auto;
   border-radius: var(--cgs-radius);
   overflow: hidden;
   box-shadow: var(--cgs-shadow-lg);
@@ -413,68 +417,8 @@ a:hover { color: var(--cgs-navy-700); }
 .cgs-video-band__frame video {
   display: block;
   width: 100%;
-  height: clamp(320px, 56vw, 640px);
+  height: clamp(220px, 34vw, 420px);
   object-fit: cover;
-}
-/* Honest disclosure, not a marketing badge: this clip is AI-generated
-   (docs/ASSET-INVENTORY.md), and this site's whole pitch rests on being
-   real and verifiable, so it does not get to pass as documentary footage.
-   Low-key by design — same translucent-navy-pill language as the hero
-   eyebrow, not a warning banner. Remove once real footage lands or the
-   client signs off on the AI clip. */
-.cgs-video-band__disclosure {
-  position: absolute;
-  z-index: 1;
-  /* Top, not bottom: the overlay heading is bottom-anchored and can run to
-     two lines on a short/mobile frame, which collided with this pill when
-     both sat at the bottom-right corner. */
-  right: clamp(16px, 3vw, 24px);
-  top: clamp(16px, 3vw, 24px);
-  margin: 0;
-  padding: 6px 12px;
-  background: rgba(8, 20, 40, .55);
-  border: 1px solid rgba(255, 255, 255, .2);
-  border-radius: 100px;
-  font-size: 12px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, .82);
-  backdrop-filter: blur(4px);
-}
-/* Overlay ignores pointer events so the video's own controls stay reachable
-   when autoplay is refused or reduced motion is on; the CTA re-enables them.
-   Bottom-anchored scrim (not a flat tint) keeps the top of the frame clear
-   for bright footage while guaranteeing contrast where the heading sits. */
-.cgs-video-band__overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: clamp(28px, 5vw, 64px) clamp(20px, 4vw, 48px);
-  color: #fff;
-  background: linear-gradient(to top, rgba(8, 20, 40, .78) 0%, rgba(8, 20, 40, .38) 42%, rgba(8, 20, 40, 0) 75%);
-  pointer-events: none;
-}
-.cgs-video-band__overlay a { pointer-events: auto; }
-.cgs-video-band__overlay h2 {
-  margin: 0 0 22px;
-  max-width: 20ch;
-  font-size: clamp(24px, 3.6vw, 40px);
-  font-weight: 800;
-  line-height: 1.18;
-  letter-spacing: -0.02em;
-  color: #fff;
-  text-wrap: balance;
-  /* Belt and braces over the gradient scrim above. */
-  text-shadow: 0 2px 20px rgba(0, 0, 0, .6);
-}
-.cgs-video-band__overlay .cgs-eyebrow { margin-bottom: 10px; }
-
-/* Respect a reduced-motion preference: pause rather than autoplay.
-   Pair this with JS that calls video.pause() on the same media query —
-   CSS alone cannot stop playback. */
-@media (prefers-reduced-motion: reduce) {
-  .cgs-video-band__frame video { animation: none; }
 }
 
 /* --- Cards --------------------------------------------------------------- */

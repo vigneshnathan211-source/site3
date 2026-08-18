@@ -261,16 +261,14 @@ require __DIR__ . '/includes/header.php';
   </section>
 
   <!-- 2 ── VIDEO BAND ───────────────────────────────────────
-       The brief places a video section directly after the hero. The
-       current clip (assets/video/cgs-home-intro.mp4) is AI-generated —
-       see docs/ASSET-INVENTORY.md's own pre-go-live note asking the
-       client to confirm this is acceptable given the rest of the site is
-       real operations photography. Until that's confirmed, the visible
-       disclosure below keeps this honest rather than presenting an
-       AI clip as documentary footage; remove it once real footage lands
-       or the client signs off on the AI clip.
-       Muted + playsinline so mobile permits autoplay; cgs.js pauses
-       it off-screen and honours prefers-reduced-motion. -->
+       The brief places a video section directly after the hero. Real
+       client-supplied footage (assets/video/cgs-company-video.mp4), so
+       unlike the earlier AI-generated placeholder this needs no honesty
+       disclosure. Deliberately plain: no scrim, no overlay copy, just
+       the video — native controls so the visitor can pause/mute it
+       themselves. Muted + playsinline so mobile permits autoplay;
+       cgs.js skips autoplay under reduced motion (controls still let
+       someone start it manually). -->
   <section class="cgs-video-band" aria-label="Carriage Global operations">
     <div class="container-fluid px-4">
       <div class="cgs-video-band__frame">
@@ -279,11 +277,7 @@ require __DIR__ . '/includes/header.php';
           <?php if (!empty($settings['hero_video_poster'])): ?>
           poster="<?php echo url($settings['hero_video_poster']); ?>"
           <?php endif; ?>
-          autoplay muted loop playsinline preload="metadata"></video>
-        <p class="cgs-video-band__disclosure">Concept visualization — final operations footage pending</p>
-        <div class="cgs-video-band__overlay">
-          <h2>From the packing list to the final site</h2>
-        </div>
+          autoplay muted loop playsinline controls preload="metadata"></video>
       </div>
     </div>
   </section>

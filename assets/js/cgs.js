@@ -355,11 +355,12 @@
     });
   });
 
-  /* --- Homepage video band + hero background video --------------------------
-     These are decorative background footage, not media players, so no
-     `controls` fallback: autoplay refused or reduced motion just leaves
-     the poster frame showing, muted and static.                          */
-  document.querySelectorAll('.cgs-video-band video, .cgs-hero__media video').forEach(function (video) {
+  /* --- Hero background video --------------------------------------------
+     Decorative footage, not a media player: no `controls`, autoplay
+     refused or reduced motion just leaves the poster frame showing,
+     muted and static, and it pauses itself off-screen so nothing decodes
+     that nobody's looking at. */
+  document.querySelectorAll('.cgs-hero__media video').forEach(function (video) {
     video.removeAttribute('controls');
 
     var play = function () {
@@ -386,7 +387,6 @@
       reduceMotion.addEventListener('change', applyMotionPreference);
     }
 
-    /* Don't decode a video nobody is looking at. */
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
@@ -394,6 +394,20 @@
           if (entry.isIntersecting) { play(); } else { entry.target.pause(); }
         });
       }, { threshold: 0.25 }).observe(video);
+    }
+  });
+
+  /* --- Video band ---------------------------------------------------------
+     Real content, not decoration: it keeps its `controls` markup, so
+     play/pause/mute stay in the visitor's hands. Autoplays muted on load
+     unless reduced motion is set (then it just sits on its poster frame,
+     controls still there to start it manually) — deliberately no
+     IntersectionObserver override here, since forcing it back to play
+     every time it scrolls into view would fight a visitor who paused it
+     themselves. */
+  document.querySelectorAll('.cgs-video-band video').forEach(function (video) {
+    if (reduceMotion.matches) {
+      video.removeAttribute('autoplay');
     }
   });
 
