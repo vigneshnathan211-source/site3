@@ -1857,7 +1857,7 @@ html.js .cgs-split__media.is-visible img { opacity: 1; transform: none; }
   position: absolute;
   inset: 0;
   z-index: -1;
-  background-image: radial-gradient(rgba(8, 34, 56, .3) 1.5px, transparent 1.5px);
+  background-image: radial-gradient(rgba(8, 34, 56, .5) 1.5px, transparent 1.5px);
   background-size: 15px 15px;
   -webkit-mask-image: radial-gradient(120% 100% at 50% 50%, transparent 28%, #000 85%);
           mask-image: radial-gradient(120% 100% at 50% 50%, transparent 28%, #000 85%);
