@@ -345,18 +345,18 @@
   });
 
   /* --- Homepage video band + hero background video --------------------------
-     Autoplay is muted + playsinline so mobile permits it. Someone who has
-     asked for reduced motion gets a still frame and the controls instead,
-     which CSS alone cannot do.                                              */
+     These are decorative background footage, not media players, so no
+     `controls` fallback: autoplay refused or reduced motion just leaves
+     the poster frame showing, muted and static.                          */
   document.querySelectorAll('.cgs-video-band video, .cgs-hero__media video').forEach(function (video) {
+    video.removeAttribute('controls');
+
     var play = function () {
       var attempt = video.play();
-      // Older Safari returns undefined rather than a promise.
+      // Older Safari returns undefined rather than a promise; autoplay
+      // being refused just leaves the poster frame up.
       if (attempt && typeof attempt.catch === 'function') {
-        attempt.catch(function () {
-          // Autoplay refused: leave the poster up and give the user controls.
-          video.setAttribute('controls', '');
-        });
+        attempt.catch(function () {});
       }
     };
 
@@ -364,7 +364,6 @@
       if (reduceMotion.matches) {
         video.pause();
         video.removeAttribute('autoplay');
-        video.setAttribute('controls', '');
       } else if (video.paused) {
         play();
       }
