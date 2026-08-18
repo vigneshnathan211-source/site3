@@ -66,6 +66,7 @@
   --cgs-shadow:    0 8px 24px rgba(8, 34, 56, 0.08);
   --cgs-shadow-lg: 0 16px 48px rgba(8, 34, 56, 0.14);
   --cgs-section-y: clamp(56px, 7vw, 104px);
+  --cgs-cta-overlap: clamp(48px, 6vw, 88px); /* how far the CTA card dips into the footer below it */
 }
 
 /* --- Base ---------------------------------------------------------------- */
@@ -457,6 +458,7 @@ a:hover { color: var(--cgs-navy-700); }
 .cgs-topbar a:hover { color: #fff; }
 
 .cgs-footer {
+  position: relative;
   background: var(--cgs-navy-900);
   color: rgba(255, 255, 255, .72);
   font-size: 14.5px;
@@ -1809,10 +1811,33 @@ html.js .cgs-split__media.is-visible img { opacity: 1; transform: none; }
    --cgs-btn--on-dark fill, which is already built to read on any dark
    ground. */
 
+/* The negative margin lives on the CARD, not the section: a negative
+   bottom margin on the last in-flow child shrinks its parent's auto
+   height by that same amount, so the white .cgs-cta box ends early —
+   short of the card's own full height — while the card itself keeps
+   painting past that point, overflowing (visibly, nothing here clips
+   it) into the footer below. z-index on the section lifts that
+   overflowing strip of the card above the footer's own background, so
+   it reads as the card resting on the footer rather than the footer
+   covering it. .cgs-footer adds the same amount back as padding-top so
+   its own columns still clear the card.
+   flow-root on the inner wrapper matters: with no padding/border of its
+   own on that edge, the card's negative margin would otherwise collapse
+   straight through it (and through .cgs-cta too) and come out the other
+   side as .cgs-cta's own margin — shrinking nothing and just pulling the
+   footer under the still-full-height white section instead of letting
+   the card poke through it. */
 .cgs-cta {
-  padding-block: clamp(40px, 5vw, 64px);
+  position: relative;
+  z-index: 2;
+  padding-block: clamp(40px, 5vw, 64px) 0;
   background: #fff;
 }
+.cgs-cta > .container-fluid { display: flow-root; }
+/* Only pages that actually end on this CTA get the extra top clearance on
+   the footer — otherwise every other page's footer would carry the same
+   gap with no floating card to justify it. */
+main:has(> .cgs-cta:last-child) + .cgs-footer { padding-top: var(--cgs-cta-overlap); }
 .cgs-cta__card {
   position: relative;
   overflow: hidden;
@@ -1823,6 +1848,7 @@ html.js .cgs-split__media.is-visible img { opacity: 1; transform: none; }
   flex-wrap: wrap;
   gap: clamp(24px, 4vw, 48px);
   padding: clamp(40px, 6vw, 56px) clamp(28px, 5vw, 64px);
+  margin-bottom: calc(-1 * var(--cgs-cta-overlap));
   border-radius: clamp(20px, 2.4vw, 28px);
   background: radial-gradient(130% 160% at 100% 100%, var(--cgs-navy-900) 0%, var(--cgs-teal-500) 55%);
   color: #fff;
