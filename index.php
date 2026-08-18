@@ -9,8 +9,8 @@
 |
 |   1. Hero                full-bleed media, copy on the left, black scrim
 |   2. Video band          inset video card (the brief's post-hero section)
+|   2b. Partners           logo marquee, continuous auto-scroll
 |   3. Services            asymmetric bento, 5 cells for 5 services
-|   3b. Partners           logo marquee, continuous auto-scroll
 |   4. The CGS approach    dark band, numbered editorial rows
 |   4b. Accent CTA card    single-accent band, "Send us your packing list"
 |   4c. Core values        five-item grid, light
@@ -288,6 +288,48 @@ require __DIR__ . '/includes/header.php';
     </div>
   </section>
 
+  <!-- 2b ── PARTNERS ────────────────────────────────────────
+       Continuous auto-scroll logo marquee. Logos pulled from the client's
+       old staging site (docs/PROJECT-BRIEF.md open question 13) — still
+       needs the client to confirm these relationships carry over before
+       this ships live. -->
+  <?php if ($partners): ?>
+  <section class="cgs-section cgs-partners" aria-label="Partners and carriers">
+    <div class="container-fluid px-4">
+      <header class="cgs-section-head">
+        <h2>Working with trusted partners</h2>
+      </header>
+    </div>
+
+    <?php
+    /* Swiper's loop mode needs the *real* slide count (before its own
+       internal duplication) to cover however many tiles fit on screen at
+       once, or it silently disables looping and the whole strip freezes
+       (see cgs.js) — on a wide enough monitor, more ~230px tiles fit than
+       there are partner logos. Repeating the same list into the DOM a few
+       times keeps that covered regardless of screen width, without
+       needing a second copy of the data itself. */
+    $partnersLoop = array_merge($partners, $partners, $partners);
+    ?>
+    <?php /* aria-hidden: the section's own aria-label already names the
+       purpose; without this a screen reader would read out each partner
+       name 3x now that the list is tripled for the loop-mode fix above. */ ?>
+    <div class="swiper cgs-partners__swiper" data-partners-swiper aria-hidden="true">
+      <div class="swiper-wrapper">
+        <?php foreach ($partnersLoop as $partner): ?>
+        <div class="swiper-slide cgs-partners__slide">
+          <span class="cgs-partners__tile">
+            <img src="<?php echo url($partner['logo']); ?>"
+                 alt="<?php echo e($partner['name']); ?>"
+                 loading="lazy" width="160" height="60">
+          </span>
+        </div>
+        <?php endforeach; ?>
+      </div>
+    </div>
+  </section>
+  <?php endif; ?>
+
   <!-- 3 ── SERVICES ─────────────────────────────────────────
        Scroll-pin: on desktop, with motion allowed, the section holds one
        screen (cgs-services-pin__sticky) while its own extra height
@@ -386,48 +428,6 @@ require __DIR__ . '/includes/header.php';
       </div>
     </div>
   </section>
-
-  <!-- 3b ── PARTNERS ────────────────────────────────────────
-       Continuous auto-scroll logo marquee. Logos pulled from the client's
-       old staging site (docs/PROJECT-BRIEF.md open question 13) — still
-       needs the client to confirm these relationships carry over before
-       this ships live. -->
-  <?php if ($partners): ?>
-  <section class="cgs-section cgs-partners" aria-label="Partners and carriers">
-    <div class="container-fluid px-4">
-      <header class="cgs-section-head">
-        <h2>Working with trusted partners</h2>
-      </header>
-    </div>
-
-    <?php
-    /* Swiper's loop mode needs the *real* slide count (before its own
-       internal duplication) to cover however many tiles fit on screen at
-       once, or it silently disables looping and the whole strip freezes
-       (see cgs.js) — on a wide enough monitor, more ~230px tiles fit than
-       there are partner logos. Repeating the same list into the DOM a few
-       times keeps that covered regardless of screen width, without
-       needing a second copy of the data itself. */
-    $partnersLoop = array_merge($partners, $partners, $partners);
-    ?>
-    <?php /* aria-hidden: the section's own aria-label already names the
-       purpose; without this a screen reader would read out each partner
-       name 3x now that the list is tripled for the loop-mode fix above. */ ?>
-    <div class="swiper cgs-partners__swiper" data-partners-swiper aria-hidden="true">
-      <div class="swiper-wrapper">
-        <?php foreach ($partnersLoop as $partner): ?>
-        <div class="swiper-slide cgs-partners__slide">
-          <span class="cgs-partners__tile">
-            <img src="<?php echo url($partner['logo']); ?>"
-                 alt="<?php echo e($partner['name']); ?>"
-                 loading="lazy" width="160" height="60">
-          </span>
-        </div>
-        <?php endforeach; ?>
-      </div>
-    </div>
-  </section>
-  <?php endif; ?>
 
   <!-- 4 ── THE CGS APPROACH ─────────────────────────────────
        Dark band, numbered editorial rows, closing with a single-accent
