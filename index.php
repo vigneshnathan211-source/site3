@@ -17,9 +17,8 @@
 |   4d. Special services   three-card grid, tinted
 |   5. Fleet teaser        two-image split
 |   6. Operations gallery  contained carousel, arrows either side + autoplay
-|   7. Sectors             inline chip list
-|   8. CTA                 centred band on navy
-|   9. FAQ                 accordion, verbatim from the old site
+|   7. CTA                 centred band on navy
+|   8. FAQ                 accordion, verbatim from the old site
 |
 | Copy status: the approach section is verbatim from the client's Project
 | Freight Forwarding email (docs/CONTENT.md); the service blurbs and the
@@ -91,9 +90,6 @@ $approach = [
         'body'  => 'Routes, handling gear and vessel types are checked against the real constraints of your site before anything is committed.',
     ],
 ];
-
-/* Sectors served, from the old site. */
-$sectors = ['Oil and gas', 'Offshore vessels', 'Heavy lift', 'Energy', 'Construction', 'Mining'];
 
 /* Partner/carrier logos for the homepage marquee. Pulled from the client's
    old staging site (zvv.cra.mybluehost.me, "Our Clients" section) on
@@ -578,20 +574,7 @@ require __DIR__ . '/includes/header.php';
     <?php endif; ?>
   </section>
 
-  <!-- 7 ── SECTORS ──────────────────────────────────────────
-       Inline chip list. Real list, from the old site. -->
-  <section class="cgs-section cgs-sectors">
-    <div class="container-fluid px-4">
-      <h2>Sectors we work in</h2>
-      <ul>
-        <?php foreach ($sectors as $sector): ?>
-          <li><?php echo e($sector); ?></li>
-        <?php endforeach; ?>
-      </ul>
-    </div>
-  </section>
-
-  <!-- 8 ── CTA ──────────────────────────────────────────────
+  <!-- 7 ── CTA ──────────────────────────────────────────────
        One CTA intent on this page: "Get a Quote". Same label in the
        nav, the hero and here. -->
   <section class="cgs-cta">
@@ -612,7 +595,7 @@ require __DIR__ . '/includes/header.php';
     </div>
   </section>
 
-  <!-- 9 ── FAQ ──────────────────────────────────────────────
+  <!-- 8 ── FAQ ──────────────────────────────────────────────
        Native <details>/<summary> accordion — no JS needed, accessible by
        default. Verbatim Q&A from the old site (docs/CONTENT.md), pulled
        from its live DOM since the source page only renders answer text
