@@ -1652,7 +1652,7 @@ html.js [data-service-slide].is-active { display: grid; }
   transition: transform 400ms var(--ease-out);
 }
 .cgs-special__body h3 {
-  margin: 0 0 8px;
+  margin: 0;
   font-size: 17px;
   font-weight: 700;
   letter-spacing: -0.01em;
@@ -1672,6 +1672,23 @@ html.js [data-service-slide].is-active { display: grid; }
   html.js .cgs-special__grid .cgs-special__card:hover { transform: translateY(-4px); box-shadow: var(--cgs-shadow-lg); }
   .cgs-special__card:hover .cgs-special__media img { transform: scale(1.06); }
   .cgs-special__card:hover .cgs-special__icon { transform: scale(0.6); }
+
+  /* Title-only at rest; the description only earns its place once someone
+     is actually reading this card. Kept out of the touch/no-hover case
+     above (description stays visible there) since a tap has no equivalent
+     "I'm interested" signal to reveal it on. */
+  .cgs-special__body p {
+    margin-top: 0;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 320ms var(--ease-out), opacity 220ms var(--ease-out), margin-top 320ms var(--ease-out);
+  }
+  .cgs-special__card:hover .cgs-special__body p {
+    margin-top: 8px;
+    max-height: 160px;
+    opacity: 1;
+  }
 }
 @media (max-width: 767.98px) {
   .cgs-special__grid { grid-template-columns: 1fr; }
