@@ -123,21 +123,30 @@ $coreValues = [
    docs/PROJECT-BRIEF.md open question 9) — not among the five service
    pages, shown here as a capabilities strip pending the client's call on
    whether they get full pages of their own. Verbatim descriptions. */
+/* Images reuse the same operations photography (and its already-verified
+   captions) from the gallery fallback set above — thematic pairings, not a
+   claim that any one photo documents that exact service. */
 $specialServices = [
     [
         'icon'  => 'fa-triangle-exclamation',
         'title' => 'Dangerous goods',
         'body'  => 'A hazardous material is a general name for flammable, explosive, strongly corrosive, toxic, and radioactive materials. Such as gasoline, explosives, strong acid, strong alkali, benzene, naphthalene, etc.',
+        'image' => 'assets/img/gallery/ops-05.jpg',
+        'alt'   => 'Oversized cargo secured for sea transport',
     ],
     [
         'icon'  => 'fa-right-left',
         'title' => 'Door to door',
         'body'  => 'Door to Door Container and Oversize/Breakbulk Cargo service from Singapore-Batam, and Vice-Versa. Daily Service from Monday to Friday from Singapore to Batam and vice versa.',
+        'image' => 'assets/img/gallery/ops-04.jpg',
+        'alt'   => 'Cargo transferred to a barge alongside',
     ],
     [
         'icon'  => 'fa-box',
         'title' => 'Customized packing',
         'body'  => 'We provide customized packing and special projects packing solutions including Heat Shrink Wrapping, Plastic Crates Wooden crates, and pallets, as well as cargo choking and lashing services.',
+        'image' => 'assets/img/gallery/ops-02.jpg',
+        'alt'   => 'Break bulk unit slung under a ship crane',
     ],
 ];
 
@@ -482,7 +491,13 @@ require __DIR__ . '/includes/header.php';
        open question 9) — not among the five service pages, shown here as a
        capabilities strip pending the client's call on whether they get full
        pages of their own. No "read more" links: the old site's pointed to
-       pages we don't have. -->
+       pages we don't have.
+
+       Card interaction modelled on cargokite.com's "Why us" cards: a corner
+       icon badge that tucks away (scale down, transform-origin at its own
+       corner) and the card lifting on a soft shadow when hovered — adapted
+       here onto a photo card instead of their flat tint, so the icon shrink
+       also reveals more of the image underneath it. -->
   <section class="cgs-section cgs-section--tint cgs-special">
     <div class="container-fluid px-4">
       <header class="cgs-section-head">
@@ -491,9 +506,16 @@ require __DIR__ . '/includes/header.php';
       <div class="cgs-special__grid">
         <?php foreach ($specialServices as $n => $svc): ?>
         <div class="cgs-special__card" data-reveal style="--reveal-delay: <?php echo $n * 70; ?>ms">
+          <div class="cgs-special__media">
+            <img src="<?php echo url($svc['image']); ?>"
+                 alt="<?php echo e($svc['alt']); ?>"
+                 loading="lazy" width="600" height="600">
+          </div>
           <span class="cgs-special__icon"><i class="fa-solid <?php echo e($svc['icon']); ?>" aria-hidden="true"></i></span>
-          <h3><?php echo e($svc['title']); ?></h3>
-          <p><?php echo e($svc['body']); ?></p>
+          <div class="cgs-special__body">
+            <h3><?php echo e($svc['title']); ?></h3>
+            <p><?php echo e($svc['body']); ?></p>
+          </div>
         </div>
         <?php endforeach; ?>
       </div>
