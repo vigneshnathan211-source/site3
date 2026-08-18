@@ -229,16 +229,6 @@ a:hover { color: var(--cgs-navy-700); }
 
 .cgs-hero__media { position: absolute; inset: 0; }
 .cgs-hero__media img { width: 100%; height: 100%; object-fit: cover; }
-/* Scrim: heavy on the left where the copy sits, clearing to the right so the
-   photograph is still readable as a photograph. */
-.cgs-hero__media::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(90deg, rgba(10, 30, 92, .92) 0%, rgba(10, 30, 92, .74) 38%, rgba(10, 30, 92, .34) 66%, rgba(10, 30, 92, .12) 100%),
-    linear-gradient(to top, rgba(10, 30, 92, .55) 0%, transparent 45%);
-}
 
 /* --- Hero carousel ------------------------------------------------------- */
 
@@ -309,6 +299,9 @@ a:hover { color: var(--cgs-navy-700); }
   gap: 9px;
   margin: 0 0 20px;
   padding: 7px 15px;
+  /* No scrim behind the hero copy now, so the pill needs its own fill —
+     a border and blur alone have nothing translucent to blur against. */
+  background: rgba(8, 20, 40, .38);
   border: 1px solid rgba(255, 255, 255, .24);
   border-radius: 100px;
   font-size: 13px;
@@ -327,6 +320,9 @@ a:hover { color: var(--cgs-navy-700); }
   letter-spacing: -0.025em;
   color: #fff;
   text-wrap: balance;
+  /* Same reasoning: a text-shadow is the minimum needed to keep white
+     type readable directly on a photograph with no scrim behind it. */
+  text-shadow: 0 2px 20px rgba(0, 0, 0, .55);
 }
 
 .cgs-hero__lead {
@@ -335,6 +331,7 @@ a:hover { color: var(--cgs-navy-700); }
   font-size: clamp(15.5px, 1.7vw, 18px);
   line-height: 1.7;
   color: rgba(255, 255, 255, .84);
+  text-shadow: 0 1px 12px rgba(0, 0, 0, .5);
 }
 
 .cgs-hero__actions { display: flex; flex-wrap: wrap; gap: 14px; }
@@ -441,14 +438,6 @@ a:hover { color: var(--cgs-navy-700); }
   flex-direction: column;
   justify-content: flex-end;
   padding-block: clamp(28px, 5vw, 64px);
-  /* Tall, dense scrim: the footage is bright sky at the bottom edge, where the
-     copy sits, so a light gradient leaves the eyebrow unreadable. */
-  background: linear-gradient(to top,
-    rgba(10, 30, 92, .94) 0%,
-    rgba(10, 30, 92, .80) 22%,
-    rgba(10, 30, 92, .40) 52%,
-    rgba(10, 30, 92, .05) 80%,
-    transparent 100%);
   color: #fff;
   pointer-events: none;
 }
@@ -462,6 +451,9 @@ a:hover { color: var(--cgs-navy-700); }
   letter-spacing: -0.02em;
   color: #fff;
   text-wrap: balance;
+  /* No scrim behind the overlay now, so a text-shadow is the minimum
+     needed to keep the heading legible over bright footage. */
+  text-shadow: 0 2px 20px rgba(0, 0, 0, .6);
 }
 .cgs-video-band__overlay .cgs-eyebrow { margin-bottom: 10px; }
 
@@ -1171,17 +1163,6 @@ a:hover { color: var(--cgs-navy-700); }
   object-fit: cover;
   transition: transform 600ms var(--ease-out);
 }
-/* Flat scrim (not a gradient), so the copy stays legible whatever the
-   photograph does. Shifts hue on hover — navy to the brand blue — as the
-   hover cue, rather than a lift/shadow doing all the work alone. */
-.cgs-service-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: rgba(8, 34, 56, .68);
-  transition: background-color 300ms ease;
-}
 
 .cgs-service-card__body {
   margin-top: auto;
@@ -1196,14 +1177,16 @@ a:hover { color: var(--cgs-navy-700); }
   line-height: 1.25;
   letter-spacing: -0.015em;
   text-wrap: balance;
+  /* No scrim behind the title now, so a text-shadow is the only thing
+     keeping it legible against a bright patch of photograph. */
+  text-shadow: 0 2px 12px rgba(0, 0, 0, .55);
 }
 
 @media (hover: hover) and (pointer: fine) {
   /* Without this, the global a:hover rule (color: navy-700) outranks
      .cgs-service-card's own color: #fff and the title silently goes
-     near-invisible against the dark scrim the moment you hover it. */
+     near-invisible on hover. */
   .cgs-service-card:hover { transform: translateY(-4px); box-shadow: var(--cgs-shadow-lg); color: #fff; }
-  .cgs-service-card:hover::after { background: rgba(14, 58, 86, .78); }
   .cgs-service-card:hover .cgs-service-card__media img { transform: scale(1.06); }
 }
 
@@ -1233,16 +1216,21 @@ a:hover { color: var(--cgs-navy-700); }
   max-width: 46ch;
 }
 
-/* Narrow and tall: one column, two rows, under the description. */
+/* Narrow and tall: one column, two rows, under the description. A second,
+   tighter crop of the same service photo — not an icon — so the tile
+   still shows real cargo rather than a generic pictogram. */
 .cgs-service-bento__icon {
   grid-column: 3 / 4;
   grid-row: 2 / 4;
-  background: #fff;
-  border: 1px solid var(--cgs-line);
-  align-items: center;
-  justify-content: center;
+  padding: 0;
+  overflow: hidden;
 }
-.cgs-service-bento__icon img { width: 44px; height: 44px; }
+.cgs-service-bento__icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 65%;
+}
 
 /* Small and stacked: single column, single row each, right of the icon. */
 .cgs-service-bento__cta {

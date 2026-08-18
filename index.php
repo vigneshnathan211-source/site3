@@ -209,11 +209,11 @@ require __DIR__ . '/includes/header.php';
 
   <!-- 3 ── SERVICES ─────────────────────────────────────────
        Swiper: each slide is one service's own 5-tile bento grid — a
-       feature photo cell plus four info cells (description, icon, CTA,
-       position counter). Only the feature cell carries a photograph,
-       since every service has exactly one image in the database; the
-       other four tiles are real title/description/icon/link data, not
-       filler photos. Swipe or use the arrows to move between services. -->
+       feature photo cell plus four info cells (description, a second
+       crop of the same photo, CTA, position counter). Every service has
+       exactly one real image in the database, so the second photo cell
+       reuses it rather than pulling in an unrelated stock or gallery
+       shot. Swipe or use the arrows to move between services. -->
   <section class="cgs-section" id="services">
     <div class="container-fluid px-4">
       <header class="cgs-section-head">
@@ -264,9 +264,9 @@ require __DIR__ . '/includes/header.php';
               </div>
               <?php endif; ?>
 
-              <?php if (!empty($svc['icon'])): ?>
+              <?php if (!empty($svc['image'])): ?>
               <div class="cgs-service-bento__cell cgs-service-bento__icon">
-                <img src="<?php echo url($svc['icon']); ?>" alt="" aria-hidden="true" loading="lazy" width="44" height="44">
+                <img src="<?php echo url($svc['image']); ?>" alt="" aria-hidden="true" loading="lazy" width="400" height="500">
               </div>
               <?php endif; ?>
 
