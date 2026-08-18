@@ -262,7 +262,8 @@ require __DIR__ . '/includes/header.php';
           ?>
           <div class="cgs-service-bento" data-service-slide>
 
-            <a class="cgs-service-card cgs-service-bento__feature" href="<?php echo url($svc['link']); ?>">
+            <a class="cgs-service-card cgs-service-bento__feature" href="<?php echo url($svc['link']); ?>"
+               <?php if (empty($svc['image'])): ?>aria-label="<?php echo e($svc['title']); ?>"<?php endif; ?>>
               <?php if (!empty($svc['image'])): ?>
               <span class="cgs-service-card__media">
                 <img src="<?php echo url($svc['image']); ?>"
@@ -270,16 +271,14 @@ require __DIR__ . '/includes/header.php';
                      loading="lazy" width="800" height="600">
               </span>
               <?php endif; ?>
-              <span class="cgs-service-card__body">
-                <span class="cgs-service-card__title"><?php echo e($svc['title']); ?></span>
-              </span>
             </a>
 
-            <?php if (!empty($svc['short_desc'])): ?>
             <div class="cgs-service-bento__cell cgs-service-bento__desc">
+              <h3 class="cgs-service-bento__desc-title"><?php echo e($svc['title']); ?></h3>
+              <?php if (!empty($svc['short_desc'])): ?>
               <p><?php echo e($svc['short_desc']); ?></p>
+              <?php endif; ?>
             </div>
-            <?php endif; ?>
 
             <?php if ($secondary): ?>
             <div class="cgs-service-bento__cell cgs-service-bento__icon">
@@ -288,7 +287,14 @@ require __DIR__ . '/includes/header.php';
             <?php endif; ?>
 
             <a class="cgs-service-bento__cell cgs-service-bento__cta" href="<?php echo url($svc['link']); ?>">
-              Read more <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
+              <?php if (!empty($svc['image'])): ?>
+              <span class="cgs-service-bento__cta-media" aria-hidden="true">
+                <img src="<?php echo url($svc['image']); ?>" alt="" loading="lazy" width="300" height="220">
+              </span>
+              <?php endif; ?>
+              <span class="cgs-service-bento__cta-label">
+                Read more <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
+              </span>
             </a>
 
             <div class="cgs-service-bento__cell cgs-service-bento__index" aria-hidden="true">

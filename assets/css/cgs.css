@@ -1245,24 +1245,6 @@ html.js [data-service-slide].is-active { display: grid; }
   transition: transform 600ms var(--ease-out);
 }
 
-.cgs-service-card__body {
-  margin-top: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 22px;
-}
-.cgs-service-card__title {
-  font-size: clamp(22px, 2.3vw, 30px);
-  font-weight: 700;
-  line-height: 1.25;
-  letter-spacing: -0.015em;
-  text-wrap: balance;
-  /* No scrim behind the title now, so a text-shadow is the only thing
-     keeping it legible against a bright patch of photograph. */
-  text-shadow: 0 2px 12px rgba(0, 0, 0, .55);
-}
-
 @media (hover: hover) and (pointer: fine) {
   /* Without this, the global a:hover rule (color: navy-700) outranks
      .cgs-service-card's own color: #fff and the title silently goes
@@ -1286,6 +1268,15 @@ html.js [data-service-slide].is-active { display: grid; }
   grid-row: 1 / 2;
   background: var(--cgs-surface);
   justify-content: center;
+  gap: 6px;
+}
+.cgs-service-bento__desc-title {
+  font-size: clamp(18px, 1.6vw, 22px);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--cgs-ink);
+  margin: 0;
 }
 .cgs-service-bento__desc p {
   font-size: 14.5px;
@@ -1293,6 +1284,7 @@ html.js [data-service-slide].is-active { display: grid; }
   color: var(--cgs-ink);
   opacity: .82;
   max-width: 46ch;
+  margin: 0;
 }
 
 /* Narrow and tall: one column, two rows, under the description. A general
@@ -1311,23 +1303,43 @@ html.js [data-service-slide].is-active { display: grid; }
   object-fit: cover;
 }
 
-/* Small and stacked: single column, single row each, right of the icon. */
+/* Small and stacked: single column, single row each, right of the icon.
+   The service's own feature photo sits behind the label — a navy scrim
+   plus cyan wash keeps "Read more" readable and ties the tile back to the
+   feature cell's colour instead of the flat cyan fill it used to be. */
 .cgs-service-bento__cta {
   grid-column: 4 / 5;
   grid-row: 2 / 3;
-  background: var(--cgs-cyan-400);
-  color: var(--cgs-navy-900);
+  background: var(--cgs-navy-900);
+  color: #fff;
   text-decoration: none;
   flex-direction: row;
   align-items: flex-end;
   justify-content: space-between;
   font-weight: 700;
   font-size: 15px;
-  transition: background-color 220ms var(--ease-out);
+  overflow: hidden;
+  isolation: isolate;
 }
+.cgs-service-bento__cta-media { position: absolute; inset: 0; z-index: -2; }
+.cgs-service-bento__cta-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 600ms var(--ease-out);
+}
+.cgs-service-bento__cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(8, 34, 56, .35), rgba(8, 34, 56, .85)),
+              rgba(20, 107, 150, .18);
+}
+.cgs-service-bento__cta-label { display: flex; align-items: center; gap: 6px; }
 .cgs-service-bento__cta i { transition: transform 220ms var(--ease-out); }
 @media (hover: hover) and (pointer: fine) {
-  .cgs-service-bento__cta:hover { background: var(--cgs-cyan-300); color: var(--cgs-navy-900); }
+  .cgs-service-bento__cta:hover .cgs-service-bento__cta-media img { transform: scale(1.08); }
   .cgs-service-bento__cta:hover i { transform: translateX(4px); }
 }
 
@@ -1734,7 +1746,8 @@ html.js [data-reveal].is-visible {
   .cgs-services__arrow:active { transform: none; }
   .cgs-service-card:hover .cgs-service-card__media img,
   .cgs-gallery li:hover img { transform: none; }
-  .cgs-service-bento__cta:hover i { transform: none; }
+  .cgs-service-bento__cta:hover i,
+  .cgs-service-bento__cta:hover .cgs-service-bento__cta-media img { transform: none; }
   .cgs-btn:hover i,
   .cgs-textlink:hover i,
   .cgs-topbar__contact:hover i { transform: none; }
