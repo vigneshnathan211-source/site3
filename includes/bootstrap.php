@@ -51,6 +51,18 @@ function url(string $path = ''): string
     return e(BASE_URL . ltrim($path, '/'));
 }
 
+/**
+ * Same as url(), plus a ?v=<mtime> cache-buster so edits to cgs.css/cgs.js
+ * during active development don't get served stale out of a visitor's
+ * browser cache — those two files have no version in the filename, unlike
+ * the vendor plugin bundles which don't change.
+ */
+function asset_url(string $path): string
+{
+    $version = @filemtime(__DIR__ . '/../' . ltrim($path, '/')) ?: time();
+    return url($path) . '?v=' . $version;
+}
+
 /** Filename of the page currently being served, e.g. "index.php". */
 function current_page(): string
 {

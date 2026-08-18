@@ -7,9 +7,10 @@
 | different on purpose: eight near-identical card rows is what makes a page
 | read as templated.
 |
-|   1. Hero                full-bleed media, copy on the left
-|   2. Video band          full-bleed video (the brief's post-hero section)
+|   1. Hero                full-bleed media, copy on the left, black scrim
+|   2. Video band          inset video card (the brief's post-hero section)
 |   3. Services            asymmetric bento, 5 cells for 5 services
+|   3b. Partners           logo marquee, continuous auto-scroll
 |   4. The CGS approach    dark band, numbered editorial rows
 |   4b. Accent CTA card    single-accent band, "Send us your packing list"
 |   5. Fleet teaser        two-image split
@@ -91,6 +92,25 @@ $approach = [
 /* Sectors served, from the old site. */
 $sectors = ['Oil and gas', 'Offshore vessels', 'Heavy lift', 'Energy', 'Construction', 'Mining'];
 
+/* Partner/carrier logos for the homepage marquee. Pulled from the client's
+   old staging site (zvv.cra.mybluehost.me, "Our Clients" section) on
+   2026-08-18 — the live carriageglobal.com domain has nothing deployed, so
+   this staging URL, supplied by the client, was the actual source. See
+   docs/PROJECT-BRIEF.md open question 13: still needs the client to confirm
+   these relationships carry over to the new site before this goes live. */
+$partners = [
+    ['name' => 'Zodiac Milpro',            'logo' => 'assets/img/partners/zodiac-milpro.png'],
+    ['name' => 'IKM Subsea',               'logo' => 'assets/img/partners/ikm-subsea.png'],
+    ['name' => 'MMA Offshore',             'logo' => 'assets/img/partners/mma-offshore.png'],
+    ['name' => 'Subsea 7',                 'logo' => 'assets/img/partners/subsea-7.png'],
+    ['name' => 'Sarens',                   'logo' => 'assets/img/partners/sarens.png'],
+    ['name' => 'ALE',                      'logo' => 'assets/img/partners/ale.jpg'],
+    ['name' => 'Fugro',                    'logo' => 'assets/img/partners/fugro.png'],
+    ['name' => 'MacGregor',                'logo' => 'assets/img/partners/macgregor.png'],
+    ['name' => 'Favelle Favco',            'logo' => 'assets/img/partners/favelle-favco.png'],
+    ['name' => 'Louis Dreyfus Armateurs',  'logo' => 'assets/img/partners/louis-dreyfus-armateurs.png'],
+];
+
 require __DIR__ . '/includes/head.php';
 require __DIR__ . '/includes/header.php';
 ?>
@@ -124,6 +144,7 @@ require __DIR__ . '/includes/header.php';
                  width="1600" height="1200"
                  <?php echo $i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'; ?>>
           </div>
+          <div class="cgs-hero__overlay" aria-hidden="true"></div>
 
           <div class="container-fluid px-4">
             <div class="cgs-hero__inner">
@@ -164,35 +185,6 @@ require __DIR__ . '/includes/header.php';
       <div class="swiper-pagination cgs-hero__pagination"></div>
       <?php endif; ?>
     </div>
-
-    <!-- Floating card, static across all slides: the facts do not belong to
-         any one of them. Icons pop in once on load, not on every slide
-         change — this band never re-animates while the carousel rotates. -->
-    <div class="cgs-hero__facts">
-      <ul>
-        <li>
-          <span class="cgs-hero__facts-icon" aria-hidden="true"><i class="fa-solid fa-certificate"></i></span>
-          <span class="cgs-hero__facts-text">
-            <strong>ISO 9001:2015</strong>
-            <span>Quality management certified</span>
-          </span>
-        </li>
-        <li>
-          <span class="cgs-hero__facts-icon" aria-hidden="true"><i class="fa-solid fa-location-dot"></i></span>
-          <span class="cgs-hero__facts-text">
-            <strong>Singapore and Johor Bahru</strong>
-            <span>Two offices, one operations team</span>
-          </span>
-        </li>
-        <li>
-          <span class="cgs-hero__facts-icon" aria-hidden="true"><i class="fa-solid fa-headset"></i></span>
-          <span class="cgs-hero__facts-text">
-            <strong>24/7 operations line</strong>
-            <span><a href="tel:<?php echo e($phone247Tel); ?>"><?php echo e($settings['phone_247']); ?></a></span>
-          </span>
-        </li>
-      </ul>
-    </div>
   </section>
 
   <!-- 2 ── VIDEO BAND ───────────────────────────────────────
@@ -207,16 +199,18 @@ require __DIR__ . '/includes/header.php';
        Muted + playsinline so mobile permits autoplay; cgs.js pauses
        it off-screen and honours prefers-reduced-motion. -->
   <section class="cgs-video-band" aria-label="Carriage Global operations">
-    <video
-      src="<?php echo url($settings['hero_video']); ?>"
-      <?php if (!empty($settings['hero_video_poster'])): ?>
-      poster="<?php echo url($settings['hero_video_poster']); ?>"
-      <?php endif; ?>
-      autoplay muted loop playsinline preload="metadata"></video>
-    <p class="cgs-video-band__disclosure">Concept visualization — final operations footage pending</p>
-    <div class="cgs-video-band__overlay">
-      <div class="container-fluid px-4">
-        <h2>From the packing list to the final site</h2>
+    <div class="container-fluid px-4">
+      <div class="cgs-video-band__frame">
+        <video
+          src="<?php echo url($settings['hero_video']); ?>"
+          <?php if (!empty($settings['hero_video_poster'])): ?>
+          poster="<?php echo url($settings['hero_video_poster']); ?>"
+          <?php endif; ?>
+          autoplay muted loop playsinline preload="metadata"></video>
+        <p class="cgs-video-band__disclosure">Concept visualization — final operations footage pending</p>
+        <div class="cgs-video-band__overlay">
+          <h2>From the packing list to the final site</h2>
+        </div>
       </div>
     </div>
   </section>
@@ -313,6 +307,35 @@ require __DIR__ . '/includes/header.php';
       </div>
     </div>
   </section>
+
+  <!-- 3b ── PARTNERS ────────────────────────────────────────
+       Continuous auto-scroll logo marquee. Logos pulled from the client's
+       old staging site (docs/PROJECT-BRIEF.md open question 13) — still
+       needs the client to confirm these relationships carry over before
+       this ships live. -->
+  <?php if ($partners): ?>
+  <section class="cgs-section cgs-partners" aria-label="Partners and carriers">
+    <div class="container-fluid px-4">
+      <header class="cgs-section-head">
+        <h2>Working with trusted partners</h2>
+      </header>
+    </div>
+
+    <div class="swiper cgs-partners__swiper" data-partners-swiper>
+      <div class="swiper-wrapper">
+        <?php foreach ($partners as $partner): ?>
+        <div class="swiper-slide cgs-partners__slide">
+          <span class="cgs-partners__tile">
+            <img src="<?php echo url($partner['logo']); ?>"
+                 alt="<?php echo e($partner['name']); ?>"
+                 loading="lazy" width="160" height="60">
+          </span>
+        </div>
+        <?php endforeach; ?>
+      </div>
+    </div>
+  </section>
+  <?php endif; ?>
 
   <!-- 4 ── THE CGS APPROACH ─────────────────────────────────
        Dark band, numbered editorial rows, closing with a single-accent

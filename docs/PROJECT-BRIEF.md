@@ -173,3 +173,14 @@ verifiable claims a logistics buyer will check.
     covers it), or written case studies with cargo, mode, route and outcome
     (needs a `projects` table and, more to the point, needs the client to
     approve naming the cargo and the client involved).
+13. **Partner/client logos for the homepage marquee.** Requested 2026-08-18.
+    `carriageglobal.com` itself serves the default unconfigured Hostinger
+    page, not the old site; the client pointed to the real old site at
+    `https://zvv.cra.mybluehost.me/` (its "Our Clients" section) instead.
+    The homepage marquee (`index.php`, after Services) now uses those ten
+    logos, downloaded to `assets/img/partners/`: Zodiac Milpro, IKM Subsea,
+    MMA Offshore, Subsea 7, Sarens, ALE, Fugro, MacGregor, Favelle Favco,
+    Louis Dreyfus Armateurs. Still needs the client to confirm these
+    relationships carry over to the new site before this goes live — an old
+    staging site is a reasonable source to build from, not a substitute for
+    the client's own sign-off on which partners to name publicly.

@@ -230,6 +230,16 @@ a:hover { color: var(--cgs-navy-700); }
 .cgs-hero__media { position: absolute; inset: 0; }
 .cgs-hero__media img { width: 100%; height: 100%; object-fit: cover; }
 
+/* Flat black scrim, not a directional gradient: with the facts card gone,
+   the whole slide needs to hold white text on any photograph, not just the
+   copy's own left-aligned column. */
+.cgs-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, .48);
+  pointer-events: none;
+}
+
 /* --- Hero carousel ------------------------------------------------------- */
 
 .cgs-hero__swiper {
@@ -336,95 +346,15 @@ a:hover { color: var(--cgs-navy-700); }
 
 .cgs-hero__actions { display: flex; flex-wrap: wrap; gap: 14px; }
 
-/* Floating card, inset from the hero's own edges rather than a flush band —
-   the hero message itself stays at four elements (eyebrow, headline,
-   subtext, CTAs); this sits visually on top as a fifth, detached layer. */
-.cgs-hero__facts {
-  position: absolute;
-  left: clamp(20px, 4vw, 40px);
-  right: clamp(20px, 4vw, 40px);
-  bottom: clamp(20px, 3vw, 32px);
-  z-index: 2;
-  padding: 22px clamp(20px, 3vw, 32px);
-  border-radius: var(--cgs-radius);
-  border: 1px solid rgba(255, 255, 255, .16);
-  background: rgba(10, 30, 92, .52);
-  backdrop-filter: blur(10px);
-  box-shadow: var(--cgs-shadow-lg);
-  opacity: 0;
-  transform: translateY(16px);
-  animation: cgs-hero-facts-in 640ms var(--ease-out) 420ms both;
-}
-.cgs-hero__facts ul {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px 40px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.cgs-hero__facts li { display: flex; align-items: center; gap: 14px; }
-.cgs-hero__facts-text { display: flex; flex-direction: column; gap: 3px; }
-.cgs-hero__facts strong {
-  font-size: 16px;
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: -0.01em;
-}
-.cgs-hero__facts span,
-.cgs-hero__facts a {
-  font-size: 13.5px;
-  color: rgba(255, 255, 255, .72);
-  text-decoration: none;
-}
-.cgs-hero__facts a:hover { color: var(--cgs-cyan-300); }
-
-/* Icon pops in per stat, staggered — the one clearly "animated" element in
-   an otherwise static card, so the eye reads three distinct capabilities
-   rather than one wall of text. A one-time entrance on load, not a loop:
-   the hero is seen once a session, not hundreds of times a day. */
-.cgs-hero__facts-icon {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, .24);
-  background: rgba(255, 255, 255, .08);
-  color: var(--cgs-cyan-300);
-  font-size: 15px;
-  opacity: 0;
-  transform: scale(0.5) rotate(-12deg);
-  animation: cgs-hero-facts-icon-in 520ms var(--ease-out) 620ms both;
-}
-.cgs-hero__facts li:nth-child(2) .cgs-hero__facts-icon { animation-delay: 700ms; }
-.cgs-hero__facts li:nth-child(3) .cgs-hero__facts-icon { animation-delay: 780ms; }
-
-@keyframes cgs-hero-facts-in {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes cgs-hero-facts-icon-in {
-  from { opacity: 0; transform: scale(0.5) rotate(-12deg); }
-  to   { opacity: 1; transform: scale(1) rotate(0deg); }
-}
-
 @media (max-width: 767.98px) {
   .cgs-hero { min-height: 0; }
   .cgs-hero__actions .cgs-btn { width: 100%; justify-content: center; }
-  .cgs-hero__facts { position: static; margin-top: 28px; }
-  .cgs-hero__facts ul { grid-template-columns: 1fr; gap: 16px; }
 }
 
 /* Hero pagination — the same "how many, which one" visibility the services
-   section gives a few scrolls later. Swiper positions this absolutely at
-   the container's own bottom by default, which is fine on mobile (the
-   facts card sits static, below the slide, not overlapping it) but needs
-   pushing up on tablet/desktop, where the facts card floats over the
-   slide's own bottom edge. */
+   section gives a few scrolls later. */
 .cgs-hero__pagination {
-  bottom: 20px !important;
+  bottom: clamp(20px, 3vw, 32px) !important;
 }
 .cgs-hero__pagination .swiper-pagination-bullet {
   width: 8px;
@@ -437,17 +367,49 @@ a:hover { color: var(--cgs-navy-700); }
   background: var(--cgs-cyan-400);
   transform: scale(1.25);
 }
-@media (min-width: 768px) {
-  .cgs-hero__pagination { bottom: clamp(120px, 16vw, 160px) !important; }
-}
 
-/* --- Homepage video band (the brief's 20-second section) ----------------- */
+/* --- Homepage video band (the brief's 20-second section) -----------------
+   Inset in its own container and framed like a card, not full-bleed: the
+   video floats over the section background instead of butting straight
+   into the viewport edges. */
 
+/* White section, not navy or a photo: the frame itself carries all the
+   real imagery, so the empty space around it gets an abstract, not
+   photographic, treatment — a faint technical dot-grid plus two soft
+   colour fields in the corners. Decoration, not documentation, so it
+   doesn't have to be a real asset. */
 .cgs-video-band {
   position: relative;
-  background: var(--cgs-navy-900);
+  overflow: hidden;
+  padding-block: clamp(40px, 5vw, 72px);
+  background: #fff;
 }
-.cgs-video-band video {
+.cgs-video-band::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--cgs-line) 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: .6;
+  pointer-events: none;
+}
+.cgs-video-band::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(380px circle at 94% -8%, rgba(46, 159, 214, .22), transparent 70%),
+    radial-gradient(320px circle at -6% 108%, rgba(20, 107, 150, .16), transparent 70%);
+  pointer-events: none;
+}
+.cgs-video-band > .container-fluid { position: relative; z-index: 1; }
+.cgs-video-band__frame {
+  position: relative;
+  border-radius: var(--cgs-radius);
+  overflow: hidden;
+  box-shadow: var(--cgs-shadow-lg);
+}
+.cgs-video-band__frame video {
   display: block;
   width: 100%;
   height: clamp(320px, 56vw, 640px);
@@ -462,8 +424,11 @@ a:hover { color: var(--cgs-navy-700); }
 .cgs-video-band__disclosure {
   position: absolute;
   z-index: 1;
+  /* Top, not bottom: the overlay heading is bottom-anchored and can run to
+     two lines on a short/mobile frame, which collided with this pill when
+     both sat at the bottom-right corner. */
   right: clamp(16px, 3vw, 24px);
-  bottom: clamp(16px, 3vw, 24px);
+  top: clamp(16px, 3vw, 24px);
   margin: 0;
   padding: 6px 12px;
   background: rgba(8, 20, 40, .55);
@@ -482,7 +447,7 @@ a:hover { color: var(--cgs-navy-700); }
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding-block: clamp(28px, 5vw, 64px);
+  padding: clamp(28px, 5vw, 64px) clamp(20px, 4vw, 48px);
   color: #fff;
   pointer-events: none;
 }
@@ -506,7 +471,7 @@ a:hover { color: var(--cgs-navy-700); }
    Pair this with JS that calls video.pause() on the same media query —
    CSS alone cannot stop playback. */
 @media (prefers-reduced-motion: reduce) {
-  .cgs-video-band video { animation: none; }
+  .cgs-video-band__frame video { animation: none; }
 }
 
 /* --- Cards --------------------------------------------------------------- */
@@ -1172,10 +1137,12 @@ a:hover { color: var(--cgs-navy-700); }
 /* --- Services scroll-pin --------------------------------------------------
    .is-pinned is added by cgs.js only on desktop widths with motion allowed
    (never under prefers-reduced-motion, never on narrow viewports) — the
-   section's own height becomes services-count x 100vh so scrolling through
+   section's own height becomes services-count x 58vh so scrolling through
    it holds .cgs-services-pin__sticky in place while each service crossfades
-   in, then releases to the next section once the last one has shown. */
-.cgs-services-pin.is-pinned { height: calc(var(--services-count, 1) * 100vh); }
+   in, then releases to the next section once the last one has shown. Was
+   100vh per service; 58vh gets through the same five slides in noticeably
+   less scrolling without making any one crossfade feel rushed. */
+.cgs-services-pin.is-pinned { height: calc(var(--services-count, 1) * 58vh); }
 
 .cgs-services-pin.is-pinned .cgs-services-pin__sticky {
   position: sticky;
@@ -1415,6 +1382,44 @@ html.js [data-service-slide].is-active { display: grid; }
 
 @media (max-width: 767.98px) {
   .cgs-section-head__right { width: 100%; justify-content: space-between; }
+}
+
+/* --- Partners marquee ------------------------------------------------------
+   Continuous auto-scroll, not a carousel someone steps through — cgs.js
+   drives it with Swiper's own autoplay at a near-zero delay so the strip
+   reads as one steady drift rather than discrete slide changes. Edges fade
+   via mask-image so logos don't pop in/out at hard edges. Logos pulled from
+   the client's old staging site (docs/PROJECT-BRIEF.md open question 13),
+   shown in each brand's own colour, not desaturated. */
+.cgs-partners { background: var(--cgs-surface); overflow: hidden; }
+.cgs-partners__swiper {
+  margin-top: clamp(8px, 2vw, 20px);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  /* Swiper's own wrapper transition defaults to ease, which decelerates
+     into and re-accelerates out of every step — a "breathing" rhythm, not
+     the flat, constant-speed drift a marquee needs. This variable is
+     Swiper's own hook for overriding it. */
+  --swiper-wrapper-transition-timing-function: linear;
+}
+.cgs-partners__slide { width: auto; }
+.cgs-partners__tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 64px;
+  padding: 0 clamp(20px, 2.6vw, 32px);
+}
+.cgs-partners__tile img {
+  height: 34px;
+  width: auto;
+  max-width: 160px;
+  object-fit: contain;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cgs-partners__swiper { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
+  .cgs-partners__swiper .swiper-wrapper { transform: none !important; }
 }
 
 /* --- The CGS approach ---------------------------------------------------- */
@@ -1717,8 +1722,6 @@ html.js [data-reveal].is-visible {
      Autoplay is disabled in JS, so slides only change on request. */
   .cgs-hero__slide [data-hero-anim] { opacity: 1; transform: none; transition: none; }
   .cgs-hero__slide.swiper-slide-active .cgs-hero__media img { animation: none; transform: none; }
-  .cgs-hero__facts,
-  .cgs-hero__facts-icon { animation: none; opacity: 1; transform: none; }
   .cgs-hero__pagination .swiper-pagination-bullet-active { transform: none; }
   html.js .cgs-split__media img { opacity: 1; transform: none; transition: none; }
   .cgs-mobile-panel { transition: opacity 120ms ease, visibility 120ms; transform: none; }

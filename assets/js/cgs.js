@@ -306,6 +306,32 @@
     if (servicesNext) { servicesNext.addEventListener('click', function () { stepService(1); }); }
   }
 
+  /* --- Partners marquee ------------------------------------------------------
+     Purpose: a continuous drift, not a carousel someone steps through. Loop
+     mode plus slidesPerView:'auto' plus a near-zero autoplay delay reads as
+     one steady strip rather than discrete slide changes; speed scales with
+     slide count so adding more logos later doesn't change how fast any one
+     logo crosses the screen. No pauseOnMouseEnter: it needs to keep moving
+     regardless of where the cursor happens to be sitting, since nothing
+     here is meant to be read individually or interacted with — allowTouchMove
+     is off for the same reason. Not initialised at all under reduced
+     motion — this is pure decoration, so it falls back to the plain static
+     row the base Swiper CSS already lays out, no separate markup needed. */
+  var partnersEl = document.querySelector('[data-partners-swiper]');
+  if (partnersEl && !reduceMotion.matches && window.Swiper) {
+    var partnersSlideCount = partnersEl.querySelectorAll('.swiper-slide').length;
+    if (partnersSlideCount > 1) {
+      new Swiper(partnersEl, {
+        loop: true,
+        slidesPerView: 'auto',
+        spaceBetween: 24,
+        allowTouchMove: false,
+        speed: partnersSlideCount * 350,
+        autoplay: { delay: 1, disableOnInteraction: false, pauseOnMouseEnter: false }
+      });
+    }
+  }
+
   /* --- Keyboard access for the desktop dropdown ----------------------------
      Hover opens it for pointer users and :focus-within covers tabbing, but
      neither gives a keyboard user a way to close it without tabbing all the

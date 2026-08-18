@@ -15,7 +15,7 @@
 <script src="<?php echo url('assets/js/plugins/owlcarousel.min.js'); ?>"></script>
 <script src="<?php echo url('assets/js/plugins/magnific-popup.js'); ?>"></script>
 <script src="<?php echo url('assets/js/plugins/swiper-bundle.min.js'); ?>"></script>
-<script src="<?php echo url('assets/js/cgs.js'); ?>"></script>
+<script src="<?php echo asset_url('assets/js/cgs.js'); ?>"></script>
 
 <script>
   if (window.AOS) {

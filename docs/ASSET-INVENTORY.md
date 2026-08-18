@@ -44,6 +44,34 @@ This is the 20-second post-hero video band the brief asks for. Before go-live:
   export a poster frame — 6.2 MB is heavy for an autoplaying band.
 - Autoplay must be `muted` + `playsinline` or mobile browsers will block it.
 
+## 2b. Partner logos
+
+`assets/img/partners/` — 10 files, downloaded 2026-08-18 from the client's old
+staging site (`https://zvv.cra.mybluehost.me/`, "Our Clients" section), the
+actual reachable "old site" once the client confirmed `carriageglobal.com`
+itself is blank. Used by the homepage partners marquee (`index.php`).
+
+| File | Company |
+|---|---|
+| `zodiac-milpro.png` | Zodiac Milpro |
+| `ikm-subsea.png` | IKM Subsea |
+| `mma-offshore.png` | MMA Offshore |
+| `subsea-7.png` | Subsea 7 |
+| `sarens.png` | Sarens |
+| `ale.jpg` | ALE |
+| `fugro.png` | Fugro |
+| `macgregor.png` | MacGregor |
+| `favelle-favco.png` | Favelle Favco |
+| `louis-dreyfus-armateurs.png` | Louis Dreyfus Armateurs |
+
+Mixed formats and backgrounds as supplied (`ale.jpg` is a solid-colour brand
+banner, not a transparent mark) — the marquee's grayscale-until-hover
+treatment (`cgs.css`) is what keeps the row visually consistent, not the
+source files themselves. Before go-live: confirm with the client that these
+ten relationships still apply to the new site (see `PROJECT-BRIEF.md` open
+question 13) — an old staging site proves the relationship existed, not that
+it's current or that the client wants it named publicly again.
+
 ## 3. Operations photography — 105 images
 
 ### `client_assets/pic/` — 80 images (16 MB)
