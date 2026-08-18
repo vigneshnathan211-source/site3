@@ -17,8 +17,8 @@
 |   4d. Special services   three-card grid, tinted
 |   5. Fleet teaser        two-image split
 |   6. Operations gallery  contained carousel, arrows either side + autoplay
-|   7. CTA                 centred band on navy
-|   8. FAQ                 accordion, verbatim from the old site
+|   7. FAQ                 accordion, verbatim from the old site
+|   8. CTA                 rounded sea-blue card, inset on white
 |
 | Copy status: the approach section is verbatim from the client's Project
 | Freight Forwarding email (docs/CONTENT.md); the service blurbs and the
@@ -574,32 +574,7 @@ require __DIR__ . '/includes/header.php';
     <?php endif; ?>
   </section>
 
-  <!-- 7 ── CTA ──────────────────────────────────────────────
-       One CTA intent on this page: "Get a Quote". Same label in the
-       nav, the hero and here. Rounded sea-blue card inset on a white
-       section, with a dotted halftone texture behind the copy — not
-       full-bleed navy anymore. -->
-  <section class="cgs-cta">
-    <div class="container-fluid px-4">
-      <div class="cgs-cta__card">
-        <h2>Tell us what needs to move</h2>
-        <p>
-          Send the dimensions and the deadline. We will come back with the mode,
-          the route and what it costs.
-        </p>
-        <div class="cgs-cta__actions">
-          <a href="<?php echo url('contact.php'); ?>" class="cgs-btn cgs-btn--on-dark">
-            Get a Quote <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
-          </a>
-          <a href="tel:<?php echo e($phoneTel); ?>" class="cgs-btn cgs-btn--outline-light">
-            <i class="fa-solid fa-phone" aria-hidden="true"></i> <?php echo e($settings['phone']); ?>
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 8 ── FAQ ──────────────────────────────────────────────
+  <!-- 7 ── FAQ ──────────────────────────────────────────────
        Native <details>/<summary> accordion — no JS needed, accessible by
        default. Verbatim Q&A from the old site (docs/CONTENT.md), pulled
        from its live DOM since the source page only renders answer text
@@ -628,6 +603,32 @@ require __DIR__ . '/includes/header.php';
     </div>
   </section>
   <?php endif; ?>
+
+  <!-- 8 ── CTA ──────────────────────────────────────────────
+       One CTA intent on this page: "Get a Quote". Same label in the
+       nav, the hero and here. Rounded sea-blue card inset on a white
+       section, with a dotted halftone texture behind the copy — not
+       full-bleed navy anymore. Last section on the page, right above the
+       footer. -->
+  <section class="cgs-cta">
+    <div class="container-fluid px-4">
+      <div class="cgs-cta__card">
+        <h2>Tell us what needs to move</h2>
+        <p>
+          Send the dimensions and the deadline. We will come back with the mode,
+          the route and what it costs.
+        </p>
+        <div class="cgs-cta__actions">
+          <a href="<?php echo url('contact.php'); ?>" class="cgs-btn cgs-btn--on-dark">
+            Get a Quote <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
+          </a>
+          <a href="tel:<?php echo e($phoneTel); ?>" class="cgs-btn cgs-btn--outline-light">
+            <i class="fa-solid fa-phone" aria-hidden="true"></i> <?php echo e($settings['phone']); ?>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
 
 </main>
 
