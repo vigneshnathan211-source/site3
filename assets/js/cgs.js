@@ -344,11 +344,11 @@
     });
   });
 
-  /* --- Homepage video band -------------------------------------------------
+  /* --- Homepage video band + hero background video --------------------------
      Autoplay is muted + playsinline so mobile permits it. Someone who has
      asked for reduced motion gets a still frame and the controls instead,
      which CSS alone cannot do.                                              */
-  document.querySelectorAll('.cgs-video-band video').forEach(function (video) {
+  document.querySelectorAll('.cgs-video-band video, .cgs-hero__media video').forEach(function (video) {
     var play = function () {
       var attempt = video.play();
       // Older Safari returns undefined rather than a promise.

@@ -195,10 +195,18 @@ require __DIR__ . '/includes/header.php';
              aria-label="<?php echo ($i + 1) . ' of ' . count($heroSlides); ?>">
 
           <div class="cgs-hero__media">
+            <?php if ($i === 0 && !empty($settings['hero_bg_video'])): ?>
+            <video
+              src="<?php echo url($settings['hero_bg_video']); ?>"
+              poster="<?php echo url($slide['image']); ?>"
+              autoplay muted loop playsinline preload="metadata"
+              aria-hidden="true"></video>
+            <?php else: ?>
             <img src="<?php echo url($slide['image']); ?>"
                  alt="<?php echo e($slide['alt_text'] ?: $slide['heading']); ?>"
                  width="1600" height="1200"
                  <?php echo $i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'; ?>>
+            <?php endif; ?>
           </div>
           <div class="cgs-hero__overlay" aria-hidden="true"></div>
 

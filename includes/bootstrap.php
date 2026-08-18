@@ -135,6 +135,7 @@ $settingDefaults = [
     'hero_subheading'   => 'Heavy lift, break bulk and project cargo by sea, air and road, planned from your packing list.',
     'hero_video'        => 'assets/video/cgs-home-intro.mp4',
     'hero_video_poster' => null,
+    'hero_bg_video'     => 'assets/video/video.mp4',
     'company_name'      => 'Carriage Global (S) Pte Ltd',
     'company_short'     => 'CGS',
     'uen'               => '200714170K',

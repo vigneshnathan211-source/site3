@@ -228,7 +228,8 @@ a:hover { color: var(--cgs-navy-700); }
 }
 
 .cgs-hero__media { position: absolute; inset: 0; }
-.cgs-hero__media img { width: 100%; height: 100%; object-fit: cover; }
+.cgs-hero__media img,
+.cgs-hero__media video { width: 100%; height: 100%; object-fit: cover; }
 
 /* Flat black scrim, not a directional gradient: with the facts card gone,
    the whole slide needs to hold white text on any photograph, not just the
@@ -440,7 +441,9 @@ a:hover { color: var(--cgs-navy-700); }
   backdrop-filter: blur(4px);
 }
 /* Overlay ignores pointer events so the video's own controls stay reachable
-   when autoplay is refused or reduced motion is on; the CTA re-enables them. */
+   when autoplay is refused or reduced motion is on; the CTA re-enables them.
+   Bottom-anchored scrim (not a flat tint) keeps the top of the frame clear
+   for bright footage while guaranteeing contrast where the heading sits. */
 .cgs-video-band__overlay {
   position: absolute;
   inset: 0;
@@ -449,6 +452,7 @@ a:hover { color: var(--cgs-navy-700); }
   justify-content: flex-end;
   padding: clamp(28px, 5vw, 64px) clamp(20px, 4vw, 48px);
   color: #fff;
+  background: linear-gradient(to top, rgba(8, 20, 40, .78) 0%, rgba(8, 20, 40, .38) 42%, rgba(8, 20, 40, 0) 75%);
   pointer-events: none;
 }
 .cgs-video-band__overlay a { pointer-events: auto; }
@@ -461,8 +465,7 @@ a:hover { color: var(--cgs-navy-700); }
   letter-spacing: -0.02em;
   color: #fff;
   text-wrap: balance;
-  /* No scrim behind the overlay now, so a text-shadow is the minimum
-     needed to keep the heading legible over bright footage. */
+  /* Belt and braces over the gradient scrim above. */
   text-shadow: 0 2px 20px rgba(0, 0, 0, .6);
 }
 .cgs-video-band__overlay .cgs-eyebrow { margin-bottom: 10px; }

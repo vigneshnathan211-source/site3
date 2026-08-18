@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `hero_subheading`  TEXT         DEFAULT NULL,
   `hero_video`       VARCHAR(255) DEFAULT 'assets/video/cgs-home-intro.mp4',
   `hero_video_poster` VARCHAR(255) DEFAULT NULL,
+  `hero_bg_video`    VARCHAR(255) DEFAULT NULL, -- optional: plays behind the first hero slide instead of its image
 
   -- company identity
   `company_name`     VARCHAR(150) DEFAULT 'Carriage Global (S) Pte Ltd',
