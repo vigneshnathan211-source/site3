@@ -213,52 +213,6 @@
     }
   }
 
-  /* --- Video band parallax ---------------------------------------------------
-     Purpose: the video drifts slightly slower than the page scrolls, so the
-     inset frame reads as a window with depth behind it rather than a flat
-     clip pinned to the layout. The video element is sized taller than its
-     frame (130%, in CSS) purely to leave slack to translate within without
-     ever exposing the frame's edge — the translate range here (12% of the
-     frame's own height) stays safely inside that 15%-a-side slack.
-
-     Scroll-linked, so the listener only runs while the section is actually
-     in view — same on/off-screen discipline as the hero and gallery
-     carousels above, not a permanent scroll listener for the whole page
-     lifetime. Skipped entirely under reduced motion, where the video just
-     sits centred (the CSS default, no JS involved). */
-  var videoFrame = document.querySelector('.cgs-video-band__frame');
-  var videoParallaxEl = videoFrame ? videoFrame.querySelector('video') : null;
-
-  if (videoFrame && videoParallaxEl && !reduceMotion.matches) {
-    var updateVideoParallax = function () {
-      var rect = videoFrame.getBoundingClientRect();
-      var travel = rect.height * 0.12;
-      var viewportCenter = window.innerHeight / 2;
-      var sectionCenter = rect.top + rect.height / 2;
-      var span = viewportCenter + rect.height / 2;
-      var progress = span > 0 ? (viewportCenter - sectionCenter) / span : 0;
-      progress = Math.max(-1, Math.min(1, progress));
-      videoParallaxEl.style.transform = 'translateY(' + (progress * travel).toFixed(1) + 'px)';
-    };
-    var onVideoScroll = function () { window.requestAnimationFrame(updateVideoParallax); };
-
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            updateVideoParallax();
-            window.addEventListener('scroll', onVideoScroll, { passive: true });
-          } else {
-            window.removeEventListener('scroll', onVideoScroll);
-          }
-        });
-      }, { threshold: 0 }).observe(videoFrame);
-    } else {
-      updateVideoParallax();
-      window.addEventListener('scroll', onVideoScroll, { passive: true });
-    }
-  }
-
   /* --- Services scroll-pin --------------------------------------------------
      Purpose: one service at a time, advanced by scrolling through the
      section rather than swiping across it. On desktop, with motion
