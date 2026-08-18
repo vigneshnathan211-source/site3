@@ -1333,16 +1333,18 @@ html.js [data-service-slide].is-active { display: grid; }
   position: absolute;
   inset: 0;
   z-index: -1;
-  /* Sky-blue wash (--cgs-cyan-400) instead of navy — still darkens toward
-     the bottom edge so the white "Read more" label stays legible. */
-  background: linear-gradient(180deg, rgba(46, 159, 214, .5), rgba(8, 34, 56, .88)),
-              rgba(46, 159, 214, .45);
+  /* Black scrim — darkens toward the bottom edge so the "Read more" label
+     stays legible regardless of what the photo behind it looks like. */
+  background: linear-gradient(180deg, rgba(0, 0, 0, .45), rgba(0, 0, 0, .82));
 }
-.cgs-service-bento__cta-label { display: flex; align-items: center; gap: 6px; }
-.cgs-service-bento__cta i { transition: transform 220ms var(--ease-out); }
+.cgs-service-bento__cta-label { display: flex; align-items: center; gap: 6px; transition: color 200ms var(--ease-out); }
+.cgs-service-bento__cta i { transition: transform 220ms var(--ease-out), color 200ms var(--ease-out); }
 @media (hover: hover) and (pointer: fine) {
   .cgs-service-bento__cta:hover .cgs-service-bento__cta-media img { transform: scale(1.08); }
   .cgs-service-bento__cta:hover i { transform: translateX(4px); }
+  /* Sea-blue (--cgs-blue-500) on hover — the label and icon (which inherits
+     it) swap out of white, the scrim stays black. */
+  .cgs-service-bento__cta:hover .cgs-service-bento__cta-label { color: var(--cgs-blue-500); }
 }
 
 .cgs-service-bento__index {
