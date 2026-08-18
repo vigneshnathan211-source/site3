@@ -405,15 +405,24 @@ a:hover { color: var(--cgs-navy-700); }
 .cgs-video-band > .container-fluid { position: relative; z-index: 1; }
 .cgs-video-band__frame {
   position: relative;
+  height: clamp(320px, 56vw, 640px);
   border-radius: var(--cgs-radius);
   overflow: hidden;
   box-shadow: var(--cgs-shadow-lg);
 }
+/* Parallax: the video is sized and centred taller than its frame purely to
+   leave slack for cgs.js to translate it within on scroll, without ever
+   exposing the frame's edge. At rest (no JS, or reduced motion) it just
+   sits centred — the -15%/130% pairing does that on its own. */
 .cgs-video-band__frame video {
   display: block;
+  position: absolute;
+  left: 0;
+  top: -15%;
   width: 100%;
-  height: clamp(320px, 56vw, 640px);
+  height: 130%;
   object-fit: cover;
+  will-change: transform;
 }
 /* Honest disclosure, not a marketing badge: this clip is AI-generated
    (docs/ASSET-INVENTORY.md), and this site's whole pitch rests on being
@@ -471,7 +480,7 @@ a:hover { color: var(--cgs-navy-700); }
    Pair this with JS that calls video.pause() on the same media query —
    CSS alone cannot stop playback. */
 @media (prefers-reduced-motion: reduce) {
-  .cgs-video-band__frame video { animation: none; }
+  .cgs-video-band__frame video { animation: none; transform: none; }
 }
 
 /* --- Cards --------------------------------------------------------------- */
