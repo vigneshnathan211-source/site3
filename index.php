@@ -262,20 +262,22 @@ require __DIR__ . '/includes/header.php';
 
   <!-- 2 ── VIDEO BAND ───────────────────────────────────────
        The brief places a video section directly after the hero. Real
-       client-supplied footage (assets/video/cgs-company-video.mp4), so
+       client-supplied footage (assets/video/cgs-video-band.mp4), so
        unlike the earlier AI-generated placeholder this needs no honesty
        disclosure. Deliberately plain: no scrim, no overlay copy, just
        the video — native controls so the visitor can pause/mute it
        themselves. Muted + playsinline so mobile permits autoplay;
        cgs.js skips autoplay under reduced motion (controls still let
-       someone start it manually). -->
+       someone start it manually). Settings keys are video_band_*, not
+       hero_* — this section is distinct from the hero's own optional
+       background video (hero_bg_video, above). -->
   <section class="cgs-video-band" aria-label="Carriage Global operations">
     <div class="container-fluid px-4">
       <div class="cgs-video-band__frame">
         <video
-          src="<?php echo url($settings['hero_video']); ?>"
-          <?php if (!empty($settings['hero_video_poster'])): ?>
-          poster="<?php echo url($settings['hero_video_poster']); ?>"
+          src="<?php echo url($settings['video_band_src']); ?>"
+          <?php if (!empty($settings['video_band_poster'])): ?>
+          poster="<?php echo url($settings['video_band_poster']); ?>"
           <?php endif; ?>
           autoplay muted loop playsinline controls preload="metadata"></video>
       </div>
