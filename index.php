@@ -208,83 +208,95 @@ require __DIR__ . '/includes/header.php';
   </section>
 
   <!-- 3 ── SERVICES ─────────────────────────────────────────
-       Swiper: each slide is one service's own 5-tile bento grid — a
-       feature photo cell plus four info cells (description, a second
-       crop of the same photo, CTA, position counter). Every service has
-       exactly one real image in the database, so the second photo cell
-       reuses it rather than pulling in an unrelated stock or gallery
-       shot. Swipe or use the arrows to move between services. -->
-  <section class="cgs-section" id="services">
-    <div class="container-fluid px-4">
-      <header class="cgs-section-head">
-        <h2>What we move, and how</h2>
-        <div class="cgs-section-head__right">
-          <a href="<?php echo url('services.php'); ?>" class="cgs-textlink">
-            All services <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
-          </a>
-          <?php if (count($services) > 1): ?>
-          <div class="cgs-services__arrows">
-            <button class="cgs-services__arrow" data-services-prev type="button" aria-label="Previous service">
-              <i class="fa-solid fa-angle-left" aria-hidden="true"></i>
-            </button>
-            <button class="cgs-services__arrow" data-services-next type="button" aria-label="Next service">
-              <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
-            </button>
-          </div>
-          <?php endif; ?>
-        </div>
-      </header>
+       Scroll-pin: on desktop, with motion allowed, the section holds one
+       screen (cgs-services-pin__sticky) while its own extra height
+       (services-count x 100vh, added by cgs.js as .is-pinned) is scrolled
+       through — each service crossfades in in turn, then the page
+       continues to the next section, rather than requiring a swipe
+       gesture to see all five. Mobile and reduced-motion visitors get the
+       same crossfading stage without the pinned scroll: the arrows step
+       it directly. Without JS, every service's grid is simply stacked in
+       normal flow — nothing is hidden.
 
-      <?php if ($services): ?>
-      <div class="swiper cgs-services__swiper" data-services-swiper>
-        <div class="swiper-wrapper">
-          <?php foreach ($services as $i => $svc):
-            $num   = str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT);
-            $total = str_pad((string) count($services), 2, '0', STR_PAD_LEFT);
-          ?>
-          <div class="swiper-slide cgs-services__slide">
-            <div class="cgs-service-bento" data-reveal>
-
-              <a class="cgs-service-card cgs-service-bento__feature" href="<?php echo url($svc['link']); ?>">
-                <?php if (!empty($svc['image'])): ?>
-                <span class="cgs-service-card__media">
-                  <img src="<?php echo url($svc['image']); ?>"
-                       alt="<?php echo e($svc['alt_text'] ?: $svc['title']); ?>"
-                       loading="lazy" width="800" height="600">
-                </span>
-                <?php endif; ?>
-                <span class="cgs-service-card__body">
-                  <span class="cgs-service-card__title"><?php echo e($svc['title']); ?></span>
-                </span>
-              </a>
-
-              <?php if (!empty($svc['short_desc'])): ?>
-              <div class="cgs-service-bento__cell cgs-service-bento__desc">
-                <p><?php echo e($svc['short_desc']); ?></p>
-              </div>
-              <?php endif; ?>
-
-              <?php if (!empty($svc['image'])): ?>
-              <div class="cgs-service-bento__cell cgs-service-bento__icon">
-                <img src="<?php echo url($svc['image']); ?>" alt="" aria-hidden="true" loading="lazy" width="400" height="500">
-              </div>
-              <?php endif; ?>
-
-              <a class="cgs-service-bento__cell cgs-service-bento__cta" href="<?php echo url($svc['link']); ?>">
-                Read more <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
-              </a>
-
-              <div class="cgs-service-bento__cell cgs-service-bento__index" aria-hidden="true">
-                <strong><?php echo $num; ?></strong>
-                <span>/ <?php echo $total; ?></span>
-              </div>
-
+       The secondary photo cell uses a general operations shot (real
+       company photography, not stock), cycled by index so no two
+       services show the same picture — the feature cell keeps the one
+       photo actually tied to that specific service. -->
+  <section class="cgs-section cgs-services-pin" id="services" data-services-pin
+           style="--services-count: <?php echo max(1, count($services)); ?>;">
+    <div class="cgs-services-pin__sticky">
+      <div class="container-fluid px-4">
+        <header class="cgs-section-head">
+          <h2>What we move, and how</h2>
+          <div class="cgs-section-head__right">
+            <a href="<?php echo url('services.php'); ?>" class="cgs-textlink">
+              All services <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
+            </a>
+            <?php if (count($services) > 1): ?>
+            <div class="cgs-services__arrows">
+              <button class="cgs-services__arrow" data-services-prev type="button" aria-label="Previous service">
+                <i class="fa-solid fa-angle-left" aria-hidden="true"></i>
+              </button>
+              <button class="cgs-services__arrow" data-services-next type="button" aria-label="Next service">
+                <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
+              </button>
             </div>
+            <?php endif; ?>
+          </div>
+        </header>
+
+        <?php if ($services): ?>
+        <div class="cgs-services-pin__stage" data-services-stage>
+          <?php foreach ($services as $i => $svc):
+            $num       = str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT);
+            $total     = str_pad((string) count($services), 2, '0', STR_PAD_LEFT);
+            $secondary = $galleryRows ? $galleryRows[$i % count($galleryRows)] : null;
+          ?>
+          <div class="cgs-service-bento" data-service-slide>
+
+            <a class="cgs-service-card cgs-service-bento__feature" href="<?php echo url($svc['link']); ?>">
+              <?php if (!empty($svc['image'])): ?>
+              <span class="cgs-service-card__media">
+                <img src="<?php echo url($svc['image']); ?>"
+                     alt="<?php echo e($svc['alt_text'] ?: $svc['title']); ?>"
+                     loading="lazy" width="800" height="600">
+              </span>
+              <?php endif; ?>
+              <span class="cgs-service-card__body">
+                <span class="cgs-service-card__title"><?php echo e($svc['title']); ?></span>
+              </span>
+            </a>
+
+            <?php if (!empty($svc['short_desc'])): ?>
+            <div class="cgs-service-bento__cell cgs-service-bento__desc">
+              <p><?php echo e($svc['short_desc']); ?></p>
+            </div>
+            <?php endif; ?>
+
+            <?php if ($secondary): ?>
+            <div class="cgs-service-bento__cell cgs-service-bento__icon">
+              <img src="<?php echo url($secondary['image_path']); ?>" alt="" aria-hidden="true" loading="lazy" width="400" height="500">
+            </div>
+            <?php endif; ?>
+
+            <a class="cgs-service-bento__cell cgs-service-bento__cta" href="<?php echo url($svc['link']); ?>">
+              Read more <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
+            </a>
+
+            <div class="cgs-service-bento__cell cgs-service-bento__index" aria-hidden="true">
+              <strong><?php echo $num; ?></strong>
+              <span>/ <?php echo $total; ?></span>
+            </div>
+
           </div>
           <?php endforeach; ?>
         </div>
+
+        <div class="cgs-services-pin__track" aria-hidden="true">
+          <span class="cgs-services-pin__fill" data-services-fill></span>
+        </div>
+        <?php endif; ?>
       </div>
-      <?php endif; ?>
     </div>
   </section>
 

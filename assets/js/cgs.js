@@ -22,6 +22,17 @@
      The observer fires twice in the entire page lifetime.                   */
   var header = document.getElementById('cgs-header');
 
+  /* Exposed as a CSS var so the services scroll-pin can sit its sticky
+     stage directly under the header instead of behind it. Read from the
+     real element rather than hard-coded, so a header height change never
+     silently desyncs the two. */
+  var setHeaderHeightVar = function () {
+    if (!header) { return; }
+    document.documentElement.style.setProperty('--cgs-header-h', header.offsetHeight + 'px');
+  };
+  setHeaderHeightVar();
+  window.addEventListener('resize', setHeaderHeightVar);
+
   if (header && 'IntersectionObserver' in window) {
     var sentinel = document.createElement('div');
     sentinel.setAttribute('aria-hidden', 'true');
@@ -195,30 +206,97 @@
     }
   }
 
-  /* --- Services carousel ----------------------------------------------------
-     Purpose: one service at a time. Each slide is a full 5-tile bento grid
-     for a single service, not a peeking card, so exactly one slide shows
-     at a width. No autoplay — this is a set to browse at the visitor's own
-     pace, not a story to sit through. */
-  var servicesEl = document.querySelector('[data-services-swiper]');
+  /* --- Services scroll-pin --------------------------------------------------
+     Purpose: one service at a time, advanced by scrolling through the
+     section rather than swiping across it. On desktop, with motion
+     allowed, the section is given its own extra height (services-count x
+     100vh, in CSS) and its content sticks in place while that height
+     scrolls past — each service crossfades in in turn, then the page
+     continues on to the next section once the last one has shown, the
+     same shape as a product-page scroll gallery.
 
-  if (servicesEl && typeof window.Swiper === 'function') {
-    var servicesSlideCount = servicesEl.querySelectorAll('.swiper-slide').length;
+     Mobile and reduced-motion visitors get the identical crossfade, just
+     driven by the arrows instead of scroll position — no pin, no extra
+     section height, so there is nothing to scroll-hijack on a touch
+     device. No Swiper here: the pinned case needs scroll-position math
+     Swiper has no hook for, so both paths share one small state machine
+     instead of running two different libraries side by side. */
+  var servicesPin = document.querySelector('[data-services-pin]');
 
-    new Swiper(servicesEl, {
-      slidesPerView: 1,
-      spaceBetween: 24,
-      speed: reduceMotion.matches ? 0 : 500,
-      grabCursor: true,
-      watchSlidesProgress: true,
-      loop: servicesSlideCount > 1,
-      a11y: { enabled: true },
-      keyboard: { enabled: true, onlyInViewport: true },
-      navigation: {
-        prevEl: document.querySelector('[data-services-prev]'),
-        nextEl: document.querySelector('[data-services-next]')
+  if (servicesPin) {
+    var serviceSlides = Array.prototype.slice.call(servicesPin.querySelectorAll('[data-service-slide]'));
+    var servicesCount = serviceSlides.length;
+    var servicesPrev = document.querySelector('[data-services-prev]');
+    var servicesNext = document.querySelector('[data-services-next]');
+    var servicesFill = servicesPin.querySelector('[data-services-fill]');
+    var servicesActive = 0;
+
+    var setServiceActive = function (index) {
+      index = Math.max(0, Math.min(servicesCount - 1, index));
+      servicesActive = index;
+      serviceSlides.forEach(function (slide, i) {
+        var isActive = i === index;
+        slide.classList.toggle('is-active', isActive);
+        /* Keeps a keyboard user from tabbing into a slide that is either
+           display:none or sitting invisibly underneath the active one. */
+        slide.toggleAttribute('inert', !isActive);
+      });
+      if (servicesPrev) { servicesPrev.disabled = index === 0; }
+      if (servicesNext) { servicesNext.disabled = index === servicesCount - 1; }
+    };
+
+    setServiceActive(0);
+
+    /* Pin eligibility is decided once per load/resize, not fought over
+       every frame: desktop width, more than one service, motion allowed. */
+    var pinQuery = window.matchMedia('(min-width: 992px)');
+    var pinActive = false;
+
+    var updateFromScroll = function () {
+      var rect = servicesPin.getBoundingClientRect();
+      var total = rect.height - window.innerHeight;
+      if (total <= 0) { return; }
+      var progressed = Math.min(Math.max(-rect.top, 0), total);
+      var progress = progressed / total;
+      setServiceActive(Math.round(progress * (servicesCount - 1)));
+      if (servicesFill) { servicesFill.style.width = (progress * 100) + '%'; }
+    };
+    var onScroll = function () { window.requestAnimationFrame(updateFromScroll); };
+
+    var applyPinMode = function () {
+      var shouldPin = servicesCount > 1 && pinQuery.matches && !reduceMotion.matches;
+      if (shouldPin === pinActive) { return; }
+      pinActive = shouldPin;
+      servicesPin.classList.toggle('is-pinned', pinActive);
+      servicesPin.style.removeProperty('height');
+      if (pinActive) {
+        window.addEventListener('scroll', onScroll, { passive: true });
+        updateFromScroll();
+      } else {
+        window.removeEventListener('scroll', onScroll);
+        if (servicesFill) { servicesFill.style.width = '0%'; }
       }
-    });
+    };
+    applyPinMode();
+    window.addEventListener('resize', applyPinMode);
+
+    /* Arrow clicks: scroll the page to the target service's position while
+       pinned (there is no other way to change "how far scrolled" is), or
+       just swap the active slide directly otherwise. */
+    var stepService = function (delta) {
+      var target = servicesActive + delta;
+      if (target < 0 || target > servicesCount - 1) { return; }
+      if (pinActive) {
+        var rect = servicesPin.getBoundingClientRect();
+        var total = rect.height - window.innerHeight;
+        var pinTop = window.scrollY + rect.top;
+        window.scrollTo({ top: pinTop + (target / (servicesCount - 1)) * total, behavior: 'smooth' });
+      } else {
+        setServiceActive(target);
+      }
+    };
+    if (servicesPrev) { servicesPrev.addEventListener('click', function () { stepService(-1); }); }
+    if (servicesNext) { servicesNext.addEventListener('click', function () { stepService(1); }); }
   }
 
   /* --- Keyboard access for the desktop dropdown ----------------------------

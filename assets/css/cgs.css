@@ -1124,8 +1124,77 @@ a:hover { color: var(--cgs-navy-700); }
   }
 }
 
-.cgs-services__swiper { overflow: hidden; margin-inline: -2px; padding: 2px; }
-.cgs-services__slide { height: auto; }
+/* --- Services scroll-pin --------------------------------------------------
+   .is-pinned is added by cgs.js only on desktop widths with motion allowed
+   (never under prefers-reduced-motion, never on narrow viewports) — the
+   section's own height becomes services-count x 100vh so scrolling through
+   it holds .cgs-services-pin__sticky in place while each service crossfades
+   in, then releases to the next section once the last one has shown. */
+.cgs-services-pin.is-pinned { height: calc(var(--services-count, 1) * 100vh); }
+
+.cgs-services-pin.is-pinned .cgs-services-pin__sticky {
+  position: sticky;
+  top: var(--cgs-header-h, 85px);
+  height: calc(100dvh - var(--cgs-header-h, 85px));
+  overflow: hidden;
+  display: flex;
+}
+.cgs-services-pin.is-pinned .cgs-services-pin__sticky > .container-fluid {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+}
+.cgs-services-pin.is-pinned .cgs-section-head,
+.cgs-services-pin.is-pinned .cgs-services-pin__track { flex-shrink: 0; }
+
+/* Default JS behaviour (no pin — mobile, tablet, or reduced motion): the
+   arrows show/hide the active slide in normal block flow, so the stage's
+   height simply follows whichever service is showing, including a taller
+   mobile-stacked grid. No transition here; only the pinned, scroll-driven
+   version below is worth the crossfade cost. Without JS at all, neither
+   rule applies and every service's grid stacks and shows at once. */
+html.js [data-service-slide] { display: none; margin: 0; }
+html.js [data-service-slide].is-active { display: grid; }
+
+/* Pinned behaviour: every slide stays laid out, absolutely stacked on top
+   of each other, and crossfades via opacity/transform as scroll progress
+   (or the arrows) move the active index. The stage fills whatever space is
+   left in the sticky viewport (flex: 1 1 auto) — stable to size against
+   since .is-pinned only ever applies on desktop, where the grid's own
+   height doesn't change between services. */
+.cgs-services-pin.is-pinned .cgs-services-pin__stage {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.cgs-services-pin.is-pinned [data-service-slide] {
+  display: grid;
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 420ms var(--ease-out), transform 420ms var(--ease-out);
+  pointer-events: none;
+}
+.cgs-services-pin.is-pinned [data-service-slide].is-active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Progress line: only meaningful while pinned, since only then does
+   scrolling itself carry a "how far through" position. */
+.cgs-services-pin__track { display: none; }
+.cgs-services-pin.is-pinned .cgs-services-pin__track {
+  display: block;
+  height: 3px;
+  margin-top: 20px;
+  border-radius: 2px;
+  background: var(--cgs-line);
+  overflow: hidden;
+}
+.cgs-services-pin__fill { display: block; height: 100%; width: 0%; background: var(--cgs-cyan-400); }
 
 /* One 5-tile bento per slide: a photo feature cell plus four info cells
    filling the rest of a 4-col x 3-row grid. The info cells are sized
@@ -1190,9 +1259,7 @@ a:hover { color: var(--cgs-navy-700); }
   .cgs-service-card:hover .cgs-service-card__media img { transform: scale(1.06); }
 }
 
-/* The four info cells. Real title/description/icon/link data, not filler
-   photography — every service has exactly one real image, so the mosaic
-   is built from content, not from repeated or unrelated pictures. */
+/* The four info cells: description, a secondary photo, CTA, position. */
 .cgs-service-bento__cell {
   position: relative;
   display: flex;
@@ -1216,9 +1283,10 @@ a:hover { color: var(--cgs-navy-700); }
   max-width: 46ch;
 }
 
-/* Narrow and tall: one column, two rows, under the description. A second,
-   tighter crop of the same service photo — not an icon — so the tile
-   still shows real cargo rather than a generic pictogram. */
+/* Narrow and tall: one column, two rows, under the description. A general
+   operations photo (real company photography, cycled per service so no
+   two services show the same one) rather than an icon or a repeat of the
+   feature cell's photo. */
 .cgs-service-bento__icon {
   grid-column: 3 / 4;
   grid-row: 2 / 4;
@@ -1229,7 +1297,6 @@ a:hover { color: var(--cgs-navy-700); }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 65%;
 }
 
 /* Small and stacked: single column, single row each, right of the icon. */
