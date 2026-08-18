@@ -46,20 +46,28 @@ $activeSocials = array_filter(
 ?>
 <!-- ==========================================================
      TOP INFO BAR
-     One contact and the social icons. The email, the 24/7 line and
-     the address all live in the footer and the mobile menu; crowding
-     four of them in here made the row unreadable and gave the eye
-     nothing to land on.
+     Phone and email, plus the social icons. The 24/7 line and the
+     address still live only in the footer and the mobile menu —
+     crowding all four in here made the row unreadable and gave the
+     eye nothing to land on.
      Hidden below lg, where the mobile menu carries the same details.
      ========================================================== -->
 <div class="cgs-topbar d-none d-lg-block">
   <div class="container-fluid px-4">
     <div class="cgs-topbar__inner">
 
-      <a class="cgs-topbar__contact" href="tel:<?php echo e($phoneTel); ?>">
-        <i class="fa-solid fa-phone" aria-hidden="true"></i>
-        <span><?php echo e($settings['phone']); ?></span>
-      </a>
+      <div class="cgs-topbar__contacts">
+        <a class="cgs-topbar__contact" href="tel:<?php echo e($phoneTel); ?>">
+          <i class="fa-solid fa-phone" aria-hidden="true"></i>
+          <span><?php echo e($settings['phone']); ?></span>
+        </a>
+        <?php if (!empty($settings['email'])): ?>
+        <a class="cgs-topbar__contact" href="mailto:<?php echo e($settings['email']); ?>">
+          <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+          <span><?php echo e($settings['email']); ?></span>
+        </a>
+        <?php endif; ?>
+      </div>
 
       <div class="cgs-topbar__right">
         <?php if (!empty($settings['iso_statement'])): ?>

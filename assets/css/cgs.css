@@ -26,6 +26,7 @@
      blue, rgb(0,115,171) link blue, sampled 2026-08-17). */
   --cgs-cyan-300:  #6FC6E9;
   --cgs-cyan-400:  #2E9FD6;   /* lightest point of the mark; accents, icons, focus rings */
+  --cgs-teal-500:  #1E8CB8;   /* requested accent — top bar background, CTA card gradient */
   --cgs-blue-500:  #146B96;   /* links, active nav — was a brighter purple-blue, now a cleaner ocean blue */
   --cgs-blue-600:  #0F5378;
   --cgs-navy-700:  #0E3A56;   /* primary button hover */
@@ -448,11 +449,11 @@ a:hover { color: var(--cgs-navy-700); }
 /* --- Header / footer chrome --------------------------------------------- */
 
 .cgs-topbar {
-  background: var(--cgs-navy-900);
-  color: rgba(255, 255, 255, .82);
+  background: var(--cgs-teal-500);
+  color: rgba(255, 255, 255, .92);
   font-size: 14px;
 }
-.cgs-topbar a { color: rgba(255, 255, 255, .82); text-decoration: none; }
+.cgs-topbar a { color: rgba(255, 255, 255, .92); text-decoration: none; }
 .cgs-topbar a:hover { color: #fff; }
 
 .cgs-footer {
@@ -553,8 +554,11 @@ a:hover { color: var(--cgs-navy-700); }
   min-height: 44px;
 }
 
-/* Single contact, so it can carry a little weight instead of being
-   one of four competing links. */
+.cgs-topbar__contacts {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
 .cgs-topbar__contact {
   display: inline-flex;
   align-items: center;
@@ -563,8 +567,18 @@ a:hover { color: var(--cgs-navy-700); }
   letter-spacing: .01em;
   white-space: nowrap;
 }
+/* Second contact item gets a divider, same treatment as the ISO badge's
+   border-right on the other side of the bar. */
+.cgs-topbar__contact + .cgs-topbar__contact {
+  padding-left: 20px;
+  border-left: 1px solid rgba(255, 255, 255, .28);
+}
+/* White, not --cgs-cyan-400: the mark's lightest accent all but disappears
+   against this teal background — the two are too close in tone/luminance
+   to read as a highlight here, even though the pairing works everywhere
+   else in the palette. */
 .cgs-topbar__contact i {
-  color: var(--cgs-cyan-400);
+  color: #fff;
   font-size: 12px;
   transition: transform 160ms var(--ease-out);
 }
@@ -581,13 +595,12 @@ a:hover { color: var(--cgs-navy-700); }
   align-items: center;
   gap: 8px;
   padding-right: 18px;
-  border-right: 1px solid rgba(255, 255, 255, .16);
+  border-right: 1px solid rgba(255, 255, 255, .28);
   font-size: 13px;
   white-space: nowrap;
 }
-/* Amber, matching the same badge in the footer, so the accreditation reads
-   as one mark across the page rather than two different-looking ones. */
-.cgs-topbar__iso i { color: var(--cgs-cyan-400); font-size: 12px; }
+/* White, not --cgs-cyan-400 — see .cgs-topbar__contact i above. */
+.cgs-topbar__iso i { color: #fff; font-size: 12px; }
 
 .cgs-topbar__socials {
   display: flex;
@@ -1801,7 +1814,7 @@ html.js .cgs-split__media.is-visible img { opacity: 1; transform: none; }
   gap: clamp(24px, 4vw, 48px);
   padding: clamp(40px, 6vw, 56px) clamp(28px, 5vw, 64px);
   border-radius: clamp(20px, 2.4vw, 28px);
-  background: radial-gradient(130% 160% at 100% 100%, var(--cgs-blue-500) 0%, var(--cgs-navy-900) 55%);
+  background: radial-gradient(130% 160% at 100% 100%, var(--cgs-teal-500) 0%, var(--cgs-navy-900) 55%);
   color: #fff;
   box-shadow: 0 30px 70px -24px rgba(8, 34, 56, .55);
 }
@@ -1864,7 +1877,6 @@ html.js .cgs-split__media.is-visible img { opacity: 1; transform: none; }
 }
 
 @media (max-width: 575.98px) {
-  .cgs-cta__actions { flex-basis: 100%; width: 100%; }
   .cgs-cta__actions .cgs-btn { width: 100%; justify-content: center; }
 }
 
