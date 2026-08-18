@@ -29,8 +29,12 @@ PHP 8 · MySQL/MariaDB (PDO) · Bootstrap 5 · jQuery 3.7.1 · PHPMailer (SMTP).
 No build step, no package manager, no framework — files are served as-is.
 Deploys to Hostinger shared hosting.
 
-Front-end plugins carried over from the Roofer theme: AOS, Owl Carousel, Slick,
-Magnific Popup, Nice Select, FontAwesome (self-hosted woff2).
+Front-end plugins actually wired into `includes/head.php` / `scripts.php`: AOS,
+Owl Carousel, Magnific Popup, Swiper, FontAwesome (self-hosted woff2), plus
+Bootstrap's own JS. The Roofer theme's `main.css` / `main.js` and the Slick /
+Nice Select plugins still sit in `assets/css/plugins` and `assets/js/plugins`
+but are not linked from any page — a file existing there doesn't mean it's
+active; check `head.php` and `scripts.php` before assuming a plugin is loaded.
 
 ## Layout
 
@@ -51,8 +55,8 @@ Magnific Popup, Nice Select, FontAwesome (self-hosted woff2).
 │   ├── includes/            shared admin helpers
 │   └── PHPMailer/
 ├── assets/
-│   ├── css/                 main.css (theme) · cgs.css (brand) · plugins/ · fonts/
-│   ├── js/                  main.js (theme) · cgs.js (site) · plugins/
+│   ├── css/                 main.css (theme, unused) · cgs.css (brand, active) · plugins/ · fonts/
+│   ├── js/                  main.js (theme, unused) · cgs.js (site, active) · plugins/
 │   ├── img/                 logo/ hero/ services/ fleet/ gallery/ icons/ bg/ resources/
 │   └── video/               cgs-home-intro.mp4
 ├── uploads/                 admin-uploaded media — writable, gitignored
@@ -61,6 +65,42 @@ Magnific Popup, Nice Select, FontAwesome (self-hosted woff2).
 ├── client_assets/           client-supplied originals — READ ONLY
 └── reference/roofer/        reference theme + its SQL dump — READ ONLY
 ```
+
+## Architecture
+
+Every public page's first line is `require_once __DIR__ . '/includes/bootstrap.php';`,
+which does all the real setup — nothing else does:
+
+- Starts the session, opens `$pdo` (via `admin/config/db.php`), and derives
+  `BASE_URL` from `$_SERVER['SCRIPT_NAME']` so the site works unedited at a
+  domain root or in a subfolder.
+- Defines the helpers templates use throughout: `e()` (escape), `url()`
+  (root-relative + escaped), `current_page()` / `nav_active()` (nav
+  highlighting), `tel_link()`, `excerpt()`, and `db_all()` — a query wrapper
+  that logs and returns `[]` instead of throwing when a table doesn't exist
+  yet, so pages still render during setup, before `schema.sql` has been
+  imported.
+- Loads `$settings` (single-row table) and fills any NULL/missing column from
+  `$settingDefaults` in a loop (not `+=` — every column already exists once
+  the row does, just possibly NULL, and `+=` only fills keys that are
+  *absent*), so header/footer/hero render sensible copy before the client has
+  touched the admin. Loads `$services` (active, sorted) once for the nav
+  dropdown, mobile menu and footer to share.
+- Derives `$phoneTel`, `$phone247Tel`, `$whatsappLink`, `$socialPlatforms`
+  from `$settings`, so no template re-parses a phone number or checks which
+  social links are configured.
+
+Schema tables (`database/schema.sql`): `users`, `settings`, `hero_slides`,
+`services`, `service_sections`, `fleet_items`, `resources`, `certificates`,
+`gallery`, `page_blocks`, `faqs`, `leads`.
+
+`landing.php` is a standalone design concept ("Hyer"), not part of the
+day-to-day build — it deliberately skips `head.php` / `header.php` /
+`footer.php` and loads its own `assets/css/landing-hyer.css` /
+`assets/js/landing-hyer.js` instead of `cgs.css`, scoped under
+`body.page-hyer`. It still calls `includes/bootstrap.php` for
+`$settings`/`$services`. Don't "fix" it to match the shared-includes rule
+below — staying separate is the point of it.
 
 ## Conventions
 
@@ -80,10 +120,12 @@ is admin rich-text (`service_sections.body`, `resources.content`,
 **Prepared statements only.** PDO with bound parameters, no string interpolation
 into SQL. `PDO::ATTR_EMULATE_PREPARES` is off.
 
-**CSS goes in `cgs.css`.** Never edit `main.css` (650 KB of theme system, kept
-pristine so components stay predictable) and never write inline `<style>` blocks
-in pages — Roofer has 450+ lines of inline CSS per page; do not reproduce that.
-Use the `--cgs-*` custom properties rather than hard-coded hex values.
+**CSS goes in `cgs.css`.** Never edit `main.css` — it's not even linked from
+any page (see Stack), kept only as a copy-from reference, so changing it would
+have zero effect and just cost the next person time figuring that out. Never
+write inline `<style>` blocks in pages either — Roofer has 450+ lines of
+inline CSS per page; do not reproduce that. Use the `--cgs-*` custom
+properties rather than hard-coded hex values.
 
 **Content comes from the database, not from markup.** Services, fleet items,
 resources, gallery, FAQs and the editable page copy all live in tables so the
@@ -173,8 +215,13 @@ convention per page.
 - `database/schema.sql` is re-runnable (`CREATE TABLE IF NOT EXISTS`,
   `INSERT IGNORE`). Schema changes go in that file, not in ad-hoc migrations —
   there is no migration tool.
-- Local development: PHP 8 + MySQL on `localhost`; `db.php` switches to the
-  production credentials by hostname, so no file edit is needed to deploy.
-- There is no test suite and no linter. Verify changes by loading the page.
-- Not currently a git repository. A `.gitignore` is in place for when it becomes
-  one — it excludes `client_assets/`, `reference/`, `uploads/` and local config.
+- Local development: PHP 8 + MySQL, served locally as `http://site3.test/`
+  (Herd/Valet-style `.test` domain) or `localhost`; `db.php` detects which by
+  hostname and switches credentials accordingly, so no file edit is needed to
+  deploy.
+- There is no test suite, no linter, and no build step. Verify changes by
+  running `php -l <file>.php` (catches syntax errors) and then loading the
+  page — there's nothing else to run.
+- `main` is on GitHub (`origin`); work happens on feature branches
+  (`redesign/*`, `concept/*`) merged into `redesign/home`. `.gitignore`
+  excludes `client_assets/`, `reference/`, `uploads/` and local config.

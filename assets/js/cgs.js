@@ -156,16 +156,20 @@
      move; the CTA, the facts card and the layout are fixed, so autoplay never
      shifts a target the visitor is reaching for.
 
-     No visible pagination/arrow/pause controls by request. Autoplay still
-     pauses on hover, on keyboard focus, and while the tab or section is
-     off-screen, and it never starts at all under reduced motion — the
-     automatic-only mitigations WCAG 2.2.2 allows in place of a manual
-     control, though a manual one is the more robust option if this changes. */
+     Clickable dot pagination gives sighted users the same "how many, which
+     one" visibility the services section already provides a few scrolls
+     later — the two carousels on this page now match instead of one being
+     silent. Autoplay still pauses on hover, on keyboard focus, and while
+     the tab or section is off-screen, and it never starts at all under
+     reduced motion — WCAG 2.2.2's automatic-only mitigations, kept as a
+     second layer on top of the manual control rather than a substitute
+     for it. */
   var heroEl = document.querySelector('[data-hero-swiper]');
 
   if (heroEl && typeof window.Swiper === 'function') {
     var slideCount = heroEl.querySelectorAll('.swiper-slide').length;
     var autoplayOn = slideCount > 1 && !reduceMotion.matches;
+    var heroPaginationEl = heroEl.querySelector('.cgs-hero__pagination');
 
     var heroSwiper = new Swiper(heroEl, {
       loop: slideCount > 1,
@@ -178,6 +182,9 @@
          it is the first thing dropped under reduced motion (see CSS). */
       autoplay: autoplayOn
         ? { delay: 6000, disableOnInteraction: false, pauseOnMouseEnter: true }
+        : false,
+      pagination: (slideCount > 1 && heroPaginationEl)
+        ? { el: heroPaginationEl, clickable: true }
         : false,
       a11y: { enabled: true },
       keyboard: { enabled: true, onlyInViewport: true }
@@ -353,5 +360,67 @@
       }, { threshold: 0.25 }).observe(video);
     }
   });
+
+  /* --- Fleet split: the offset pair drops into place -----------------------
+     Purpose: the CSS already composes the two images as two objects at
+     different depths (the second one dropped lower and overlapping the
+     first — see .cgs-split__media's own comment). The entrance dramatises
+     that same idea instead of a generic fade: the back image settles
+     quietly in place, the front image visibly drops into its offset a
+     beat later, then the copy follows. One shot, CSS-driven off a single
+     class so there is nothing to keep in sync by hand. */
+  var splitMedia = document.querySelector('.cgs-split__media');
+
+  if (splitMedia) {
+    if (reduceMotion.matches || !('IntersectionObserver' in window)) {
+      splitMedia.classList.add('is-visible');
+    } else {
+      new IntersectionObserver(function (entries, observer) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) { return; }
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        });
+      }, { threshold: 0.2, rootMargin: '0px 0px -32px 0px' }).observe(splitMedia);
+    }
+  }
+
+  /* --- Operations gallery: a one-time scroll hint ---------------------------
+     Purpose: the gallery's only discovery cue is a partial next-image peek
+     at the row's right edge, which is easy to miss on a first pass. A
+     single nudge-and-settle on first view teaches "this scrolls" without
+     asking for a permanent affordance like arrows. Skipped outright if the
+     row already shows everything (nothing to discover), if the visitor has
+     already scrolled it themselves before this fires, and under reduced
+     motion — this moves real content, not decoration, so it gets the same
+     opt-out as anything else that travels across the screen. Fires once. */
+  var gallery = document.querySelector('.cgs-gallery');
+
+  if (gallery && !reduceMotion.matches && 'IntersectionObserver' in window) {
+    /* scroll-snap-type plus the row's own padding makes some browsers seat
+       scrollLeft at the padding value (not 0) before anyone has touched it,
+       so "untouched" is measured against that resting value, not a literal
+       zero. */
+    var galleryRestScrollLeft = gallery.scrollLeft;
+    new IntersectionObserver(function (entries, observer) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) { return; }
+        observer.unobserve(entry.target);
+        if (gallery.scrollWidth <= gallery.clientWidth) { return; }
+        if (gallery.scrollLeft !== galleryRestScrollLeft) { return; }
+        /* scroll-snap-type: x mandatory vetoes a scrollTo that doesn't land
+           on a snap point, so a peek this small needs snapping suspended for
+           the moment it plays. */
+        gallery.style.scrollSnapType = 'none';
+        gallery.scrollTo({ left: galleryRestScrollLeft + 56, behavior: 'smooth' });
+        window.setTimeout(function () {
+          gallery.scrollTo({ left: galleryRestScrollLeft, behavior: 'smooth' });
+          window.setTimeout(function () {
+            gallery.style.scrollSnapType = '';
+          }, 550);
+        }, 550);
+      });
+    }, { threshold: 0.4 }).observe(gallery);
+  }
 
 }());

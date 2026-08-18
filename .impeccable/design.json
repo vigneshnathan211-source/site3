@@ -1,0 +1,128 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-18T00:00:00Z",
+  "title": "Design System: Carriage Global (S) Pte Ltd",
+  "extensions": {
+    "colorMeta": {
+      "deep-navy":       { "role": "primary",   "displayName": "Deep Navy",       "canonical": "#082238" },
+      "navy-hover":      { "role": "primary",   "displayName": "Navy Hover",      "canonical": "#0E3A56" },
+      "ocean-blue":      { "role": "secondary", "displayName": "Ocean Blue",      "canonical": "#146B96" },
+      "ocean-blue-deep": { "role": "secondary", "displayName": "Ocean Blue Deep", "canonical": "#0F5378" },
+      "sea-blue":        { "role": "tertiary",  "displayName": "Sea Blue",        "canonical": "#2E9FD6" },
+      "sea-blue-light":  { "role": "tertiary",  "displayName": "Sea Blue Light",  "canonical": "#6FC6E9" },
+      "ink":             { "role": "neutral",   "displayName": "Ink",             "canonical": "#0E1726" },
+      "slate":           { "role": "neutral",   "displayName": "Slate",           "canonical": "#4A5568" },
+      "muted-slate":     { "role": "neutral",   "displayName": "Muted Slate",     "canonical": "#64708A" },
+      "hairline":        { "role": "neutral",   "displayName": "Hairline",        "canonical": "#E4E8EF" },
+      "surface-tint":    { "role": "neutral",   "displayName": "Surface Tint",    "canonical": "#F5F8FC" },
+      "white":           { "role": "neutral",   "displayName": "White",           "canonical": "#FFFFFF" },
+      "success-green":   { "role": "status",    "displayName": "Success Green (reserved)", "canonical": "#1E9E6A" },
+      "danger-red":      { "role": "status",    "displayName": "Danger Red (reserved)",    "canonical": "#D64550" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero headline only." },
+      "headline": { "displayName": "Headline", "purpose": "Section h2 headings sitewide." },
+      "title": { "displayName": "Title", "purpose": "Sub-headings inside components: card titles, approach-list step names." },
+      "body": { "displayName": "Body", "purpose": "Paragraph copy in section intros and descriptions." },
+      "label": { "displayName": "Label", "purpose": "Uppercase eyebrows and overline tags." }
+    },
+    "shadows": [
+      { "name": "ambient", "value": "0 8px 24px rgba(8, 34, 56, 0.08)", "purpose": "Low-emphasis elevation token; not currently used at rest anywhere (system is flat-at-rest by rule)." },
+      { "name": "lifted", "value": "0 16px 48px rgba(8, 34, 56, 0.14)", "purpose": "Hover/open state for cards, mobile nav panel, submenu dropdowns." },
+      { "name": "action", "value": "0 8px 20px rgba(8, 34, 56, 0.28)", "purpose": "Resting shadow unique to the primary button." },
+      { "name": "action-hover", "value": "0 12px 28px rgba(8, 34, 56, 0.36)", "purpose": "Primary button hover — deepened action shadow." }
+    ],
+    "motion": [
+      { "name": "ease-out", "value": "cubic-bezier(0.23, 1, 0.32, 1)", "purpose": "Default easing for nearly all UI transitions — entrances, hovers, lifts." },
+      { "name": "ease-in-out", "value": "cubic-bezier(0.77, 0, 0.175, 1)", "purpose": "Used for the hero photograph's slow drift animation only." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "575.98px" },
+      { "name": "md", "value": "767.98px" },
+      { "name": "lg", "value": "991.98px" },
+      { "name": "xl", "value": "1200px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The system's one confident action colour — deep navy fill, never the accent blue.",
+      "html": "<a class=\"ds-btn ds-btn-primary\" href=\"#\">Get a quote <svg class=\"ds-btn-icon\" viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M9 6l6 6-6 6\"/></svg></a>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; gap: 8px; padding: 15px 28px; border-radius: 4px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; font-size: 15px; line-height: 1; text-decoration: none; white-space: nowrap; transition: transform 160ms cubic-bezier(0.23,1,0.32,1), box-shadow 200ms cubic-bezier(0.23,1,0.32,1), background-color 200ms ease; } .ds-btn:active { transform: scale(0.97); } .ds-btn-icon { transition: transform 200ms cubic-bezier(0.23,1,0.32,1); } .ds-btn:hover .ds-btn-icon { transform: translateX(3px); } .ds-btn-primary { background: #082238; color: #fff; box-shadow: 0 8px 20px rgba(8,34,56,.28); } .ds-btn-primary:hover { background: #0E3A56; box-shadow: 0 12px 28px rgba(8,34,56,.36); transform: translateY(-2px); } .ds-btn-primary:focus-visible { outline: 3px solid #2E9FD6; outline-offset: 2px; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary action — transparent fill, hairline border, hover shifts to Ocean Blue.",
+      "html": "<a class=\"ds-btn ds-btn-ghost\" href=\"#\">Learn more</a>",
+      "css": ".ds-btn-ghost { background: transparent; color: #082238; border: 1.5px solid #E4E8EF; padding: 15px 28px; border-radius: 4px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; font-size: 15px; text-decoration: none; transition: border-color 200ms ease, color 200ms ease; } .ds-btn-ghost:hover { border-color: #146B96; color: #146B96; } .ds-btn-ghost:focus-visible { outline: 3px solid #2E9FD6; outline-offset: 2px; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Generic white card — flat at rest, lifts with a tinted shadow on hover.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-media\"><img src=\"https://picsum.photos/seed/cgs/640/400\" alt=\"\"></div><div class=\"ds-card-body\"><h3 class=\"ds-card-title\">Heavy Lift Chartering</h3><p class=\"ds-card-text\">Full-charter and part-charter heavy-lift vessel solutions for oversized, high-value cargo.</p></div></div>",
+      "css": ".ds-card { background: #fff; border: 1px solid #E4E8EF; border-radius: 4px; overflow: hidden; transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease; } .ds-card:hover { transform: translateY(-4px); border-color: transparent; box-shadow: 0 16px 48px rgba(8,34,56,.14); } .ds-card-media { aspect-ratio: 16/10; overflow: hidden; } .ds-card-media img { width: 100%; height: 100%; object-fit: cover; transition: transform 500ms ease; } .ds-card:hover .ds-card-media img { transform: scale(1.05); } .ds-card-body { padding: 24px; } .ds-card-title { margin: 0 0 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: -0.01em; color: #0E1726; } .ds-card-text { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14.5px; line-height: 1.65; color: #4A5568; }"
+    },
+    {
+      "name": "Eyebrow Label",
+      "kind": "chip",
+      "refersTo": "eyebrow-label",
+      "description": "Uppercase overline tag used above section headings and inside the hero.",
+      "html": "<span class=\"ds-eyebrow\">Project Freight Forwarding</span>",
+      "css": ".ds-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #146B96; }"
+    },
+    {
+      "name": "Primary Navigation",
+      "kind": "nav",
+      "description": "Sticky white header with an animated underline on hover/active — the desktop nav language the mobile dropdown panel mirrors.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link is-active\" href=\"#\">Home</a><a class=\"ds-nav-link\" href=\"#\">Our Fleet</a><a class=\"ds-nav-link\" href=\"#\">Services</a><a class=\"ds-nav-link\" href=\"#\">Contact Us</a></nav>",
+      "css": ".ds-nav { display: flex; align-items: center; gap: 4px; background: #fff; padding: 12px 8px; } .ds-nav-link { position: relative; display: inline-flex; align-items: center; padding: 18px 16px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15.5px; font-weight: 600; color: #0E1726; text-decoration: none; transition: color 200ms ease; } .ds-nav-link::after { content: ''; position: absolute; left: 16px; right: 16px; bottom: 0; height: 3px; background: linear-gradient(100deg, #2E9FD6 0%, #082238 100%); transform: scaleX(0); transform-origin: left; transition: transform 250ms ease; } .ds-nav-link:hover, .ds-nav-link.is-active { color: #146B96; } .ds-nav-link:hover::after, .ds-nav-link.is-active::after { transform: scaleX(1); }"
+    },
+    {
+      "name": "Services Bento Slide",
+      "kind": "custom",
+      "description": "Signature component: one service's content fills an asymmetric 4x3 grid (photo feature, description, secondary image, CTA, numbered index). The system's most distinctive pattern.",
+      "html": "<div class=\"ds-bento\"><a class=\"ds-bento-feature\" href=\"#\"><img src=\"https://picsum.photos/seed/cgs-feature/800/600\" alt=\"\"><span class=\"ds-bento-feature-title\">Project Freight Forwarding</span></a><div class=\"ds-bento-desc\"><p>End-to-end forwarding for project cargo, from route survey to final-mile delivery.</p></div><div class=\"ds-bento-icon\"><img src=\"https://picsum.photos/seed/cgs-secondary/400/500\" alt=\"\"></div><a class=\"ds-bento-cta\" href=\"#\">Read more →</a><div class=\"ds-bento-index\"><strong>01</strong><span>/ 05</span></div></div>",
+      "css": ".ds-bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, minmax(140px, 1fr)); gap: 16px; font-family: 'Plus Jakarta Sans', sans-serif; } .ds-bento-feature { grid-column: 1 / 3; grid-row: 1 / 4; position: relative; display: flex; align-items: flex-end; overflow: hidden; border-radius: 4px; background: #082238; text-decoration: none; } .ds-bento-feature img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; } .ds-bento-feature-title { padding: 22px; font-size: 26px; font-weight: 700; color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,.55); } .ds-bento-desc { grid-column: 3 / 5; grid-row: 1 / 2; background: #F5F8FC; border-radius: 4px; padding: 22px; display: flex; align-items: center; } .ds-bento-desc p { margin: 0; font-size: 14.5px; line-height: 1.65; color: #0E1726; opacity: .82; } .ds-bento-icon { grid-column: 3 / 4; grid-row: 2 / 4; border-radius: 4px; overflow: hidden; } .ds-bento-icon img { width: 100%; height: 100%; object-fit: cover; } .ds-bento-cta { grid-column: 4 / 5; grid-row: 2 / 3; display: flex; align-items: flex-end; justify-content: space-between; background: #2E9FD6; color: #082238; border-radius: 4px; padding: 22px; font-weight: 700; font-size: 15px; text-decoration: none; transition: background-color 220ms ease; } .ds-bento-cta:hover { background: #6FC6E9; } .ds-bento-index { grid-column: 4 / 5; grid-row: 3 / 4; display: flex; align-items: flex-end; justify-content: flex-end; gap: 3px; background: #0E3A56; color: #fff; border-radius: 4px; padding: 22px; } .ds-bento-index strong { font-size: 36px; font-weight: 800; line-height: 1; } .ds-bento-index span { font-size: 14px; font-weight: 600; opacity: .6; padding-bottom: 3px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Sea Blue, Logo True",
+    "overview": "This palette is not invented. It is the client's own logo — a left-to-right gradient from a light sea-blue into a deep navy — extended into a full interface system. Deep Navy is the dark end of that gradient and does almost all of the work: button fills, the top bar, the footer, every dark section. Sea Blue is the light end, and it is deliberately rare: reserved for links, icons, and focus rings, with exactly one place on the entire home page (the accent CTA band) where it is allowed to fill a surface outright. Maersk's own site was sampled live as a second data point late in the process — not as inspiration to copy, but as industry validation that a deep-navy-primary / sea-blue-accent hierarchy with no warm colour anywhere is the right register for a shipping and project-logistics brand, not an idiosyncratic choice.\n\nThe system reads as confident rather than decorated: near-square 4px corners instead of soft consumer-app rounding, hairline borders doing most of the separating instead of ambient shadow, and photography that stays untouched by dark gradient overlays — legibility for white type comes from text-shadow alone, so the client's own operations photography is never dimmed to make room for a headline. Motion is brief and functional (sub-300ms transitions, a hard ease-out curve, no bounce) rather than atmospheric.",
+    "keyCharacteristics": [
+      "Two-colour brand axis only — Deep Navy and Sea Blue — with zero warm hue anywhere in the system.",
+      "Sea Blue's rarity is enforced: one fill use on the whole page; everywhere else it is a link, an icon, or a focus ring.",
+      "Flat by default; shadow appears only as hover/interaction feedback, always tinted navy, never pure black.",
+      "One radius (4px) for every rectangle; fully-round shapes (pill, circle) are reserved for tags, badges, and icon buttons.",
+      "No scrims over photography — text-shadow carries legibility instead, so the client's photos stay true."
+    ],
+    "rules": [
+      { "name": "The Single-Fill Rule", "body": "Sea Blue fills a surface in exactly one place on any given page. Everywhere else, it is confined to links, icons, focus rings, and small accents. Its rarity is what makes it read as a signal.", "section": "colors" },
+      { "name": "The No-Warm Rule", "body": "No hue outside the navy-to-sea-blue axis appears anywhere in the system — not in an icon, a badge, or a hover state. This was a deliberate late-stage removal (a provisional amber token was dropped entirely once Maersk's own all-blue palette confirmed the direction); nothing should reintroduce warmth.", "section": "colors" },
+      { "name": "The Balance Rule", "body": "Every multi-word heading in the system carries text-wrap: balance. A ragged one-word widow on the last line is treated as a bug, not a rounding error.", "section": "typography" },
+      { "name": "The Flat-at-Rest Rule", "body": "Nothing carries a shadow in its default state. Shadow only appears as a direct response to hover, focus, or an open state — it is feedback, not decoration.", "section": "elevation" },
+      { "name": "The Tinted-Shadow Rule", "body": "Every shadow in the system is rgba(8, 34, 56, …) — navy, at varying opacity — never pure black. A generic rgba(0,0,0,…) shadow does not belong in this system.", "section": "elevation" },
+      { "name": "The No-Scrim Rule", "body": "Photography (hero, video band, service feature cards) never sits behind a dark gradient overlay to buy text legibility. text-shadow does that work instead — a deliberate removal from an earlier iteration, so the client's own photography reads at full brightness.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep Sea Blue (#2E9FD6) to at most one fill use per page; everywhere else, restrict it to links, icons, and focus rings (the Single-Fill Rule).",
+      "Do use text-shadow — never a gradient scrim — when white type sits directly on a photograph (the No-Scrim Rule).",
+      "Do keep every shadow navy-tinted (rgba(8, 34, 56, …)) and reserved for hover/interaction states, never applied at rest (the Flat-at-Rest and Tinted-Shadow Rules).",
+      "Do use the 4px radius on every rectangular surface; reserve pill and full-circle shapes for tags, badges, and icon-only buttons.",
+      "Do give every pressable element a scale(0.97) active state and a hover lift gated behind (hover: hover) and (pointer: fine).",
+      "Do route services, fleet items, resources, gallery images, and FAQ copy through the database tables rather than hard-coding them — the CMS exists so the client can edit this content without a developer."
+    ],
+    "donts": [
+      "Don't introduce a second accent hue or any warm colour. The system's entire brand axis is Deep Navy to Sea Blue; Maersk's own all-blue palette was used as industry confirmation of this, not as a source to copy from (the No-Warm Rule).",
+      "Don't add a dark gradient or scrim behind hero, video-band, or service-card photography — that pattern was deliberately removed in favour of text-shadow.",
+      "Don't mix border-radius scales. There is one rectangle radius (4px) in the entire system; do not introduce an 8–16px \"soft card\" variant alongside it.",
+      "Don't edit assets/css/main.css expecting it to change anything on the live site — it is not linked from any page (cgs.css is the only stylesheet that reaches the browser as brand CSS).",
+      "Don't use ease-in for interface motion. Only --ease-out (cubic-bezier(0.23, 1, 0.32, 1)) and --ease-in-out are defined; ease-in delays exactly the first frame the user is watching."
+    ]
+  }
+}

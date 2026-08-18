@@ -17,11 +17,14 @@
 |   7. Sectors             inline chip list
 |   8. CTA                 centred band on navy
 |
-| Copy status: hero, approach, fleet and CTA text is PLACEHOLDER. The client
-| has supplied homepage copy for none of it (docs/CONTENT.md). The service
-| blurbs and the sector list are real, taken from the client's own emails and
-| the old site. Nothing here asserts a fleet size, tonnage, headcount or
-| project reference that was not supplied.
+| Copy status: the approach section is verbatim from the client's Project
+| Freight Forwarding email (docs/CONTENT.md); the service blurbs and the
+| sector list are real, taken from the client's own emails and the old
+| site; the fleet/lashing/yard capability copy is confirmed accurate by the
+| client. Hero and CTA copy is original marketing phrasing written for this
+| build rather than a client quote, but it asserts no fleet size, tonnage,
+| headcount or project reference that was not supplied — nothing on this
+| page states an unverified fact.
 */
 
 require_once __DIR__ . '/includes/bootstrap.php';
@@ -157,6 +160,9 @@ require __DIR__ . '/includes/header.php';
         <?php endforeach; ?>
       </div>
 
+      <?php if (count($heroSlides) > 1): ?>
+      <div class="swiper-pagination cgs-hero__pagination"></div>
+      <?php endif; ?>
     </div>
 
     <!-- Floating card, static across all slides: the facts do not belong to
@@ -190,7 +196,14 @@ require __DIR__ . '/includes/header.php';
   </section>
 
   <!-- 2 ── VIDEO BAND ───────────────────────────────────────
-       The brief places a video section directly after the hero.
+       The brief places a video section directly after the hero. The
+       current clip (assets/video/cgs-home-intro.mp4) is AI-generated —
+       see docs/ASSET-INVENTORY.md's own pre-go-live note asking the
+       client to confirm this is acceptable given the rest of the site is
+       real operations photography. Until that's confirmed, the visible
+       disclosure below keeps this honest rather than presenting an
+       AI clip as documentary footage; remove it once real footage lands
+       or the client signs off on the AI clip.
        Muted + playsinline so mobile permits autoplay; cgs.js pauses
        it off-screen and honours prefers-reduced-motion. -->
   <section class="cgs-video-band" aria-label="Carriage Global operations">
@@ -200,6 +213,7 @@ require __DIR__ . '/includes/header.php';
       poster="<?php echo url($settings['hero_video_poster']); ?>"
       <?php endif; ?>
       autoplay muted loop playsinline preload="metadata"></video>
+    <p class="cgs-video-band__disclosure">Concept visualization — final operations footage pending</p>
     <div class="cgs-video-band__overlay">
       <div class="container-fluid px-4">
         <h2>From the packing list to the final site</h2>
@@ -350,8 +364,8 @@ require __DIR__ . '/includes/header.php';
   </section>
 
   <!-- 5 ── FLEET TEASER ─────────────────────────────────────
-       Two-image split. Copy is placeholder: the client has supplied
-       nothing for the fleet, lashing or yard. -->
+       Two-image split. In-house trailers, lashing crew and open yard are
+       confirmed accurate by the client — no longer placeholder. -->
   <section class="cgs-section">
     <div class="container-fluid px-4">
       <div class="cgs-split">
@@ -364,7 +378,7 @@ require __DIR__ . '/includes/header.php';
                loading="lazy" width="700" height="900">
         </div>
 
-        <div class="cgs-split__body">
+        <div class="cgs-split__body" data-reveal style="--reveal-delay: 280ms">
           <h2>Our own trailers, our own lashing crew</h2>
           <p>
             Owning the equipment and the people who secure the cargo removes the

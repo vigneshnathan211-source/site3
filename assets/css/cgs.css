@@ -36,7 +36,7 @@
   /* Neutrals */
   --cgs-ink:       #0E1726;   /* headings and body text */
   --cgs-slate:     #4A5568;   /* secondary text */
-  --cgs-muted:     #7A869A;
+  --cgs-muted:     #64708A;   /* darkened from the original #7A869A — that value measured 3.7:1 on white, below WCAG AA's 4.5:1; this passes at ~5:1 */
   --cgs-line:      #E4E8EF;   /* hairlines, card borders */
   --cgs-surface:   #F5F8FC;   /* tinted section backgrounds */
   --cgs-white:     #FFFFFF;
@@ -417,6 +417,30 @@ a:hover { color: var(--cgs-navy-700); }
   .cgs-hero__facts ul { grid-template-columns: 1fr; gap: 16px; }
 }
 
+/* Hero pagination — the same "how many, which one" visibility the services
+   section gives a few scrolls later. Swiper positions this absolutely at
+   the container's own bottom by default, which is fine on mobile (the
+   facts card sits static, below the slide, not overlapping it) but needs
+   pushing up on tablet/desktop, where the facts card floats over the
+   slide's own bottom edge. */
+.cgs-hero__pagination {
+  bottom: 20px !important;
+}
+.cgs-hero__pagination .swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, .5);
+  opacity: 1;
+  transition: background-color 200ms var(--ease-out), transform 200ms var(--ease-out);
+}
+.cgs-hero__pagination .swiper-pagination-bullet-active {
+  background: var(--cgs-cyan-400);
+  transform: scale(1.25);
+}
+@media (min-width: 768px) {
+  .cgs-hero__pagination { bottom: clamp(120px, 16vw, 160px) !important; }
+}
+
 /* --- Homepage video band (the brief's 20-second section) ----------------- */
 
 .cgs-video-band {
@@ -428,6 +452,27 @@ a:hover { color: var(--cgs-navy-700); }
   width: 100%;
   height: clamp(320px, 56vw, 640px);
   object-fit: cover;
+}
+/* Honest disclosure, not a marketing badge: this clip is AI-generated
+   (docs/ASSET-INVENTORY.md), and this site's whole pitch rests on being
+   real and verifiable, so it does not get to pass as documentary footage.
+   Low-key by design — same translucent-navy-pill language as the hero
+   eyebrow, not a warning banner. Remove once real footage lands or the
+   client signs off on the AI clip. */
+.cgs-video-band__disclosure {
+  position: absolute;
+  z-index: 1;
+  right: clamp(16px, 3vw, 24px);
+  bottom: clamp(16px, 3vw, 24px);
+  margin: 0;
+  padding: 6px 12px;
+  background: rgba(8, 20, 40, .55);
+  border: 1px solid rgba(255, 255, 255, .2);
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, .82);
+  backdrop-filter: blur(4px);
 }
 /* Overlay ignores pointer events so the video's own controls stay reachable
    when autoplay is refused or reduced motion is on; the CTA re-enables them. */
@@ -1504,6 +1549,21 @@ html.js [data-service-slide].is-active { display: grid; }
 .cgs-split__media img:first-child { aspect-ratio: 4 / 5; }
 .cgs-split__media img:last-child  { aspect-ratio: 3 / 4; margin-top: clamp(24px, 5vw, 56px); }
 
+/* Entrance dramatises the composition above rather than a generic fade:
+   the back image settles quietly in place; the front, overlapping image
+   visibly drops into its offset a beat later — cgs.js toggles one class
+   on first view, off entirely under reduced motion. */
+html.js .cgs-split__media img {
+  opacity: 0;
+  transition: opacity 620ms var(--ease-out), transform 620ms var(--ease-out);
+}
+html.js .cgs-split__media img:first-child { transform: scale(0.96); }
+html.js .cgs-split__media img:last-child {
+  transform: translateY(28px) scale(0.97);
+  transition-delay: 160ms;
+}
+html.js .cgs-split__media.is-visible img { opacity: 1; transform: none; }
+
 .cgs-split__body h2 {
   margin: 0 0 16px;
   font-size: clamp(26px, 3.4vw, 40px);
@@ -1659,6 +1719,8 @@ html.js [data-reveal].is-visible {
   .cgs-hero__slide.swiper-slide-active .cgs-hero__media img { animation: none; transform: none; }
   .cgs-hero__facts,
   .cgs-hero__facts-icon { animation: none; opacity: 1; transform: none; }
+  .cgs-hero__pagination .swiper-pagination-bullet-active { transform: none; }
+  html.js .cgs-split__media img { opacity: 1; transform: none; transition: none; }
   .cgs-mobile-panel { transition: opacity 120ms ease, visibility 120ms; transform: none; }
   .cgs-mobile-panel.is-open { transform: none; }
   .cgs-burger:active { transform: none; }
