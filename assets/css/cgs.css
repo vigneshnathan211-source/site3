@@ -1481,10 +1481,10 @@ html.js [data-service-slide].is-active { display: grid; }
 
 /* --- Accent CTA card ------------------------------------------------------
    Single-use, single-accent card ("Send us your packing list"), ported from
-   the "Hyer" landing concept's featured clay card. Full-bleed on the site's
-   one accent colour — deliberately the only place cyan is used as a fill
-   rather than a text/icon accent, so it stays a one-off, not a pattern. */
-.cgs-accent-cta { background: var(--cgs-cyan-400); }
+   the "Hyer" landing concept's featured clay card. Full-bleed on the same
+   --cgs-teal-500 used for the top bar and closing CTA card, so all three
+   read as one accent rather than three different blues. */
+.cgs-accent-cta { background: var(--cgs-teal-500); }
 .cgs-accent-cta__inner {
   padding-block: clamp(48px, 6vw, 72px);
   display: flex;
@@ -1506,7 +1506,7 @@ html.js [data-service-slide].is-active { display: grid; }
   margin: 0;
   font-size: 16px;
   line-height: 1.6;
-  color: rgba(8, 34, 56, .78);
+  color: #fff;
 }
 .cgs-accent-cta .cgs-btn--on-dark {
   background: var(--cgs-navy-900);
