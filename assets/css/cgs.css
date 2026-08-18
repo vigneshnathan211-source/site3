@@ -63,8 +63,9 @@
 
   /* Rhythm */
   --cgs-radius:    4px;        /* near-square corners read as industrial — Maersk's own buttons use the same 4px */
-  --cgs-shadow:    0 8px 24px rgba(8, 34, 56, 0.08);
-  --cgs-shadow-lg: 0 16px 48px rgba(8, 34, 56, 0.14);
+  --cgs-shadow:       0 8px 24px rgba(8, 34, 56, 0.08);
+  --cgs-shadow-lg:    0 16px 48px rgba(8, 34, 56, 0.14);
+  --cgs-shadow-float: 0 30px 70px -24px rgba(8, 34, 56, .55); /* heavier lift for elements meant to read as overlapping/floating, e.g. the closing CTA card */
   --cgs-section-y: clamp(56px, 7vw, 104px);
   --cgs-cta-overlap: clamp(48px, 6vw, 88px); /* how far the CTA card dips into the footer below it */
 }
@@ -1851,7 +1852,7 @@ main:has(> .cgs-cta:last-child) + .cgs-footer { padding-top: var(--cgs-cta-overl
   border-radius: clamp(20px, 2.4vw, 28px);
   background: radial-gradient(130% 160% at 100% 100%, var(--cgs-navy-900) 0%, var(--cgs-teal-500) 55%);
   color: #fff;
-  box-shadow: 0 30px 70px -24px rgba(8, 34, 56, .55);
+  box-shadow: var(--cgs-shadow-float);
 }
 .cgs-cta__card::before,
 .cgs-cta__card::after {
@@ -1870,15 +1871,21 @@ main:has(> .cgs-cta:last-child) + .cgs-footer { padding-top: var(--cgs-cta-overl
   background-repeat: no-repeat;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='100' viewBox='0 0 170 100'%3E%3Cpath d='M4 62 C22 16 46 16 58 44 C68 68 90 68 100 42 C107 24 107 10 96 6' stroke='white' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
 }
-/* Dashed orbit rings, sitting behind the actions column. */
+/* Dashed orbit rings, sitting behind the actions column. Colour comes from
+   background-color, not the SVG: the data URI only supplies shape through
+   a mask, so this stays on --cgs-cyan-400 if that token ever moves,
+   instead of quietly drifting like the old --cgs-accent amber did. */
 .cgs-cta__card::after {
   right: clamp(-30px, 3vw, 0px);
   bottom: clamp(-60px, -6vw, -30px);
   width: clamp(180px, 20vw, 260px);
   height: clamp(180px, 20vw, 260px);
   opacity: .55;
-  background-repeat: no-repeat;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'%3E%3Ccircle cx='130' cy='130' r='118' fill='none' stroke='%232E9FD6' stroke-width='1.5' stroke-dasharray='2 7'/%3E%3Ccircle cx='130' cy='130' r='84' fill='none' stroke='%232E9FD6' stroke-width='1.5' stroke-dasharray='2 6'/%3E%3C/svg%3E");
+  background-color: var(--cgs-cyan-400);
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'%3E%3Ccircle cx='130' cy='130' r='118' fill='none' stroke='%23000' stroke-width='1.5' stroke-dasharray='2 7'/%3E%3Ccircle cx='130' cy='130' r='84' fill='none' stroke='%23000' stroke-width='1.5' stroke-dasharray='2 6'/%3E%3C/svg%3E");
+          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'%3E%3Ccircle cx='130' cy='130' r='118' fill='none' stroke='%23000' stroke-width='1.5' stroke-dasharray='2 7'/%3E%3Ccircle cx='130' cy='130' r='84' fill='none' stroke='%23000' stroke-width='1.5' stroke-dasharray='2 6'/%3E%3C/svg%3E");
 }
 .cgs-cta__copy {
   position: relative;

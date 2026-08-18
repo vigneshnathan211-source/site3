@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `hero_bg_image`    VARCHAR(255) DEFAULT 'assets/img/bg/hero-bg.jpg',
   `hero_heading`     VARCHAR(255) DEFAULT 'Integrated Project Logistics, Engineered End to End',
   `hero_subheading`  TEXT         DEFAULT NULL,
-  `video_band_src`    VARCHAR(255) DEFAULT 'assets/video/cgs-video-band.mp4', -- the Video Band section below the hero, not the hero itself
+  `video_band_src`   VARCHAR(255) DEFAULT 'assets/video/cgs-video-band.mp4', -- the Video Band section below the hero, not the hero itself
   `video_band_poster` VARCHAR(255) DEFAULT NULL,
   `hero_bg_video`    VARCHAR(255) DEFAULT NULL, -- optional: plays behind the first hero slide instead of its image
 
