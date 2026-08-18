@@ -1896,12 +1896,18 @@ main:has(> .cgs-cta:last-child) + .cgs-footer { padding-top: var(--cgs-cta-overl
   color: #fff;
   text-wrap: balance;
 }
+/* Full opacity, not the usual muted white: this card's copy sits over the
+   lighter --cgs-teal-500 end of the gradient (reversed to lead with teal),
+   where dimmed white reads as low-contrast and hard to read. A faint
+   text-shadow keeps it legible even in the small strip where the gradient
+   passes back through a mid-tone. */
 .cgs-cta__card p {
   margin: 0;
   max-width: 50ch;
   font-size: 16.5px;
   line-height: 1.7;
-  color: rgba(255, 255, 255, .8);
+  color: #fff;
+  text-shadow: 0 1px 10px rgba(8, 34, 56, .35);
 }
 .cgs-cta__actions {
   position: relative;
