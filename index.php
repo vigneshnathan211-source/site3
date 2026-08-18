@@ -400,9 +400,22 @@ require __DIR__ . '/includes/header.php';
       </header>
     </div>
 
-    <div class="swiper cgs-partners__swiper" data-partners-swiper>
+    <?php
+    /* Swiper's loop mode needs the *real* slide count (before its own
+       internal duplication) to cover however many tiles fit on screen at
+       once, or it silently disables looping and the whole strip freezes
+       (see cgs.js) — on a wide enough monitor, more ~230px tiles fit than
+       there are partner logos. Repeating the same list into the DOM a few
+       times keeps that covered regardless of screen width, without
+       needing a second copy of the data itself. */
+    $partnersLoop = array_merge($partners, $partners, $partners);
+    ?>
+    <?php /* aria-hidden: the section's own aria-label already names the
+       purpose; without this a screen reader would read out each partner
+       name 3x now that the list is tripled for the loop-mode fix above. */ ?>
+    <div class="swiper cgs-partners__swiper" data-partners-swiper aria-hidden="true">
       <div class="swiper-wrapper">
-        <?php foreach ($partners as $partner): ?>
+        <?php foreach ($partnersLoop as $partner): ?>
         <div class="swiper-slide cgs-partners__slide">
           <span class="cgs-partners__tile">
             <img src="<?php echo url($partner['logo']); ?>"

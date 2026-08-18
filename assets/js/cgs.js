@@ -316,7 +316,18 @@
      here is meant to be read individually or interacted with — allowTouchMove
      is off for the same reason. Not initialised at all under reduced
      motion — this is pure decoration, so it falls back to the plain static
-     row the base Swiper CSS already lays out, no separate markup needed. */
+     row the base Swiper CSS already lays out, no separate markup needed.
+
+     With slidesPerView:'auto', Swiper needs the *real* slide count to cover
+     however many tiles fit on screen at once, or it silently disables loop
+     mode entirely and the whole strip freezes at translateX(0) — logged as
+     a console warning, not a thrown error, so it's easy to miss. On a big
+     enough monitor more of our ~230px tiles fit than there were partner
+     logos to begin with, which is why index.php renders the $partners list
+     repeated 3x into the DOM rather than relying on Swiper's own loop
+     duplication (loopAdditionalSlides pads the same side of that
+     comparison as the visible-tile estimate, so it can't fix a shortfall
+     in real slides — only more real slides can). */
   var partnersEl = document.querySelector('[data-partners-swiper]');
   if (partnersEl && !reduceMotion.matches && window.Swiper) {
     var partnersSlideCount = partnersEl.querySelectorAll('.swiper-slide').length;
