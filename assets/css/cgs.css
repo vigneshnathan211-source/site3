@@ -1252,7 +1252,6 @@ html.js [data-service-slide].is-active { display: grid; }
   font-size: 14.5px;
   line-height: 1.65;
   color: var(--cgs-ink);
-  opacity: .82;
   max-width: 46ch;
   margin: 0;
 }
@@ -1429,7 +1428,7 @@ html.js [data-service-slide].is-active { display: grid; }
   max-width: 52ch;
   font-size: 16px;
   line-height: 1.75;
-  color: var(--cgs-slate);
+  color: var(--cgs-ink);
 }
 
 .cgs-approach__list { margin: 0; padding: 0; list-style: none; counter-reset: none; }
@@ -1461,7 +1460,7 @@ html.js [data-service-slide].is-active { display: grid; }
 .cgs-approach__text span {
   font-size: 15px;
   line-height: 1.7;
-  color: var(--cgs-slate);
+  color: var(--cgs-ink);
   max-width: 56ch;
 }
 
@@ -1557,7 +1556,7 @@ html.js [data-service-slide].is-active { display: grid; }
   margin: 0;
   font-size: 14px;
   line-height: 1.6;
-  color: var(--cgs-slate);
+  color: var(--cgs-ink);
 }
 @media (max-width: 991.98px) {
   .cgs-values__grid { grid-template-columns: repeat(2, 1fr); }
@@ -1715,7 +1714,7 @@ html.js .cgs-split__media.is-visible img { opacity: 1; transform: none; }
   max-width: 52ch;
   font-size: 16px;
   line-height: 1.75;
-  color: var(--cgs-slate);
+  color: var(--cgs-ink);
 }
 
 .cgs-split__points { margin: 0 0 28px; padding: 0; list-style: none; }
@@ -1729,7 +1728,7 @@ html.js .cgs-split__media.is-visible img { opacity: 1; transform: none; }
 }
 .cgs-split__points li:hover { border-left-color: var(--cgs-cyan-400); }
 .cgs-split__points strong { font-size: 15.5px; font-weight: 700; color: var(--cgs-ink); }
-.cgs-split__points span { font-size: 14.5px; line-height: 1.65; color: var(--cgs-slate); }
+.cgs-split__points span { font-size: 14.5px; line-height: 1.65; color: var(--cgs-ink); }
 
 @media (max-width: 991.98px) {
   .cgs-split { grid-template-columns: 1fr; }
@@ -1956,7 +1955,7 @@ main:has(> .cgs-cta:last-child) + .cgs-footer { padding-top: var(--cgs-cta-overl
   margin: 0 0 12px;
   font-size: 14.5px;
   line-height: 1.75;
-  color: var(--cgs-slate);
+  color: var(--cgs-ink);
 }
 .cgs-faq__answer p:last-child { margin-bottom: 0; }
 
