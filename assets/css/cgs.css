@@ -1078,8 +1078,6 @@ a:hover { color: var(--cgs-navy-700); }
   letter-spacing: -0.025em;
   text-wrap: balance;
 }
-.cgs-section-head--dark h2 { color: #fff; }
-
 .cgs-textlink {
   display: inline-flex;
   align-items: center;
@@ -1770,12 +1768,10 @@ html.js .cgs-split__media.is-visible img { opacity: 1; transform: none; }
 
 /* --- Operations gallery -------------------------------------------------- */
 
-/* Overrides the shared .cgs-section--dark navy fill with --cgs-cyan-400,
-   just for this section — the approach section further up keeps navy. The
-   heading and arrows also flip from light-on-dark to dark-on-light below,
-   since white text on this lighter blue reads too low-contrast. */
-.cgs-gallery-section { background: var(--cgs-cyan-400); padding-bottom: clamp(40px, 5vw, 72px); }
-.cgs-gallery-section .cgs-section-head h2 { color: var(--cgs-navy-900); }
+/* Light tint, not the dark/accent fill this section carried before — same
+   token as the special-services section above it, so the page doesn't run
+   three plain-white sections in a row between the fleet teaser and FAQ. */
+.cgs-gallery-section { background: var(--cgs-surface); padding-bottom: clamp(40px, 5vw, 72px); }
 
 /* Arrows flank the frame; the frame itself is the Swiper instance. Arrows
    are flex-shrink: 0 so they keep their own footprint regardless of how
@@ -1808,9 +1804,8 @@ html.js .cgs-split__media.is-visible img { opacity: 1; transform: none; }
   .cgs-gallery .swiper-slide:hover img { transform: scale(1.03); }
 }
 
-/* Same circular-arrow shape as the services section's prev/next — now the
-   same dark-on-light palette too, since --cgs-cyan-400 is too light for
-   white borders/text to read clearly. */
+/* Same circular-arrow shape as the services section's prev/next, and the
+   same dark-on-light palette since this section's background is light too. */
 .cgs-gallery__arrow {
   display: grid;
   place-items: center;

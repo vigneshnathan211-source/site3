@@ -572,9 +572,9 @@ require __DIR__ . '/includes/header.php';
        autoplay steps through the photos on its own, same autoplay etiquette
        as the hero carousel (see cgs.js) — pauses on hover/focus and while
        off-screen, never starts under reduced motion. -->
-  <section class="cgs-section cgs-section--dark cgs-gallery-section">
+  <section class="cgs-section cgs-gallery-section">
     <div class="container-fluid px-4">
-      <header class="cgs-section-head cgs-section-head--dark">
+      <header class="cgs-section-head">
         <h2>Recent operations</h2>
       </header>
     </div>
