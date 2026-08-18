@@ -14,7 +14,7 @@
 |   4. The CGS approach    dark band, numbered editorial rows
 |   4b. Accent CTA card    single-accent band, "Send us your packing list"
 |   5. Fleet teaser        two-image split
-|   6. Operations gallery  horizontal scroll-snap
+|   6. Operations gallery  contained carousel, arrows either side + autoplay
 |   7. Sectors             inline chip list
 |   8. CTA                 centred band on navy
 |
@@ -438,7 +438,10 @@ require __DIR__ . '/includes/header.php';
   </section>
 
   <!-- 6 ── OPERATIONS GALLERY ───────────────────────────────
-       Horizontal scroll-snap. Breadth without a wall of equal tiles. -->
+       Contained carousel: dedicated prev/next arrows flank the frame and
+       autoplay steps through the photos on its own, same autoplay etiquette
+       as the hero carousel (see cgs.js) — pauses on hover/focus and while
+       off-screen, never starts under reduced motion. -->
   <section class="cgs-section cgs-section--dark cgs-gallery-section">
     <div class="container-fluid px-4">
       <header class="cgs-section-head cgs-section-head--dark">
@@ -446,15 +449,29 @@ require __DIR__ . '/includes/header.php';
       </header>
     </div>
 
-    <ul class="cgs-gallery" role="list">
-      <?php foreach ($galleryRows as $shot): ?>
-      <li>
-        <img src="<?php echo url($shot['image_path']); ?>"
-             alt="<?php echo e($shot['alt_text'] ?: 'Carriage Global project cargo operation'); ?>"
-             loading="lazy" width="720" height="540">
-      </li>
-      <?php endforeach; ?>
-    </ul>
+    <?php if ($galleryRows): ?>
+    <div class="cgs-gallery-carousel container-fluid px-4">
+      <button class="cgs-gallery__arrow cgs-gallery__arrow--prev" data-gallery-prev type="button" aria-label="Previous photo">
+        <i class="fa-solid fa-angle-left" aria-hidden="true"></i>
+      </button>
+
+      <div class="swiper cgs-gallery" data-gallery-swiper>
+        <div class="swiper-wrapper">
+          <?php foreach ($galleryRows as $shot): ?>
+          <div class="swiper-slide">
+            <img src="<?php echo url($shot['image_path']); ?>"
+                 alt="<?php echo e($shot['alt_text'] ?: 'Carriage Global project cargo operation'); ?>"
+                 loading="lazy" width="720" height="540">
+          </div>
+          <?php endforeach; ?>
+        </div>
+      </div>
+
+      <button class="cgs-gallery__arrow cgs-gallery__arrow--next" data-gallery-next type="button" aria-label="Next photo">
+        <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
+      </button>
+    </div>
+    <?php endif; ?>
   </section>
 
   <!-- 7 ── SECTORS ──────────────────────────────────────────

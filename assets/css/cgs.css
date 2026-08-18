@@ -1333,8 +1333,10 @@ html.js [data-service-slide].is-active { display: grid; }
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(180deg, rgba(8, 34, 56, .35), rgba(8, 34, 56, .85)),
-              rgba(20, 107, 150, .18);
+  /* Sky-blue wash (--cgs-cyan-400) instead of navy — still darkens toward
+     the bottom edge so the white "Read more" label stays legible. */
+  background: linear-gradient(180deg, rgba(46, 159, 214, .5), rgba(8, 34, 56, .88)),
+              rgba(46, 159, 214, .45);
 }
 .cgs-service-bento__cta-label { display: flex; align-items: center; gap: 6px; }
 .cgs-service-bento__cta i { transition: transform 220ms var(--ease-out); }
@@ -1618,24 +1620,27 @@ html.js .cgs-split__media.is-visible img { opacity: 1; transform: none; }
 
 .cgs-gallery-section { padding-bottom: clamp(40px, 5vw, 72px); }
 
-.cgs-gallery {
+/* Arrows flank the frame; the frame itself is the Swiper instance. Arrows
+   are flex-shrink: 0 so they keep their own footprint regardless of how
+   many photos are in the track. */
+.cgs-gallery-carousel {
   display: flex;
-  gap: 16px;
-  margin: 0;
-  padding: 0 clamp(16px, 3vw, 40px) 12px;
-  list-style: none;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, .28) transparent;
-  overscroll-behavior-x: contain;
+  align-items: center;
+  gap: clamp(10px, 1.6vw, 20px);
 }
-.cgs-gallery li {
-  flex: 0 0 auto;
+
+.cgs-gallery {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  padding-bottom: 4px;
+}
+.cgs-gallery .swiper-slide {
   width: clamp(240px, 30vw, 380px);
-  scroll-snap-align: start;
+  height: auto;
 }
 .cgs-gallery img {
+  display: block;
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
@@ -1643,11 +1648,36 @@ html.js .cgs-split__media.is-visible img { opacity: 1; transform: none; }
   transition: transform 400ms var(--ease-out);
 }
 @media (hover: hover) and (pointer: fine) {
-  .cgs-gallery li:hover img { transform: scale(1.03); }
+  .cgs-gallery .swiper-slide:hover img { transform: scale(1.03); }
 }
-.cgs-gallery::-webkit-scrollbar { height: 6px; }
-.cgs-gallery::-webkit-scrollbar-track { background: rgba(255, 255, 255, .08); border-radius: 3px; }
-.cgs-gallery::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, .28); border-radius: 3px; }
+
+/* Same circular-arrow shape as the services section's prev/next, but the
+   light-on-dark palette this section already uses for its heading. */
+.cgs-gallery__arrow {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  padding: 0;
+  border: 1.5px solid rgba(255, 255, 255, .32);
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 160ms var(--ease-out), background-color 200ms var(--ease-out),
+              border-color 200ms var(--ease-out), color 200ms var(--ease-out);
+}
+.cgs-gallery__arrow:active { transform: scale(0.94); }
+.cgs-gallery__arrow.swiper-button-disabled { opacity: .35; cursor: default; }
+@media (hover: hover) and (pointer: fine) {
+  .cgs-gallery__arrow:not(.swiper-button-disabled):hover {
+    background: #fff;
+    border-color: #fff;
+    color: var(--cgs-navy-900);
+  }
+}
 
 /* --- Sectors ------------------------------------------------------------- */
 
@@ -1743,15 +1773,15 @@ html.js [data-reveal].is-visible {
   .cgs-btn:active,
   .cgs-service-card:hover,
   .cgs-service-card:active,
-  .cgs-services__arrow:active { transform: none; }
+  .cgs-services__arrow:active,
+  .cgs-gallery__arrow:active { transform: none; }
   .cgs-service-card:hover .cgs-service-card__media img,
-  .cgs-gallery li:hover img { transform: none; }
+  .cgs-gallery .swiper-slide:hover img { transform: none; }
   .cgs-service-bento__cta:hover i,
   .cgs-service-bento__cta:hover .cgs-service-bento__cta-media img { transform: none; }
   .cgs-btn:hover i,
   .cgs-textlink:hover i,
   .cgs-topbar__contact:hover i { transform: none; }
-  .cgs-gallery { scroll-behavior: auto; }
 }
 
 /* --- Focus visibility ---------------------------------------------------- */

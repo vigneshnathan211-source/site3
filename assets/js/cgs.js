@@ -411,42 +411,54 @@
     }
   }
 
-  /* --- Operations gallery: a one-time scroll hint ---------------------------
-     Purpose: the gallery's only discovery cue is a partial next-image peek
-     at the row's right edge, which is easy to miss on a first pass. A
-     single nudge-and-settle on first view teaches "this scrolls" without
-     asking for a permanent affordance like arrows. Skipped outright if the
-     row already shows everything (nothing to discover), if the visitor has
-     already scrolled it themselves before this fires, and under reduced
-     motion — this moves real content, not decoration, so it gets the same
-     opt-out as anything else that travels across the screen. Fires once. */
-  var gallery = document.querySelector('.cgs-gallery');
+  /* --- Operations gallery: contained carousel --------------------------------
+     Purpose: the same photography as a paced, one-frame-at-a-time carousel
+     instead of a free scroll strip — dedicated prev/next arrows flank the
+     frame for manual control, and autoplay steps it on its own. Same
+     autoplay etiquette as the hero carousel above: pauses on hover, on
+     keyboard focus, and while the section is off-screen, and never starts
+     at all under reduced motion. */
+  var galleryEl = document.querySelector('[data-gallery-swiper]');
 
-  if (gallery && !reduceMotion.matches && 'IntersectionObserver' in window) {
-    /* scroll-snap-type plus the row's own padding makes some browsers seat
-       scrollLeft at the padding value (not 0) before anyone has touched it,
-       so "untouched" is measured against that resting value, not a literal
-       zero. */
-    var galleryRestScrollLeft = gallery.scrollLeft;
-    new IntersectionObserver(function (entries, observer) {
-      entries.forEach(function (entry) {
-        if (!entry.isIntersecting) { return; }
-        observer.unobserve(entry.target);
-        if (gallery.scrollWidth <= gallery.clientWidth) { return; }
-        if (gallery.scrollLeft !== galleryRestScrollLeft) { return; }
-        /* scroll-snap-type: x mandatory vetoes a scrollTo that doesn't land
-           on a snap point, so a peek this small needs snapping suspended for
-           the moment it plays. */
-        gallery.style.scrollSnapType = 'none';
-        gallery.scrollTo({ left: galleryRestScrollLeft + 56, behavior: 'smooth' });
-        window.setTimeout(function () {
-          gallery.scrollTo({ left: galleryRestScrollLeft, behavior: 'smooth' });
-          window.setTimeout(function () {
-            gallery.style.scrollSnapType = '';
-          }, 550);
-        }, 550);
+  if (galleryEl && typeof window.Swiper === 'function') {
+    var gallerySlideCount = galleryEl.querySelectorAll('.swiper-slide').length;
+    var galleryAutoplayOn = gallerySlideCount > 1 && !reduceMotion.matches;
+
+    var gallerySwiper = new Swiper(galleryEl, {
+      loop: gallerySlideCount > 2,
+      slidesPerView: 'auto',
+      spaceBetween: 16,
+      speed: reduceMotion.matches ? 0 : 500,
+      grabCursor: gallerySlideCount > 1,
+      watchOverflow: true,
+      autoplay: galleryAutoplayOn
+        ? { delay: 3200, disableOnInteraction: false, pauseOnMouseEnter: true }
+        : false,
+      navigation: {
+        prevEl: document.querySelector('[data-gallery-prev]'),
+        nextEl: document.querySelector('[data-gallery-next]')
+      },
+      a11y: { enabled: true },
+      keyboard: { enabled: true, onlyInViewport: true }
+    });
+
+    if ('IntersectionObserver' in window && galleryAutoplayOn) {
+      new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!gallerySwiper.autoplay) { return; }
+          if (entry.isIntersecting) { gallerySwiper.autoplay.start(); }
+          else { gallerySwiper.autoplay.stop(); }
+        });
+      }, { threshold: 0.2 }).observe(galleryEl);
+    }
+
+    if (galleryAutoplayOn) {
+      galleryEl.addEventListener('focusin', function () { gallerySwiper.autoplay.stop(); });
+      galleryEl.addEventListener('focusout', function (event) {
+        if (galleryEl.contains(event.relatedTarget)) { return; }
+        gallerySwiper.autoplay.start();
       });
-    }, { threshold: 0.4 }).observe(gallery);
+    }
   }
 
 }());
