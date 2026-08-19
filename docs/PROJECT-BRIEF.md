@@ -41,7 +41,7 @@ place. See *Deviations from the Roofer theme* below for what changes.
 | 7 | Chartering Heavy Lift & Semi-Geared Vessels | `heavy-lift-chartering.php` | ✅ supplied verbatim |
 | 8 | Chartering Tug & Barge | `tug-and-barge-chartering.php` | ❌ not supplied |
 | 9 | Roll On / Roll Off | `roll-on-roll-off.php` | ❌ not supplied |
-| 10 | Air Freight | `air-freight.php` | ❌ copy missing (images supplied) |
+| 10 | Air Freight | `air-freight.php` | ✅ supplied verbatim |
 
 ### Supporting pages (not counted in the brief, still required)
 
@@ -127,16 +127,17 @@ The Roofer build is the reference, not the target. These things change:
 
 ## Content status
 
-Two of ten pages have client copy. See [`CONTENT.md`](CONTENT.md) for the full
+Three of ten pages have client copy. See [`CONTENT.md`](CONTENT.md) for the full
 breakdown and exactly what to request.
 
 | Have | Missing |
 |---|---|
-| Project Freight Forwarding (full) | Tug & Barge, RoRo, Air Freight copy |
+| Project Freight Forwarding (full) | Tug & Barge, RoRo copy |
 | Heavy Lift Chartering (full) | Our Fleet (all three blocks) |
-| Company facts, from the old site | All five Resources topics |
-| 105 operations photos | Homepage hero + about copy |
-| Logo (JPEG), 20 s video | ISO certificate scan, General T&Cs document |
+| Air Freight (full) | All five Resources topics |
+| Company facts, from the old site | Homepage hero + about copy |
+| 105 operations photos | ISO certificate scan, General T&Cs document |
+| Logo (JPEG), 20 s video | |
 
 **Build with real structure and clearly-marked placeholder copy**, so the pages
 are ready to receive text the moment it arrives. Do not invent facts about
@@ -149,8 +150,8 @@ verifiable claims a logistics buyer will check.
    to ten (5 primary + 5 service). Is the Services overview page not counted, or
    is one of the five service pages being dropped?
 2. **Resources structure.** One page with five sections (assumed), or five pages?
-3. **Missing copy.** Tug & Barge, RoRo, Air Freight, Our Fleet, all five
-   Resources topics, homepage. Should CGS write it, or is copywriting in scope?
+3. **Missing copy.** Tug & Barge, RoRo, Our Fleet, all five Resources topics,
+   homepage. Should CGS write it, or is copywriting in scope?
 4. **Logo files.** Vector or transparent PNG, plus a white version for the dark
    footer. The supplied JPEG has a white background.
 5. **Video.** Is the AI-generated clip final, or is real operations footage coming?

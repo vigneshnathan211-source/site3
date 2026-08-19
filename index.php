@@ -346,7 +346,7 @@ require __DIR__ . '/includes/header.php';
     <div class="cgs-services-pin__sticky">
       <div class="container-fluid px-4">
         <header class="cgs-section-head">
-          <h2>What we move, and how</h2>
+          <h2>Our Services</h2>
           <div class="cgs-section-head__right">
             <a href="<?php echo url('services.php'); ?>" class="cgs-textlink">
               All services <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
@@ -366,6 +366,13 @@ require __DIR__ . '/includes/header.php';
 
         <?php if ($services): ?>
         <div class="cgs-services-pin__stage" data-services-stage>
+          <?php /* Plain wrapper in the markup, no classes — cgs.js promotes
+             this to a real .swiper-wrapper (and each slide to .swiper-slide)
+             only while the carousel below 992px is active, so the swiper
+             CSS's own display:flex never touches the desktop pin/crossfade
+             layout or the no-JS fallback (every service stacked in normal
+             flow), both of which rely on it staying an inert div. */ ?>
+          <div data-services-track>
           <?php foreach ($services as $i => $svc):
             $num       = str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT);
             $total     = str_pad((string) count($services), 2, '0', STR_PAD_LEFT);
@@ -415,6 +422,7 @@ require __DIR__ . '/includes/header.php';
 
           </div>
           <?php endforeach; ?>
+          </div>
         </div>
 
         <div class="cgs-services-pin__track" aria-hidden="true">

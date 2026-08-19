@@ -177,8 +177,9 @@ which uses Bootstrap's offcanvas for its mobile menu; ours does not.
 
 ## Content rules
 
-Only two of ten pages have client copy (Project Freight Forwarding and Heavy Lift
-Chartering; both are reproduced verbatim in `docs/CONTENT.md`).
+Only three of ten pages have client copy (Project Freight Forwarding, Heavy Lift
+Chartering, and Air Freight; all three are reproduced verbatim in
+`docs/CONTENT.md`).
 
 Build the remaining pages with real structure and **visibly marked placeholder
 copy**, so they are ready the moment text arrives. Do not invent facts — fleet

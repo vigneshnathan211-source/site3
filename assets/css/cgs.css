@@ -420,8 +420,9 @@ a:hover { color: var(--cgs-navy-700); }
 .cgs-video-band__frame video {
   display: block;
   width: 100%;
-  height: clamp(220px, 34vw, 420px);
-  object-fit: cover;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  object-fit: contain;
 }
 
 /* --- Cards --------------------------------------------------------------- */
@@ -1131,14 +1132,16 @@ a:hover { color: var(--cgs-navy-700); }
 .cgs-services-pin.is-pinned .cgs-section-head,
 .cgs-services-pin.is-pinned .cgs-services-pin__track { flex-shrink: 0; }
 
-/* Default JS behaviour (no pin — mobile, tablet, or reduced motion): the
-   arrows show/hide the active slide in normal block flow, so the stage's
-   height simply follows whichever service is showing, including a taller
-   mobile-stacked grid. No transition here; only the pinned, scroll-driven
-   version below is worth the crossfade cost. Without JS at all, neither
-   rule applies and every service's grid stacks and shows at once. */
-html.js [data-service-slide] { display: none; margin: 0; }
-html.js [data-service-slide].is-active { display: grid; }
+/* Default JS behaviour (no pin, no carousel — desktop with reduced motion
+   only, now that the sub-992px case runs the swiper below instead): the
+   arrows show/hide the active slide in normal block flow. Scoped off of
+   :not(.swiper-initialized) so it steps aside the moment cgs.js turns the
+   stage into a real carousel — Swiper needs every slide actually laid out
+   to compute its own widths, and this display:none would zero them out.
+   Without JS at all, neither rule applies (no .js class, no swiper either)
+   and every service's grid stacks and shows at once. */
+html.js [data-services-stage]:not(.swiper-initialized) [data-service-slide] { display: none; margin: 0; }
+html.js [data-services-stage]:not(.swiper-initialized) [data-service-slide].is-active { display: grid; }
 
 /* Pinned behaviour: every slide stays laid out, absolutely stacked on top
    of each other, and crossfades via opacity/transform as scroll progress
@@ -1336,34 +1339,75 @@ html.js [data-service-slide].is-active { display: grid; }
 .cgs-service-bento__index span { font-size: 14px; font-weight: 600; opacity: .6; padding-bottom: 3px; }
 
 /* The asymmetric desktop placement is line-number-based (grid-column:
-   3 / 5 etc.), which only means anything against the desktop 4-col x
-   3-row track. Below that, every cell resets to natural single-column
-   flow — the "except numbers" tile keeps its content, just not its
-   desktop position. */
+   3 / 5 etc.) against a 4-col x 3-row track sized to fill the pinned
+   sticky viewport — neither the grid nor the pin exists below 992px
+   (cgs.js only pins at min-width:992px), so squeezing the same five
+   tiles into one column just produced mismatched cell heights and, on
+   the description cell specifically, a large dead gap (its row height
+   was driven by the tall secondary photo next to it, not its own
+   short text). Below 992px every service collapses to one plain card
+   instead: image, title, description, a plain "Read more" link. The
+   secondary "general operations" photo (decorative, not tied to the
+   specific service — see the PHP template comment) is dropped rather
+   than resized, and the numbered index becomes a small pill over the
+   image instead of its own full-width tile. */
 @media (max-width: 991.98px) {
   .cgs-service-bento {
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: none;
+    display: block;
+    position: relative;
+    height: auto;
+    background: #fff;
+    border: 1px solid var(--cgs-line);
+    border-radius: var(--cgs-radius);
+    overflow: hidden;
+    box-shadow: var(--cgs-shadow-lg);
   }
-  .cgs-service-bento__feature { grid-column: span 2; grid-row: span 1; min-height: 340px; }
-  .cgs-service-bento__desc,
-  .cgs-service-bento__icon,
-  .cgs-service-bento__cta,
-  .cgs-service-bento__index { grid-column: span 1; grid-row: span 1; min-height: 220px; }
+  /* Matches the scoped :not(.swiper-initialized) rule above so this wins
+     on source order (same specificity, later in the file) whenever the
+     carousel hasn't taken over — e.g. Swiper failing to load. Once
+     .swiper-initialized is present neither rule matches and Swiper's own
+     slide layout applies instead; the plain .cgs-service-bento
+     display:block above already covers the no-JS fallback, where every
+     slide stacks unhidden. */
+  html.js [data-services-stage]:not(.swiper-initialized) [data-service-slide].is-active { display: block; }
+
+  .cgs-service-bento__feature { aspect-ratio: 16 / 9; border-radius: 0; }
+
+  .cgs-service-bento__icon { display: none; }
+
+  .cgs-service-bento__desc {
+    padding: 20px 20px 6px;
+    background: transparent;
+    justify-content: flex-start;
+  }
   .cgs-service-bento__desc p { max-width: none; }
-}
-@media (max-width: 575.98px) {
-  .cgs-service-bento { grid-template-columns: 1fr; }
-  .cgs-service-bento__feature,
-  .cgs-service-bento__desc,
-  .cgs-service-bento__icon,
-  .cgs-service-bento__cta,
-  .cgs-service-bento__index { grid-column: span 1; }
-  .cgs-service-bento__feature { min-height: 280px; }
-  .cgs-service-bento__desc,
-  .cgs-service-bento__icon,
-  .cgs-service-bento__cta,
-  .cgs-service-bento__index { min-height: 180px; }
+
+  .cgs-service-bento__cta {
+    position: static;
+    display: inline-flex;
+    margin: 4px 20px 20px;
+    padding: 0;
+    background: transparent;
+    color: var(--cgs-blue-500);
+    font-size: 15px;
+  }
+  .cgs-service-bento__cta-media,
+  .cgs-service-bento__cta::before { display: none; }
+
+  .cgs-service-bento__index {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 3px;
+    padding: 6px 10px;
+    background: rgba(8, 34, 56, .72);
+    backdrop-filter: blur(6px);
+    border-radius: 999px;
+  }
+  .cgs-service-bento__index strong { font-size: 13px; }
+  .cgs-service-bento__index span { font-size: 12px; padding-bottom: 0; }
 }
 
 @media (max-width: 767.98px) {
@@ -1499,7 +1543,7 @@ html.js [data-service-slide].is-active { display: grid; }
   font-weight: 800;
   line-height: 1.1;
   letter-spacing: -0.025em;
-  color: var(--cgs-navy-900);
+  color: #fff;
   text-wrap: balance;
 }
 .cgs-accent-cta__inner p {
@@ -1561,9 +1605,39 @@ html.js [data-service-slide].is-active { display: grid; }
 }
 @media (max-width: 991.98px) {
   .cgs-values__grid { grid-template-columns: repeat(2, 1fr); }
+  /* Five items in a 2-column grid leaves the 6th cell empty — the grid's
+     own gap background (--cgs-line) was showing through it as a blank
+     grey box next to "Embrace teamwork". Only meaningful while the grid
+     actually has 2 columns (there's no orphan cell in the single-column
+     mobile layout below, nor the 5-across desktop one above), so scoped
+     to that range and undone again at the 575.98px breakpoint. */
+  .cgs-values__grid li:nth-child(5) {
+    grid-column: 1 / -1;
+    align-items: center;
+    text-align: center;
+  }
 }
 @media (max-width: 575.98px) {
   .cgs-values__grid { grid-template-columns: 1fr; }
+  .cgs-values__grid li:nth-child(5) {
+    grid-column: auto;
+    align-items: normal;
+    text-align: left;
+  }
+}
+/* This section's own header is just a bare "What we stand for" — no
+   textlink or arrows riding along the right like the other
+   .cgs-section-head instances (services, gallery) have, so unlike those
+   it reads better centred once the grid above drops out of its 5-across
+   row, from tablet's 2-column grid down through mobile's single column,
+   rather than left-hung with no reason to be. */
+@media (max-width: 991.98px) {
+  /* justify-content, not just align-items: the shared .cgs-section-head
+     rule only switches to flex-direction:column (where align-items
+     alone would centre it) below 767.98px — across 768-991.98px it's
+     still a row, so centring the lone h2 needs the main-axis property
+     too, or it just centres vertically and stays hugging the left. */
+  .cgs-values .cgs-section-head { justify-content: center; align-items: center; text-align: center; }
 }
 
 /* --- Special services -----------------------------------------------------
@@ -1925,6 +1999,14 @@ main:has(> .cgs-cta:last-child) + .cgs-footer { padding-top: var(--cgs-cta-overl
 }
 
 @media (max-width: 575.98px) {
+  /* .cgs-cta__actions is flex-shrink:0 with an auto flex-basis (it needs
+     to hug its content at desktop widths, sitting next to the copy rather
+     than stretching). A child at width:100% resolves against that auto
+     basis using its own max-content size, not the card's actual width —
+     so without pinning the container itself to 100% here too, the button
+     column ends up wider than the card and .cgs-cta__card's overflow:
+     hidden silently clips the right edge of every button. */
+  .cgs-cta__actions { flex-basis: 100%; width: 100%; }
   .cgs-cta__actions .cgs-btn { width: 100%; justify-content: center; }
 }
 

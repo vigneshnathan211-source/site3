@@ -222,21 +222,31 @@
      continues on to the next section once the last one has shown, the
      same shape as a product-page scroll gallery.
 
-     Mobile and reduced-motion visitors get the identical crossfade, just
-     driven by the arrows instead of scroll position — no pin, no extra
-     section height, so there is nothing to scroll-hijack on a touch
-     device. No Swiper here: the pinned case needs scroll-position math
-     Swiper has no hook for, so both paths share one small state machine
-     instead of running two different libraries side by side. */
+     Below 992px (no room to pin, and where the mobile/tablet card redesign
+     lives — see cgs.css) the same arrow buttons instead drive a real
+     Swiper carousel that autoplays, same etiquette as the hero and gallery
+     swipers below: pauses on hover/keyboard focus/off-screen, never
+     autoplays under reduced motion. Swiper only ever owns the sub-992px
+     case — the pinned case needs scroll-position math Swiper has no hook
+     for, so the two paths still share one state machine for that half,
+     just handing off to Swiper for the other. The markup's wrapper div
+     around the slides (data-services-track) has no classes of its own;
+     cgs.js adds swiper/swiper-wrapper/swiper-slide only while the carousel
+     is actually active, so Swiper's own display:flex CSS never touches the
+     pin/crossfade layout or the no-JS fallback. */
   var servicesPin = document.querySelector('[data-services-pin]');
 
   if (servicesPin) {
+    var servicesStage = document.querySelector('[data-services-stage]');
+    var servicesTrack = document.querySelector('[data-services-track]');
     var serviceSlides = Array.prototype.slice.call(servicesPin.querySelectorAll('[data-service-slide]'));
     var servicesCount = serviceSlides.length;
     var servicesPrev = document.querySelector('[data-services-prev]');
     var servicesNext = document.querySelector('[data-services-next]');
     var servicesFill = servicesPin.querySelector('[data-services-fill]');
     var servicesActive = 0;
+    var servicesSwiper = null;
+    var carouselActive = false;
 
     var setServiceActive = function (index) {
       index = Math.max(0, Math.min(servicesCount - 1, index));
@@ -248,8 +258,10 @@
            display:none or sitting invisibly underneath the active one. */
         slide.toggleAttribute('inert', !isActive);
       });
-      if (servicesPrev) { servicesPrev.disabled = index === 0; }
-      if (servicesNext) { servicesNext.disabled = index === servicesCount - 1; }
+      if (!carouselActive) {
+        if (servicesPrev) { servicesPrev.disabled = index === 0; }
+        if (servicesNext) { servicesNext.disabled = index === servicesCount - 1; }
+      }
     };
 
     setServiceActive(0);
@@ -287,10 +299,85 @@
     applyPinMode();
     window.addEventListener('resize', applyPinMode);
 
-    /* Arrow clicks: scroll the page to the target service's position while
-       pinned (there is no other way to change "how far scrolled" is), or
-       just swap the active slide directly otherwise. */
+    /* Carousel eligibility: below the pin width, more than one service,
+       Swiper actually loaded. Toggled the same way as pin mode above —
+       decided on load/resize, not fought over every frame. */
+    var carouselQuery = window.matchMedia('(max-width: 991.98px)');
+
+    var applyCarouselMode = function () {
+      var shouldCarousel = servicesCount > 1 && carouselQuery.matches && typeof window.Swiper === 'function';
+      if (shouldCarousel === carouselActive) { return; }
+      carouselActive = shouldCarousel;
+
+      if (carouselActive) {
+        servicesStage.classList.add('swiper');
+        servicesTrack.classList.add('swiper-wrapper');
+        serviceSlides.forEach(function (slide) {
+          slide.classList.add('swiper-slide');
+          /* setServiceActive marked every non-active slide inert for the
+             state-machine case above, and never runs again once Swiper
+             owns the section — left alone, that inert attribute makes
+             whichever slide autoplay brings up next untouchable (inert
+             elements don't receive pointer/touch events at all), so no
+             swipe starting on it would ever reach Swiper. Swiper tracks
+             its own active slide via .swiper-slide-active instead. */
+          slide.removeAttribute('inert');
+          slide.classList.remove('is-active');
+        });
+        if (servicesPrev) { servicesPrev.disabled = false; }
+        if (servicesNext) { servicesNext.disabled = false; }
+
+        var carouselAutoplayOn = !reduceMotion.matches;
+        servicesSwiper = new Swiper(servicesStage, {
+          loop: true,
+          autoHeight: true,
+          spaceBetween: 16,
+          speed: reduceMotion.matches ? 0 : 500,
+          autoplay: carouselAutoplayOn
+            ? { delay: 4200, disableOnInteraction: false, pauseOnMouseEnter: true }
+            : false,
+          navigation: { prevEl: servicesPrev, nextEl: servicesNext },
+          a11y: { enabled: true },
+          keyboard: { enabled: true, onlyInViewport: true }
+        });
+
+        if ('IntersectionObserver' in window && carouselAutoplayOn) {
+          new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+              if (!servicesSwiper || !servicesSwiper.autoplay) { return; }
+              if (entry.isIntersecting) { servicesSwiper.autoplay.start(); }
+              else { servicesSwiper.autoplay.stop(); }
+            });
+          }, { threshold: 0.2 }).observe(servicesStage);
+        }
+
+        if (carouselAutoplayOn) {
+          servicesStage.addEventListener('focusin', function () {
+            if (servicesSwiper && servicesSwiper.autoplay) { servicesSwiper.autoplay.stop(); }
+          });
+          servicesStage.addEventListener('focusout', function (event) {
+            if (servicesStage.contains(event.relatedTarget)) { return; }
+            if (servicesSwiper && servicesSwiper.autoplay) { servicesSwiper.autoplay.start(); }
+          });
+        }
+      } else if (servicesSwiper) {
+        servicesSwiper.destroy(true, true);
+        servicesSwiper = null;
+        servicesStage.classList.remove('swiper');
+        servicesTrack.classList.remove('swiper-wrapper');
+        serviceSlides.forEach(function (slide) { slide.classList.remove('swiper-slide'); });
+        setServiceActive(servicesActive);
+      }
+    };
+    applyCarouselMode();
+    window.addEventListener('resize', applyCarouselMode);
+
+    /* Arrow clicks: while the carousel owns the section, Swiper's own
+       navigation binding (above) already moves it — this only drives the
+       pin (scroll to the target service's position, the only way to
+       change "how far scrolled" is) or plain state-machine cases. */
     var stepService = function (delta) {
+      if (carouselActive) { return; }
       var target = servicesActive + delta;
       if (target < 0 || target > servicesCount - 1) { return; }
       if (pinActive) {

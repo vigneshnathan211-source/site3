@@ -150,8 +150,33 @@ image sets that can be re-tagged.
 
 ## Service page 5 — Air Freight
 
-**Copy NOT SUPPLIED — images supplied.** The client sent an email titled
-*"Services page by Air Page"* with 7 photographs but no body text. Request copy.
+Supplied verbatim by the client (email: *"Services page by Air Page"*, 7
+photographs attached — client's own note says more are available on request
+once the page is written).
+
+> Smart air freight goes beyond booking costly full charters. CGS works closely
+> with clients to understand their needs, optimize cargo packing, and use
+> multi-modal transport to cut shipping costs.
+
+### The High Cost of Convenience
+
+> Full wide-body aircraft charters offer speed but come with massive financial
+> and resource burdens. When direct uplift is unavailable or prohibitively
+> expensive, supply chain professionals turn to clever routing and line-haul
+> trucking.
+
+### Creative Solutions Over Direct Charters
+
+- **Cross-Border European Hauls** — Moving goods by truck from remote regions in Norway down to major aviation hubs like Amsterdam avoids special charter costs while tapping into regular wide-body departures.
+- **Southeast Asian Multi-Modal Legs** — Transporting freight from Singapore hubs up to Kuching, followed by secondary long-distance trucking to regional destinations like Bintulu and Miri, bypasses the need for restricted or expensive local air connections.
+
+### Benefits of Smart Multimodal Routing
+
+- Drastically lower operational costs compared to dedicated charter flights.
+- Maximized use of existing scheduled wide-body flight capacity.
+- Flexible adaptation to regional airport infrastructure limits.
+
+> Our experts will study your details and build a fast, budget-friendly plan.
 
 ---
 
