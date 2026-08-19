@@ -70,13 +70,6 @@ $activeSocials = array_filter(
       </div>
 
       <div class="cgs-topbar__right">
-        <?php if (!empty($settings['iso_statement'])): ?>
-          <span class="cgs-topbar__iso">
-            <i class="fa-solid fa-certificate" aria-hidden="true"></i>
-            <?php echo e($settings['iso_statement']); ?>
-          </span>
-        <?php endif; ?>
-
         <?php if ($activeSocials): ?>
         <ul class="cgs-topbar__socials">
           <?php foreach ($activeSocials as $col => $meta): ?>
@@ -109,10 +102,10 @@ $activeSocials = array_filter(
       <a class="cgs-logo" href="<?php echo url('index.php'); ?>">
         <img src="<?php echo url($settings['logo']); ?>"
              alt="<?php echo e($settings['company_name']); ?>"
-             width="64" height="64">
+             width="84" height="84">
         <span class="cgs-logo__text">
-          <strong>Carriage Global</strong>
-          <small>(S) Pte Ltd</small>
+          <span class="cgs-logo__line">Carriage Global (S) Pte Ltd &middot; UEN 200714170K</span>
+          <span class="cgs-logo__line">Carriage Global Sdn Bhd &middot; Reg. No. 201701022532</span>
         </span>
       </a>
 

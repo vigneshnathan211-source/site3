@@ -419,13 +419,44 @@
   if (partnersEl && !reduceMotion.matches && window.Swiper) {
     var partnersSlideCount = partnersEl.querySelectorAll('.swiper-slide').length;
     if (partnersSlideCount > 1) {
-      new Swiper(partnersEl, {
+      var partnersSwiper = new Swiper(partnersEl, {
         loop: true,
         slidesPerView: 'auto',
         spaceBetween: 24,
         allowTouchMove: false,
         speed: partnersSlideCount * 350,
         autoplay: { delay: 1, disableOnInteraction: false, pauseOnMouseEnter: false }
+      });
+
+      /* Swiper measures every slide's width at the instant it initialises,
+         to decide whether loop mode has enough real content to cover the
+         container. A logo <img> that hasn't finished loading yet reports
+         as narrower than its final size at that exact moment, so the
+         strip can init looking "too narrow" purely by load-timing luck,
+         silently drop loop mode, and sit frozen with autoplay technically
+         running but nothing to loop through (client: "sometimes the
+         partner swiper autoplay is not running", on both mobile and
+         desktop — a timing race, not a screen-size problem). Re-measuring
+         once every logo has actually finished loading, and nudging
+         autoplay back on if that measurement left it stopped, catches it
+         without a guessed fixed delay. */
+      var partnersImgs = partnersEl.querySelectorAll('img');
+      var partnersPending = 0;
+      var recheckPartnersSwiper = function () {
+        partnersSwiper.update();
+        if (partnersSwiper.autoplay && !partnersSwiper.autoplay.running) {
+          partnersSwiper.autoplay.start();
+        }
+      };
+      partnersImgs.forEach(function (img) {
+        if (img.complete) { return; }
+        partnersPending++;
+        var onSettle = function () {
+          partnersPending--;
+          if (partnersPending === 0) { recheckPartnersSwiper(); }
+        };
+        img.addEventListener('load', onSettle, { once: true });
+        img.addEventListener('error', onSettle, { once: true });
       });
     }
   }

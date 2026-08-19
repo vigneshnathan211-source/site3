@@ -43,13 +43,14 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `hero_bg_image`    VARCHAR(255) DEFAULT 'assets/img/bg/hero-bg.jpg',
   `hero_heading`     VARCHAR(255) DEFAULT 'Integrated Project Logistics, Engineered End to End',
   `hero_subheading`  TEXT         DEFAULT NULL,
-  `video_band_src`   VARCHAR(255) DEFAULT 'assets/video/cgs-video-band.mp4', -- the Video Band section below the hero, not the hero itself
+  `video_band_src`   VARCHAR(255) DEFAULT 'assets/video/cgs-video-band-v2.mp4', -- the Video Band section below the hero, not the hero itself
   `video_band_poster` VARCHAR(255) DEFAULT NULL,
   `hero_bg_video`    VARCHAR(255) DEFAULT NULL, -- optional: plays behind the first hero slide instead of its image
 
   -- company identity
   `company_name`     VARCHAR(150) DEFAULT 'Carriage Global (S) Pte Ltd',
   `company_short`    VARCHAR(50)  DEFAULT 'CGS',
+  `tagline`          VARCHAR(150) DEFAULT 'We make ends meet.', -- footer slogan, next to the logo/wordmark
   `uen`              VARCHAR(50)  DEFAULT '200714170K',
   `iso_statement`    VARCHAR(150) DEFAULT 'An ISO 9001:2015 Certified Company',
   `years_experience` INT(11)      DEFAULT 18,
@@ -60,7 +61,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `phone_247`        VARCHAR(50)  DEFAULT '+65 6515 6106',
   `fax`              VARCHAR(50)  DEFAULT '+65 6472 5443',
   `whatsapp_number`  VARCHAR(50)  DEFAULT NULL,
-  `email`            VARCHAR(150) DEFAULT 'angeline@carriageglobal.com',
+  `email`            VARCHAR(150) DEFAULT 'admin@carriageglobal.com',
   `address`          VARCHAR(255) DEFAULT '21 Bukit Batok Crescent, WCEGA Tower #17-82, Singapore 658065',
   `map_embed_url`    TEXT         DEFAULT NULL,
 
@@ -319,14 +320,16 @@ INSERT IGNORE INTO `hero_slides`
     'Fleet, in-house lashing and an open yard for storage and re-working, under one operation.',
     'assets/img/services/project-freight-forwarding.jpg',
     'Oversized vessel section secured on a Carriage Global low-bed trailer',
-    'Get a Quote', 'contact.php', 3, 'active');
+    -- Hidden 2026-08-19 (client: "hide the Our own trailers section") — kept
+    -- as a row, not deleted, so it can be reactivated from the admin later.
+    'Get a Quote', 'contact.php', 3, 'inactive');
 
 INSERT IGNORE INTO `services` (`id`, `title`, `slug`, `link`, `short_desc`, `icon`, `sort_order`, `status`) VALUES
 (1, 'Project Freight Forwarding',            'project-freight-forwarding', 'project-freight-forwarding.php', 'Mode selection driven by packing-list analysis — the practical, cost-effective route rather than the most expensive charter.', 'assets/img/icons/s-icons1.svg', 1, 'active'),
 (2, 'Chartering Heavy Lift & Semi-Geared Vessels', 'heavy-lift-chartering', 'heavy-lift-chartering.php', 'Break bulk and project cargo on self-geared and semi-geared vessels, matched to cargo weight, volume and route.', 'assets/img/icons/s-icons2.svg', 2, 'active'),
 (3, 'Chartering Tug & Barge',                 'tug-and-barge-chartering',   'tug-and-barge-chartering.php', 'Shallow-draft and remote-site delivery where deep-water port infrastructure is not available.', 'assets/img/icons/s-icons3.svg', 3, 'active'),
 (4, 'Roll On / Roll Off',                     'roll-on-roll-off',           'roll-on-roll-off.php', 'Mafi trailers and ramp operations for rolling stock and awkward breakbulk units.', 'assets/img/icons/s-icons4.svg', 4, 'active'),
-(5, 'Air Freight',                            'air-freight',                'air-freight.php', 'Time-critical and AOG shipments, including oversize and dangerous goods handling.', 'assets/img/icons/s-icons5.svg', 5, 'active');
+(5, 'Air Freight',                            'air-freight',                'air-freight.php', 'Optimized cargo packing and multi-modal routing to major air hubs, instead of booking a costly full charter.', 'assets/img/icons/s-icons5.svg', 5, 'active');
 
 INSERT IGNORE INTO `resources` (`id`, `category`, `title`, `slug`, `sort_order`, `status`) VALUES
 (1, 'Cargo Measurement',   'CBM versus Freight Ton',                              'cbm-versus-freight-ton',        1, 'active'),

@@ -8,8 +8,12 @@
 | the rest of the homepage sections.
 |
 | The logo shown here is the white-background JPEG, which cannot sit on the
-| navy panel, so the footer uses a type-only lockup until the client sends a
-| knockout version (settings.logo_light). See docs/ASSET-INVENTORY.md.
+| navy panel, so no image renders in that slot until the client sends a
+| knockout version (settings.logo_light) — see docs/ASSET-INVENTORY.md.
+| The two entity lines below it (.cgs-footer__entities) carry the identity
+| in the meantime, mirroring the header's .cgs-logo__line pair rather than
+| a separate wordmark title (client: "like header remove existing title
+| and add both company name with uen no").
 */
 ?>
 <footer class="cgs-footer">
@@ -21,14 +25,15 @@
           <img src="<?php echo url($settings['logo_light']); ?>"
                alt="<?php echo e($settings['company_name']); ?>"
                class="cgs-footer__logo" width="150" height="56">
-        <?php else: ?>
-          <p class="cgs-footer__wordmark">
-            <strong>Carriage Global</strong><small>(S) Pte Ltd</small>
-          </p>
         <?php endif; ?>
 
-        <?php if (!empty($settings['uen'])): ?>
-          <p class="cgs-footer__uen">UEN <?php echo e($settings['uen']); ?></p>
+        <div class="cgs-footer__entities">
+          <p class="cgs-footer__uen">Carriage Global (S) Pte Ltd &middot; UEN 200714170K</p>
+          <p class="cgs-footer__uen">Carriage Global Sdn Bhd &middot; Reg. No. 201701022532</p>
+        </div>
+
+        <?php if (!empty($settings['tagline'])): ?>
+          <p class="cgs-footer__tagline"><?php echo e($settings['tagline']); ?></p>
         <?php endif; ?>
 
         <p class="cgs-footer__blurb">
@@ -38,10 +43,7 @@
         </p>
 
         <?php if (!empty($settings['iso_statement'])): ?>
-          <p class="cgs-footer__iso">
-            <i class="fa-solid fa-certificate" aria-hidden="true"></i>
-            <?php echo e($settings['iso_statement']); ?>
-          </p>
+          <p class="cgs-footer__iso"><?php echo e($settings['iso_statement']); ?></p>
         <?php endif; ?>
 
         <?php if (!empty($activeSocials)): ?>

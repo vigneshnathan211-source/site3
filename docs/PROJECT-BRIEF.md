@@ -62,15 +62,27 @@ would push the site well past the stated page count.
 
 ## Homepage structure
 
+Rebuilt 2026-08-19 against the client's own "1st email on HOME Page"
+(see CONTENT.md's Homepage section for exactly what came from it), then
+pruned the same day to only what that email (or "Email Our Fleet") actually
+supplies, plus hero/services/CTA kept unconditionally:
+
 1. Header — top info bar (phone · 24/7 line · email · address · socials) + sticky nav
 2. Hero — headline, sub-headline, CTA, enquiry form or CTA pair
-3. **20-second video section** *(explicitly required, sits directly after the hero)*
-4. Services — five cards from the `services` table
-5. Our Fleet teaser — fleet · lashing · open yard, linking to `our-fleet.php`
-6. Why CGS — ISO 9001:2015, sectors served, core values
-7. Gallery strip — featured operations photography
-8. CTA band — "Send us your packing list"
-9. Footer — company blurb, quick links, service links, both offices
+3. Credentials strip — both entities' names/registration numbers + ISO 9001:2015, bizSAFE 4, WCA Project cert links
+4. **20-second video section** *(explicitly required, sits directly after the hero — kept even though no email describes it; see CONTENT.md)*
+5. Partners marquee — client-named logo/wordmark strip
+6. Services — five cards from the `services` table
+7. Divisions — the two named in-house departments, plus a 4-item "CGS advantage" strip
+8. Our Fleet teaser — real equipment specifics, linking to `our-fleet.php`
+9. Project desk — five real named role/email contacts
+10. CTA band — "Send us your packing list"
+11. Footer — company blurb, quick links, service links, both offices
+
+Core values, special services, the operations-gallery carousel and the FAQ
+accordion (all old-site copy, not emails.txt content) were removed from
+the homepage 2026-08-19 — see CONTENT.md's Homepage section for where they
+might belong instead.
 
 ## Admin dashboard
 
@@ -127,16 +139,20 @@ The Roofer build is the reference, not the target. These things change:
 
 ## Content status
 
-Three of ten pages have client copy. See [`CONTENT.md`](CONTENT.md) for the full
-breakdown and exactly what to request.
+Four of ten pages have client copy, plus the homepage itself now has a real
+client brief. See [`CONTENT.md`](CONTENT.md) for the full breakdown and
+exactly what to request.
 
 | Have | Missing |
 |---|---|
 | Project Freight Forwarding (full) | Tug & Barge, RoRo copy |
-| Heavy Lift Chartering (full) | Our Fleet (all three blocks) |
-| Air Freight (full) | All five Resources topics |
-| Company facts, from the old site | Homepage hero + about copy |
-| 105 operations photos | ISO certificate scan, General T&Cs document |
+| Heavy Lift Chartering (full) | All five Resources topics (explainers + T&Cs doc) |
+| Air Freight (full) | Homepage hero + about copy |
+| Our Fleet (capability copy, no unit counts) | Verified logo artwork for 5 of 8 homepage partner names |
+| Homepage (credentials, divisions, advantage, project-desk contacts) | |
+| Company facts, from the old site | |
+| 105 operations photos | |
+| ISO 9001:2015, bizSAFE 4, WCA Project certs (real PDFs) | |
 | Logo (JPEG), 20 s video | |
 
 **Build with real structure and clearly-marked placeholder copy**, so the pages
@@ -178,14 +194,19 @@ verifiable claims a logistics buyer will check.
     covers it), or written case studies with cargo, mode, route and outcome
     (needs a `projects` table and, more to the point, needs the client to
     approve naming the cargo and the client involved).
-13. **Partner/client logos for the homepage marquee.** Requested 2026-08-18.
-    `carriageglobal.com` itself serves the default unconfigured Hostinger
-    page, not the old site; the client pointed to the real old site at
-    `https://zvv.cra.mybluehost.me/` (its "Our Clients" section) instead.
-    The homepage marquee (`index.php`, after Services) now uses those ten
-    logos, downloaded to `assets/img/partners/`: Zodiac Milpro, IKM Subsea,
-    MMA Offshore, Subsea 7, Sarens, ALE, Fugro, MacGregor, Favelle Favco,
-    Louis Dreyfus Armateurs. Still needs the client to confirm these
-    relationships carry over to the new site before this goes live — an old
-    staging site is a reasonable source to build from, not a substitute for
-    the client's own sign-off on which partners to name publicly.
+13. **Partner/client logos for the homepage marquee.** Superseded 2026-08-19.
+    The client's own "1st email on HOME Page" names the exact eight clients
+    to show ("google the logo of following clients to insert them"): Sarens,
+    Pageo, IKM Subsea, Skadi Offshore, Aster Chemical, Brooke Dockyard,
+    Favelle Favco, Oilstates — a higher-confidence source than the old
+    staging site's "Our Clients" section this list previously used
+    (`https://zvv.cra.mybluehost.me/`, since `carriageglobal.com` itself
+    serves the default unconfigured Hostinger page). Three names already had
+    a downloaded logo file from that earlier pass (Sarens, IKM Subsea,
+    Favelle Favco, still in `assets/img/partners/`); the other five —
+    Pageo, Skadi Offshore, Aster Chemical, Brooke Dockyard, Oilstates —
+    have no verified logo file and render as plain text wordmark tiles on
+    the marquee instead of a guessed-at graphic for a real company's mark.
+    **Open:** get real logo artwork (or explicit confirmation to keep the
+    text treatment) for those five, and the client's sign-off that all
+    eight relationships carry over to the new site before this goes live.

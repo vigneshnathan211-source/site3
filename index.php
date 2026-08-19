@@ -9,25 +9,46 @@
 |
 |   1. Hero                full-bleed media, copy on the left, black scrim
 |   2. Video band          inset video card (the brief's post-hero section)
-|   2b. Partners           logo marquee, continuous auto-scroll
+|   2b. Certifications     dark band, the 3 cert PDFs embedded live, large
+|                          (moved here, after the video band, on client
+|                          request; entity/registration details moved to the
+|                          navbar logo lockup, client: "remove company
+|                          address and only showcase certificates")
 |   3. Services            asymmetric bento, 5 cells for 5 services
-|   4. The CGS approach    dark band, numbered editorial rows
-|   4b. Accent CTA card    single-accent band, "Send us your packing list"
-|   4c. Core values        five-item grid, light
-|   4d. Special services   three-card grid, tinted
-|   5. Fleet teaser        two-image split
-|   6. Operations gallery  contained carousel, arrows either side + autoplay
-|   7. FAQ                 accordion, verbatim from the old site
-|   8. CTA                 rounded sea-blue card, inset on white
+|   4. Divisions           white band, two-column capability lists + a
+|                          4-item "why choose CGS" strip underneath
+|   4b. Partners           logo marquee, continuous auto-scroll (moved
+|                          here from just after Certifications, client:
+|                          "I want partners at the above cta")
+|   4c. Accent CTA card    single-accent band, "Send us your packing list"
+|   5. Fleet teaser        two-image split, real equipment specifics
+|   5b. Project desk       role-based contact grid
+|   5c. Gallery            masonry of real operations photos, Magnific
+|                          Popup lightbox with gallery nav — hidden via
+|                          if (false) 2026-08-19, client: "hide the
+|                          gallery section" (markup/CSS/JS left in place)
+|   6. CTA                 rounded sea-blue card, inset on white
 |
-| Copy status: the approach section is verbatim from the client's Project
-| Freight Forwarding email (docs/CONTENT.md); the service blurbs and the
-| sector list are real, taken from the client's own emails and the old
-| site; the fleet/lashing/yard capability copy is confirmed accurate by the
-| client. Hero and CTA copy is original marketing phrasing written for this
-| build rather than a client quote, but it asserts no fleet size, tonnage,
-| headcount or project reference that was not supplied — nothing on this
-| page states an unverified fact.
+| 2026-08-19: pruned to hero, services, CTA (kept unconditionally) plus
+| only the sections the client's own emails actually supply content for.
+| Removed: core values, special services, the operations-gallery carousel
+| and the FAQ accordion — all old-site scrapes, not emails.txt content
+| (still real client copy, just not sourced from this document; they can
+| return once there's a page/placement the client has actually briefed for
+| them). The video band stays even though no email describes it, because
+| CLAUDE.md/the project brief fixes it as a required structural section
+| directly after the hero, independent of emails.txt.
+|
+| Copy status: the credentials strip, divisions, CGS-advantage strip and
+| project-desk contacts are verbatim from the client's own "1st email on
+| HOME Page" (docs/source/emails.txt), the email the client wrote
+| specifically to brief this page. The fleet teaser's equipment specifics
+| are verbatim from the client's separate "Email Our Fleet". The partners
+| marquee list and the service blurbs are also real, client-supplied
+| content. Hero and CTA copy is original marketing phrasing written for
+| this build rather than a client quote, but it asserts no fleet size,
+| tonnage, headcount or project reference that was not supplied — nothing
+| on this page states an unverified fact.
 */
 
 require_once __DIR__ . '/includes/bootstrap.php';
@@ -57,7 +78,14 @@ if (!$heroSlides) {
 }
 
 /* Featured operations photography. Falls back to the files on disk until the
-   client has uploaded and tagged their own through the admin gallery. */
+   client has uploaded and tagged their own through the admin gallery.
+   ops-05.jpg was dropped 2026-08-19: byte-for-byte identical to
+   assets/img/fleet/lashing.jpg (confirmed via md5sum) — the same photo
+   under two filenames, which meant it silently duplicated Division 01's
+   gallery every time this array's 5th slot rendered in the Services bento
+   below. Replaced with ops-07.jpg, a real, previously-unused client photo
+   from client_assets/pic/ (client, 2026-08-19: pointed at that folder for
+   more real photography after "dully check don't repeat images"). */
 $galleryRows = db_all(
     $pdo,
     "SELECT * FROM gallery WHERE status = 'active' AND featured = 1
@@ -69,111 +97,149 @@ if (!$galleryRows) {
         ['image_path' => 'assets/img/gallery/ops-02.jpg', 'alt_text' => 'Break bulk unit slung under a ship crane'],
         ['image_path' => 'assets/img/gallery/ops-03.jpg', 'alt_text' => 'Heavy lift module on the quayside'],
         ['image_path' => 'assets/img/gallery/ops-04.jpg', 'alt_text' => 'Cargo transferred to a barge alongside'],
-        ['image_path' => 'assets/img/gallery/ops-05.jpg', 'alt_text' => 'Oversized cargo secured for sea transport'],
+        ['image_path' => 'assets/img/gallery/ops-07.jpg', 'alt_text' => 'Carriage Global trailer loaded with a large cable reel and crated cargo at a yard'],
         ['image_path' => 'assets/img/gallery/ops-06.jpg', 'alt_text' => 'Barge operation in Singapore waters'],
     ];
 }
 
-/* The CGS approach. Verbatim from the client's Project Freight Forwarding
-   email (docs/CONTENT.md). */
-$approach = [
+/* Certifications. Verbatim instruction from the client's "1st email on
+   HOME Page": "At the left hand corner write both company names and co
+   registration numbers, ISO number, Bizsafe". Rebuilt several times on
+   client follow-ups — full PDF page as a card, then the compact registrar
+   badge with a click-to-view popup, then a two-column entities+certs split,
+   and now (2026-08-19: "remove company address and only shocase
+   certificates in large size") certs only, full width — the two entity
+   names and the UEN moved up to the navbar logo lockup (includes/header.php)
+   instead of repeating them here.
+
+   All three cards render a static image preview rather than a live
+   <iframe> of the real PDF. That started as a fix for just the WCA card —
+   Chrome's built-in PDF viewer draws a thin dark page-border around every
+   embedded PDF, barely visible on the ISO/bizSAFE white portrait pages but
+   a heavy black frame on WCA's landscape gold-toned page (client: "wca
+   certificate not look good make it correctly") — but the live iframe
+   turned out to have a second, worse problem on mobile: Android Chrome
+   doesn't reliably render an inline PDF preview inside an iframe at all,
+   showing its generic black "filename.pdf / Open" file card instead
+   (client screenshot, 2026-08-19: "in my mobile pdf are not showing").
+   Switching ISO and bizSAFE to the same static-render pattern WCA already
+   used fixes both problems at once. Each preview is a pixel-faithful
+   render of the real PDF's first page (assets/img/certificates/*.jpg,
+   rendered at 2.2x via PyMuPDF). Clicking the card still opens the real
+   PDF (not the preview image) in the Magnific Popup lightbox — 'file'
+   stays the actual PDF path, only the card face changed. 'ratio' is each
+   PDF's own page width/height in points, used as the frame's CSS
+   aspect-ratio so a landscape certificate isn't squeezed into a portrait
+   box. */
+$certificates = [
     [
-        'title' => 'Packing list analysis',
-        'body'  => 'We match cargo dimensions directly against equipment capability before quoting anything, so the mode fits the cargo rather than the other way round.',
+        'label'   => 'ISO 9001:2015',
+        'file'    => 'assets/certificates/iso-9001-2015.pdf',
+        'ratio'   => '594 / 838',
+        'preview' => 'assets/img/certificates/iso9001.jpg',
     ],
     [
-        'title' => 'Cost efficiency',
-        'body'  => 'Urgency gets balanced against commercial constraint. Where a charter is not warranted, we will tell you, rather than sell you one.',
+        'label'   => 'bizSAFE Level 4',
+        'file'    => 'assets/certificates/bizsafe-4.pdf',
+        'ratio'   => '595 / 842',
+        'preview' => 'assets/img/certificates/bizsafe.jpg',
     ],
     [
-        'title' => 'Feasibility studies',
-        'body'  => 'Routes, handling gear and vessel types are checked against the real constraints of your site before anything is committed.',
+        'label'   => 'WCA Project, 15 yrs',
+        'file'    => 'assets/certificates/wca-project-membership.pdf',
+        'ratio'   => '765 / 567',
+        'preview' => 'assets/img/certificates/wca-project-membership.jpg',
     ],
 ];
 
-/* Partner/carrier logos for the homepage marquee. Pulled from the client's
-   old staging site (zvv.cra.mybluehost.me, "Our Clients" section) on
-   2026-08-18 — the live carriageglobal.com domain has nothing deployed, so
-   this staging URL, supplied by the client, was the actual source. See
-   docs/PROJECT-BRIEF.md open question 13: still needs the client to confirm
-   these relationships carry over to the new site before this goes live. */
+/* SECTION 1 of the client's HOME Page email: "Unrivaled Control: Two
+   Specialized In-House Departments". Verbatim, split into its two named
+   divisions. */
+$divisions = [
+    [
+        'title'   => 'In-House Asset Transport & Technical Site Services',
+        'tagline' => 'Eliminating transit risks through wholly-owned equipment, certified field crews, and regional overland lanes.',
+        'intro'   => "Our land transport division is built on physical assets and boots-on-the-ground technical expertise. We don't rely on sub-contractors to secure your cargo; we deploy our own personnel and machinery to ensure total quality control.",
+        'items'   => [
+            ['title' => 'Wholly-owned specialized fleet', 'body' => 'Immediate access to an extensive, company-owned fleet of heavy-duty low-bed trailers, multi-axle configurations, and skeleton chassis designed for heavy-haul and out-of-gauge (OOG) transport.'],
+            ['title' => 'Pan-Asian cross-border trucking', 'body' => 'High-frequency, secure overland corridors connecting Singapore, transiting West Malaysia, and reaching all the way up to Thailand. We handle all customs clearances, border permits, and transit documentation seamlessly.'],
+            ['title' => 'In-house lashing, lifting & rigging teams', 'body' => 'Certified rigger-packers and lifting supervisors who calculate center-of-gravity dynamics, design customized lifting plans, and execute precise tie-downs using premium-grade materials.'],
+            ['title' => 'Industrial packing & box fabrication', 'body' => 'On-site construction of heavy-duty, custom-engineered wooden boxes, skids, and crates tailored to the exact dimensional and weight requirements of sensitive or high-value machinery.'],
+            ['title' => 'Cargo surveying & risk mitigation', 'body' => 'Rigorous pre-ops and post-ops cargo inspections, route surveys, pinch-point analysis, and continuous monitoring to guarantee the physical integrity of your assets.'],
+            ['title' => 'Asset storage & environmental protection', 'body' => 'Access to secure, high-capacity open-yard storage facilities equipped for heavy grounding, with comprehensive industrial fumigation services meeting stringent international biosecurity standards.'],
+        ],
+    ],
+    [
+        'title'   => 'Project Freight Forwarding & Marine Engineering Desk',
+        'tagline' => 'Navigating complex maritime lanes, vessel charters, and port geometry constraints.',
+        'intro'   => 'When industrial cargo exceeds the limits of standard roads, our maritime division steps in. We analyze everything from coastal hydrology to port infrastructure to select, secure, and engineer the ideal ocean transit method for your project.',
+        'items'   => [
+            ['title' => 'Specialized container operations (OOG)', 'body' => 'Expert out-of-gauge stowage planning: precise loading, blocking, and lashing of oversized cargo onto flat racks and open-top containers, plus complex uncontainerised cargo (UC) safely positioned on container vessels.'],
+            ['title' => 'Roll-on / roll-off (RoRo) & MAFI solutions', 'body' => 'Efficient handling of heavy rolling stock and stationary oversized industrial components using heavy-duty MAFI trailers for seamless RoRo vessel loading and discharge.'],
+            ['title' => 'Tug & barge chartering', 'body' => 'Specialized coastal and inland waterway transport. We source and charter dedicated tug and barge configurations designed to navigate shallow-draft inland waterways and remote shorelines lacking mature port infrastructure.'],
+            ['title' => 'Full & part vessel chartering', 'body' => "Direct access to global shipowners. We charter heavy-lift, geared, semi-geared, and gearless vessels tailored entirely to your project's unique cargo profile and budget."],
+            ['title' => 'Port infrastructure assessment', 'body' => 'Comprehensive engineering analysis of the destination and receiving sites: length overall (LOA) limits, draft restrictions, berth capacities, and tidal variations, to determine exactly which class of vessel can safely dock and discharge your cargo.'],
+        ],
+    ],
+];
+
+/* SECTION 2 of the same email: "Why Global Industrial Leaders Choose CGS". */
+$advantage = [
+    ['icon' => 'fa-truck-ramp-box', 'title' => 'Asset-backed reliability', 'body' => 'We own the trailers, including super low-bed trailers (0.8m above the ground), skeleton chassis, forklifts from 3t to 16t, stuffing equipment, and the teams behind them, giving total control over scheduling, safety protocols, and pricing.'],
+    ['icon' => 'fa-route',          'title' => 'True door-to-door execution', 'body' => 'From the moment we fabricate the protective crating to the final discharge at a remote deep-sea or river port, your cargo never leaves our care.'],
+    ['icon' => 'fa-calculator',     'title' => 'Engineering-first approach', 'body' => 'We don\'t guess. We calculate. Every lift, lash and vessel charter is backed by precise calculations, draft assessments, and route surveys, with lifting equipment availability confirmed ahead of time to avoid last-minute disappointments.'],
+    ['icon' => 'fa-earth-asia',     'title' => 'Global network, local power', 'body' => 'A global logistics network combined with localized, asset-heavy execution. We have been a WCA Project member for fifteen years, working only with trusted, asset-based partners built up over that time.'],
+];
+
+/* "Contact Our Project Desk" from the same email — real named roles and
+   department addresses, not generic placeholders. The last row has no
+   'name': the source email names a person for every other row
+   ("PROJECT MANAGER- ANGELINE TILOKANI", "FLEET MANAGER... ALAN SOH", etc.)
+   but for Shipping Documents gives only "SHIPPING RELATED DOCUMENTS-
+   ADMIN@CARRIAGEGLOBAL.COM" — no name. An earlier pass filled that gap
+   with an invented "Admin Team" label; caught on a 2026-08-19 audit
+   ("no ai content, only content provided from emails.txt") and removed —
+   the markup below renders just the role + email when 'name' is absent. */
+$projectDesk = [
+    ['role' => 'Project Manager',            'name' => 'Angeline Tilokani', 'email' => 'angeline@carriageglobal.com'],
+    ['role' => 'Fleet Manager & Operations', 'name' => 'Alan Soh',          'email' => 'alan@carriageglobal.com'],
+    ['role' => 'Yard Manager',               'name' => 'Mr Teo & Mr Khoo',  'email' => 'ops@carriageglobal.com'],
+    ['role' => 'Accounts',                   'name' => 'Ashwini & Mr Ryan', 'email' => 'accounts@carriageglobal.com'],
+    ['role' => 'Shipping Documents',         'email' => 'admin@carriageglobal.com'],
+];
+
+/* Partner/client logos for the homepage marquee. Replaced 2026-08-19 with
+   the list the client actually named for this exact purpose (the same
+   HOME Page email: "towards the end of the page write our clients...
+   google the logo of following clients to insert them"), superseding the
+   old-site-scraped list. All eight now have a working logo file.
+
+   The first pass at the last three (oilstates.svg, skadi-offshore.svg,
+   logo.webp) each had a real problem unrelated to file format — flagged
+   back to the client rather than silently worked around: the first two
+   were white-on-transparent marks built for a dark background, invisible
+   against this section's light one; logo.webp was a website-header
+   screenshot bundling Brooke Dockyard's mark with a second, unrelated
+   company's logo and a tagline on a grey banner. The client's follow-up
+   files fix the first two directly (oil-states-1.png, skadie_offshore_1.png
+   — proper navy/gold and blue marks on white, 2026-08-19). For Brooke's
+   (brooke.png) the badge only occupied a ~310x265 region inside a
+   2928x291 canvas of flat grey padding — displayed at this tile's actual
+   size that would have shrunk the badge to an unreadable speck, so
+   brooke-mark.png is a crop down to just the badge with that flat grey
+   (229,229,229) chroma-keyed to transparent (checked against this
+   section's background for edge fringing before saving — none). The
+   original brooke.png is left on disk unused, same as any other
+   as-delivered source file. */
 $partners = [
-    ['name' => 'Zodiac Milpro',            'logo' => 'assets/img/partners/zodiac-milpro.png'],
-    ['name' => 'IKM Subsea',               'logo' => 'assets/img/partners/ikm-subsea.png'],
-    ['name' => 'MMA Offshore',             'logo' => 'assets/img/partners/mma-offshore.png'],
-    ['name' => 'Subsea 7',                 'logo' => 'assets/img/partners/subsea-7.png'],
-    ['name' => 'Sarens',                   'logo' => 'assets/img/partners/sarens.png'],
-    ['name' => 'ALE',                      'logo' => 'assets/img/partners/ale.jpg'],
-    ['name' => 'Fugro',                    'logo' => 'assets/img/partners/fugro.png'],
-    ['name' => 'MacGregor',                'logo' => 'assets/img/partners/macgregor.png'],
-    ['name' => 'Favelle Favco',            'logo' => 'assets/img/partners/favelle-favco.png'],
-    ['name' => 'Louis Dreyfus Armateurs',  'logo' => 'assets/img/partners/louis-dreyfus-armateurs.png'],
-];
-
-/* Core values. Verbatim from the old site (docs/CONTENT.md). */
-$coreValues = [
-    ['title' => 'Exceed customer expectations', 'body' => 'We are committed to exceeding the expectations of our customers.'],
-    ['title' => 'Value our people',              'body' => 'We respect each other, recognizing geographic and cultural differences.'],
-    ['title' => 'Work safely',                   'body' => 'We work in a manner that is safe for ourselves and the people around us.'],
-    ['title' => 'Act with integrity and ethics',  'body' => 'We conduct business with integrity and trust.'],
-    ['title' => 'Embrace teamwork',               'body' => 'We collaborate with our customers, supplier partners, liners, ship owners to achieve success.'],
-];
-
-/* Special services. Old-site ancillary services (docs/CONTENT.md,
-   docs/PROJECT-BRIEF.md open question 9) — not among the five service
-   pages, shown here as a capabilities strip pending the client's call on
-   whether they get full pages of their own. Verbatim descriptions. */
-/* Images reuse the same operations photography (and its already-verified
-   captions) from the gallery fallback set above — thematic pairings, not a
-   claim that any one photo documents that exact service. */
-$specialServices = [
-    [
-        'icon'  => 'fa-triangle-exclamation',
-        'title' => 'Dangerous goods',
-        'body'  => 'A hazardous material is a general name for flammable, explosive, strongly corrosive, toxic, and radioactive materials. Such as gasoline, explosives, strong acid, strong alkali, benzene, naphthalene, etc.',
-        'image' => 'assets/img/gallery/ops-05.jpg',
-        'alt'   => 'Oversized cargo secured for sea transport',
-    ],
-    [
-        'icon'  => 'fa-right-left',
-        'title' => 'Door to door',
-        'body'  => 'Door to Door Container and Oversize/Breakbulk Cargo service from Singapore-Batam, and Vice-Versa. Daily Service from Monday to Friday from Singapore to Batam and vice versa.',
-        'image' => 'assets/img/gallery/ops-04.jpg',
-        'alt'   => 'Cargo transferred to a barge alongside',
-    ],
-    [
-        'icon'  => 'fa-box',
-        'title' => 'Customized packing',
-        'body'  => 'We provide customized packing and special projects packing solutions including Heat Shrink Wrapping, Plastic Crates Wooden crates, and pallets, as well as cargo choking and lashing services.',
-        'image' => 'assets/img/gallery/ops-02.jpg',
-        'alt'   => 'Break bulk unit slung under a ship crane',
-    ],
-];
-
-/* Homepage FAQ. Verbatim from the old site's accordion (docs/CONTENT.md),
-   extracted from the live DOM since the old site is a WordPress/Beaver
-   Builder accordion that only renders answer text once expanded. */
-$faqs = [
-    [
-        'q' => 'Which mode of the shipment should be advisable in terms of cost saving without having to compromise on safety and time constraints?',
-        'a' => "There are various modes of shipment, Loading on Flat rack, Un containerized mode of shipment on Container vessel, On Mafi and Breakbulk, a combination of Road, Rail and Breakbulk or Combination of Road, Barge and Breakbulk/Un containerised option on Container vessel and many other combinations.\n\nClient's requirement to arrive on time with shortest transit time, obviously without compromising on safety and within a budget. Cargo, Hose Reel, weight 125 tons, Diameter 12.5m x Length 14.5m. Ex Yard with limited water front draft level of 1.2m.",
-    ],
-    [
-        'q' => 'What is included in our oversize/over weight/ transportation plan?',
-        'a' => 'Many aspects must be co ordinated when transporting oversize/overweight cargo. Each and every aspect should be addressed in the freight transportation plan. Each plan is tailor-made to the scope of the project and should include: custom permits, road permits and type of equipment needed; feasibility study; access to the loading and discharging locations; road and route survey, escort as it varies State by State depending upon project requirement; and potential repositioning of utility lines, trees, signage etc.',
-    ],
-    [
-        'q' => 'Why carefully choosing a right project freight forwarder is important?',
-        'a' => 'Only qualified and experienced project freight forwarders can come up with the right advice to save cost without having to compromise on safety. The correct procedure will vary based on freight characteristics and the usage of the right type of equipment, be it barge, type of trailer, lifting versus jack up and skidding, lifting versus jack down cargo on pre-placed concrete stools or a prefabricated frame on the barge, or a combination of both. Using the wrong type of equipment can be very expensive — lifting is not always the right solution; jack up and skidding is the other option to consider depending upon cargo location, infrastructure availability, feasibility, and many other factors. Experience is the key player here.',
-    ],
-    [
-        'q' => 'Can we air freight a Length of 2.28m x Diameter of 2.714m without a charter flight from Ex Norway to Batam within a week? A question raised by one of our in-house clients.',
-        'a' => "The answer is no, you cannot — but if you were to rotate the reel, which is unlikely in most cases due to the sensitive cable coil around the reel, or trim excess reel from the bottom and top, fabricate a cradle, in short, modify the dimensions to bring down the height to 2.42m to accommodate, you'd save yourself from the massive cost of chartering a flight and going on a liner schedule.\n\nWe offered a multi-modal transport solution: land transport from Norway to Luxembourg, followed by air transport from Luxembourg to Singapore, trucking from SATS to Jurong Port by road, barge from Singapore to Batu Ampar, Batam, and the last step by road to the final destination at a private jetty where a cable-laying vessel was waiting to receive this cable reel. The entire scope was concluded at USD110,000+, including road survey, obtaining escort and permits, liaising with suppliers, fabricator, airport authorities, airline ground planner, airlines to select the right time of freighter, barge operator, etc.",
-    ],
-    [
-        'q' => 'Can we provide DAP, DDP, and DDU to the end user through the shipper does not have any establishment at the country of destination?',
-        'a' => "Yes. We can assist using our license wherever CGS has its own offices, such as in Malaysia (including East Malaysia), Batam (Indonesia), Brunei, and Singapore. Outside these regions, we use our carefully selected in-house project freight forwarders, such as in Norway, Finland, the Netherlands, the Middle East, and India, to offer a complete destination, door-to-door solution — including, but not limited to, using our own company license.\n\nWe worked with Zodiac Milpro, based in Spain and Canada, to send their 15-metre boat from Spain to Langkawi for an exhibition, mobilised back to Singapore for another sea trial presentation, then sent to the UK for a third sea trial before heading back to the country of origin, Spain.",
-    ],
+    ['name' => 'Sarens',          'logo' => 'assets/img/partners/sarens.png'],
+    ['name' => 'IKM Subsea',      'logo' => 'assets/img/partners/ikm-subsea.png'],
+    ['name' => 'Favelle Favco',   'logo' => 'assets/img/partners/favelle-favco.png'],
+    ['name' => 'Pageo',           'logo' => 'assets/img/partners/Pageo-Logo.gif'],
+    ['name' => 'Skadi Offshore',  'logo' => 'assets/img/partners/skadie_offshore_1.png'],
+    ['name' => 'Aster Chemical',  'logo' => 'assets/img/partners/aster-logo.webp'],
+    ['name' => 'Brooke Dockyard', 'logo' => 'assets/img/partners/brooke-mark.png'],
+    ['name' => 'Oilstates',       'logo' => 'assets/img/partners/oil-states-1.png'],
 ];
 
 require __DIR__ . '/includes/head.php';
@@ -284,47 +350,48 @@ require __DIR__ . '/includes/header.php';
     </div>
   </section>
 
-  <!-- 2b ── PARTNERS ────────────────────────────────────────
-       Continuous auto-scroll logo marquee. Logos pulled from the client's
-       old staging site (docs/PROJECT-BRIEF.md open question 13) — still
-       needs the client to confirm these relationships carry over before
-       this ships live. -->
-  <?php if ($partners): ?>
-  <section class="cgs-section cgs-partners" aria-label="Partners and carriers">
+  <!-- 2b ── CERTIFICATIONS ──────────────────────────────────
+       Client's own instruction for this exact page (docs/source/emails.txt,
+       "1st email on HOME Page") named the ISO/bizSAFE credentials here;
+       moved to directly after the video band on client request ("move the
+       section after video"). Entity names, registration numbers and the
+       UEN used to sit in a left column next to this — now shown in the
+       navbar logo lockup instead (includes/header.php), so this band is
+       certificates only, full width, large (client: "remove company
+       address and only shocase certificates in large size"). Each cert
+       embeds the real PDF live via <iframe> (client, earlier: "showcase
+       full certificate use it as pdf") instead of a screenshot or cropped
+       logo; clicking still opens the same PDF full-size in the Magnific
+       Popup lightbox (init in includes/scripts.php) — the iframe is
+       pointer-events:none (cgs.css) so the click reaches the wrapping <a>,
+       and the href still points at the real file as a no-JS fallback.
+       White background (client: "for credentials change background color
+       to white") — cards keep a light border/shadow instead of the navy
+       fill they used on the dark band. -->
+  <section class="cgs-section cgs-credentials" aria-label="Certifications">
     <div class="container-fluid px-4">
-      <header class="cgs-section-head">
-        <h2>Working with trusted partners</h2>
+      <header class="cgs-credentials__head">
+        <p class="cgs-eyebrow">Credentials</p>
+        <h2>Certifications</h2>
       </header>
-    </div>
 
-    <?php
-    /* Swiper's loop mode needs the *real* slide count (before its own
-       internal duplication) to cover however many tiles fit on screen at
-       once, or it silently disables looping and the whole strip freezes
-       (see cgs.js) — on a wide enough monitor, more ~230px tiles fit than
-       there are partner logos. Repeating the same list into the DOM a few
-       times keeps that covered regardless of screen width, without
-       needing a second copy of the data itself. */
-    $partnersLoop = array_merge($partners, $partners, $partners);
-    ?>
-    <?php /* aria-hidden: the section's own aria-label already names the
-       purpose; without this a screen reader would read out each partner
-       name 3x now that the list is tripled for the loop-mode fix above. */ ?>
-    <div class="swiper cgs-partners__swiper" data-partners-swiper aria-hidden="true">
-      <div class="swiper-wrapper">
-        <?php foreach ($partnersLoop as $partner): ?>
-        <div class="swiper-slide cgs-partners__slide">
-          <span class="cgs-partners__tile">
-            <img src="<?php echo url($partner['logo']); ?>"
-                 alt="<?php echo e($partner['name']); ?>"
-                 loading="lazy" width="160" height="60">
+      <div class="cgs-credentials__certs">
+        <?php foreach ($certificates as $cert): ?>
+        <a class="cgs-credentials__cert cgs-pdf-trigger" href="<?php echo url($cert['file']); ?>" aria-label="<?php echo e($cert['label']); ?> — view full certificate PDF">
+          <span class="cgs-credentials__docframe" style="aspect-ratio: <?php echo e($cert['ratio']); ?>;">
+            <?php if (!empty($cert['preview'])): ?>
+              <img src="<?php echo url($cert['preview']); ?>" alt="" loading="lazy">
+            <?php else: ?>
+              <iframe src="<?php echo url($cert['file']); ?>#toolbar=0&amp;navpanes=0&amp;scrollbar=0&amp;view=FitH"
+                      tabindex="-1" aria-hidden="true" loading="lazy" title=""></iframe>
+            <?php endif; ?>
           </span>
-        </div>
+          <span class="cgs-credentials__meta"><?php echo e($cert['label']); ?></span>
+        </a>
         <?php endforeach; ?>
       </div>
     </div>
   </section>
-  <?php endif; ?>
 
   <!-- 3 ── SERVICES ─────────────────────────────────────────
        Scroll-pin: on desktop, with motion allowed, the section holds one
@@ -433,40 +500,176 @@ require __DIR__ . '/includes/header.php';
     </div>
   </section>
 
-  <!-- 4 ── THE CGS APPROACH ─────────────────────────────────
-       Dark band, numbered editorial rows, closing with a single-accent
-       CTA card — ported from the "Hyer" landing concept's approach and
-       featured-clay sections (landing.php). Client copy, from the
-       Project Freight Forwarding email. -->
-  <section class="cgs-section cgs-section--dark">
+  <!-- 4 ── DIVISIONS ────────────────────────────────────────
+       The client's own two named in-house departments, verbatim from the
+       HOME Page email, followed by a 4-item "why choose CGS" strip from
+       the same email's second section — one band, two distinct rhythms
+       within it. White section background (client: "change unrivaled
+       into white background"). Each division is its own "feature module"
+       (title/description + 3 asymmetrical photos + a card grid of its
+       checklist items), alternating text/gallery sides left-to-right —
+       see $divisionMedia below and cgs.css's .cgs-division-feature block. -->
+  <section class="cgs-section cgs-divisions">
     <div class="container-fluid px-4">
-      <div class="cgs-approach">
-        <div class="cgs-approach__intro">
-          <p class="cgs-eyebrow cgs-eyebrow--on-dark">The CGS approach</p>
-          <h2>We read the packing list before we quote</h2>
-          <p>
-            Project freight forwarding is a choice between modes, made against
-            cargo size, urgency, budget and site constraint. Analysing what you
-            are actually shipping produces a practical answer more often than
-            reaching for the most expensive charter.
-          </p>
+      <header class="cgs-divisions__head">
+        <p class="cgs-eyebrow">Unrivaled control</p>
+        <h2>Two specialized in-house departments</h2>
+        <p class="cgs-divisions__lede">
+          We eliminate third-party delays, hidden markups, and communication
+          gaps. By operating our own transport fleet alongside a dedicated
+          marine engineering desk, CGS provides single-source accountability
+          from the manufacturing floor to the final foundation.
+        </p>
+      </header>
+
+      <?php
+      /* Both divisions share one bespoke "feature module" layout (client,
+         division 01: "01 > title/subtitle/description at left, right col
+         3 asymmetrical images, section below 2x3 cards for points, whole
+         background white"; division 02: "likewise change division 2 with
+         exact layout in reverse direction" — same module, gallery and
+         text swap sides via --reverse). Real photography per division, not
+         generic filler: division 01 is land-transport/fleet themed,
+         division 02 is maritime/vessel-charter themed, matching each
+         division's own subject.
+         Every file below is used exactly once on this page (audited
+         2026-08-19, client: "dully check don't repeat images"). The first
+         pass at this only checked filenames, not actual file content —
+         assets/img/hero/cgs-trailer.jpg turned out to be a byte-for-byte
+         copy of assets/img/services/project-freight-forwarding.jpg (same
+         photo, two filenames), so it was silently duplicating Service #1's
+         card. Caught via md5sum once the client pointed at
+         client_assets/pic/ for more real photography. Both divisions were
+         cut back to a single full-bleed lead photo each (2026-08-19,
+         client: "in division 1 and 2 keep only 1 image") — the --solo
+         gallery modifier below already existed in cgs.css for this case
+         from when division 02 briefly had only one usable photo, so no CSS
+         change was needed, just fewer array entries. Division 01's photo
+         was swapped again the same day (client: "change the image for
+         division 1") for a shot that both reads landscape at full size
+         (2048x1152, no crop needed in the solo box) and carries the
+         Carriage Global name directly on the trailer. The two photos here
+         are unpublished CGS operations photography, each confirmed unique
+         via md5sum against every other file already used on this page
+         before being copied into assets/img/. */
+      $divisionMedia = [
+          [
+              ['src' => 'assets/img/fleet/oocl-pipe-trailer.jpg', 'alt' => 'Carriage Global low-bed trailer hauling large yellow industrial pipes past an OOCL container', 'wide' => true],
+          ],
+          [
+              ['src' => 'assets/img/gallery/ops-08.jpg', 'alt' => 'MacGregor ship crane hoisting cargo over the water at a Singapore port', 'wide' => true],
+          ],
+      ];
+      ?>
+      <?php foreach ($divisions as $d => $division): ?>
+      <?php $reverse = ($d % 2) === 1; ?>
+      <article class="cgs-division-feature<?php echo $reverse ? ' cgs-division-feature--reverse' : ''; ?>">
+        <div class="cgs-division-feature__top">
+          <div class="cgs-division-feature__text" data-reveal>
+            <span class="cgs-division-feature__num"><?php echo str_pad((string) ($d + 1), 2, '0', STR_PAD_LEFT); ?></span>
+            <h3><?php echo e($division['title']); ?></h3>
+            <p class="cgs-division-feature__tagline"><?php echo e($division['tagline']); ?></p>
+            <p class="cgs-division-feature__intro"><?php echo e($division['intro']); ?></p>
+          </div>
+          <?php $images = $divisionMedia[$d] ?? []; ?>
+          <div class="cgs-division-feature__gallery<?php echo count($images) === 1 ? ' cgs-division-feature__gallery--solo' : ''; ?>" data-reveal style="--reveal-delay: 120ms">
+            <?php foreach ($images as $img): ?>
+            <div class="cgs-division-feature__gimg<?php echo !empty($img['wide']) ? ' cgs-division-feature__gimg--wide' : ''; ?>">
+              <img src="<?php echo url($img['src']); ?>" alt="<?php echo e($img['alt']); ?>"
+                   loading="lazy" width="900" height="460">
+            </div>
+            <?php endforeach; ?>
+          </div>
         </div>
 
-        <ol class="cgs-approach__list">
-          <?php foreach ($approach as $n => $step): ?>
-          <li data-reveal style="--reveal-delay: <?php echo $n * 70; ?>ms">
-            <span class="cgs-approach__num"><?php echo str_pad((string) ($n + 1), 2, '0', STR_PAD_LEFT); ?></span>
-            <span class="cgs-approach__text">
-              <strong><?php echo e($step['title']); ?></strong>
-              <span><?php echo e($step['body']); ?></span>
-            </span>
+        <div class="cgs-division-feature__points">
+          <?php foreach ($division['items'] as $i => $item): ?>
+          <div class="cgs-point-card" data-reveal style="--reveal-delay: <?php echo $i * 60; ?>ms">
+            <i class="fa-solid fa-check" aria-hidden="true"></i>
+            <h4><?php echo e($item['title']); ?></h4>
+            <p><?php echo e($item['body']); ?></p>
+          </div>
+          <?php endforeach; ?>
+        </div>
+      </article>
+      <?php endforeach; ?>
+
+      <div class="cgs-advantage">
+        <p class="cgs-eyebrow">The CGS advantage</p>
+        <h3>Why global industrial leaders choose CGS</h3>
+        <ul class="cgs-advantage__grid">
+          <?php foreach ($advantage as $a => $point): ?>
+          <li data-reveal style="--reveal-delay: <?php echo $a * 70; ?>ms">
+            <span class="cgs-advantage__icon"><i class="fa-solid <?php echo e($point['icon']); ?>" aria-hidden="true"></i></span>
+            <strong><?php echo e($point['title']); ?></strong>
+            <p><?php echo e($point['body']); ?></p>
           </li>
           <?php endforeach; ?>
-        </ol>
+        </ul>
       </div>
     </div>
   </section>
 
+  <!-- 4b ── PARTNERS ────────────────────────────────────────
+       Continuous auto-scroll logo marquee, moved directly above the
+       accent CTA (client: "I want partners at the above cta"). The exact
+       client list from the HOME Page email (docs/PROJECT-BRIEF.md open
+       question 13) — five of the eight names have no verified logo file
+       yet and render as text. -->
+  <?php if ($partners): ?>
+  <section class="cgs-section cgs-partners" aria-label="Partners and carriers">
+    <div class="container-fluid px-4">
+      <header class="cgs-section-head">
+        <h2>Working with trusted partners</h2>
+      </header>
+    </div>
+
+    <?php
+    /* Swiper's loop mode needs the *real* slide count (before its own
+       internal duplication) to cover however many tiles fit on screen at
+       once, or it silently disables looping and the whole strip freezes
+       (see cgs.js) — on a wide enough monitor, more ~230px tiles fit than
+       there are partner logos. Repeating the same list into the DOM a few
+       times keeps that covered regardless of screen width, without
+       needing a second copy of the data itself. */
+    $partnersLoop = array_merge($partners, $partners, $partners);
+    /* No loading="lazy" on the logos below: Swiper measures every slide's
+       width at init to decide whether loop mode has enough real content,
+       and a still-loading (still zero-width) image at that exact moment
+       makes the strip look narrower than it is — intermittently, only on
+       whichever load was slow that time, which is why this only ever
+       happened "sometimes" (client). cgs.js also re-measures once the
+       images actually finish loading, as a second line of defence. */
+    ?>
+    <?php /* aria-hidden: the section's own aria-label already names the
+       purpose; without this a screen reader would read out each partner
+       name 3x now that the list is tripled for the loop-mode fix above. */ ?>
+    <div class="swiper cgs-partners__swiper" data-partners-swiper aria-hidden="true">
+      <div class="swiper-wrapper">
+        <?php foreach ($partnersLoop as $partner): ?>
+        <div class="swiper-slide cgs-partners__slide">
+          <?php if (!empty($partner['logo'])): ?>
+          <span class="cgs-partners__tile">
+            <img src="<?php echo url($partner['logo']); ?>"
+                 alt="<?php echo e($partner['name']); ?>"
+                 width="160" height="60">
+          </span>
+          <?php else: ?>
+          <span class="cgs-partners__tile cgs-partners__tile--text"><?php echo e($partner['name']); ?></span>
+          <?php endif; ?>
+        </div>
+        <?php endforeach; ?>
+      </div>
+    </div>
+  </section>
+  <?php endif; ?>
+
+  <!-- 4c ── ACCENT CTA card ─────────────────────────────────
+       Removed 2026-08-19 (client: "remove send us your packing list") —
+       left in place, not deleted, in case it comes back. Partners (above)
+       now sits directly on the white Divisions-to-teal-CTA seam it was
+       styled for, so removing this doesn't leave a color mismatch. -->
+  <?php if (false): ?>
   <section class="cgs-accent-cta">
     <div class="container-fluid px-4">
       <div class="cgs-accent-cta__inner" data-reveal>
@@ -481,67 +684,17 @@ require __DIR__ . '/includes/header.php';
       </div>
     </div>
   </section>
-
-  <!-- 4c ── CORE VALUES ─────────────────────────────────────
-       Verbatim from the old site (docs/CONTENT.md). Five-item grid,
-       numbered like the approach list above it but in the page's light
-       palette. -->
-  <section class="cgs-section cgs-values">
-    <div class="container-fluid px-4">
-      <header class="cgs-section-head">
-        <h2>What we stand for</h2>
-      </header>
-      <ul class="cgs-values__grid">
-        <?php foreach ($coreValues as $n => $value): ?>
-        <li data-reveal style="--reveal-delay: <?php echo $n * 60; ?>ms">
-          <span class="cgs-values__num"><?php echo str_pad((string) ($n + 1), 2, '0', STR_PAD_LEFT); ?></span>
-          <strong><?php echo e($value['title']); ?></strong>
-          <p><?php echo e($value['body']); ?></p>
-        </li>
-        <?php endforeach; ?>
-      </ul>
-    </div>
-  </section>
-
-  <!-- 4d ── SPECIAL SERVICES ────────────────────────────────
-       Old-site ancillary services (docs/CONTENT.md, docs/PROJECT-BRIEF.md
-       open question 9) — not among the five service pages, shown here as a
-       capabilities strip pending the client's call on whether they get full
-       pages of their own. No "read more" links: the old site's pointed to
-       pages we don't have.
-
-       Card interaction modelled on cargokite.com's "Why us" cards: a corner
-       icon badge that tucks away (scale down, transform-origin at its own
-       corner) and the card lifting on a soft shadow when hovered — adapted
-       here onto a photo card instead of their flat tint, so the icon shrink
-       also reveals more of the image underneath it. -->
-  <section class="cgs-section cgs-section--tint cgs-special">
-    <div class="container-fluid px-4">
-      <header class="cgs-section-head">
-        <h2>Special services</h2>
-      </header>
-      <div class="cgs-special__grid">
-        <?php foreach ($specialServices as $n => $svc): ?>
-        <div class="cgs-special__card" data-reveal style="--reveal-delay: <?php echo $n * 70; ?>ms">
-          <div class="cgs-special__media">
-            <img src="<?php echo url($svc['image']); ?>"
-                 alt="<?php echo e($svc['alt']); ?>"
-                 loading="lazy" width="600" height="600">
-          </div>
-          <span class="cgs-special__icon"><i class="fa-solid <?php echo e($svc['icon']); ?>" aria-hidden="true"></i></span>
-          <div class="cgs-special__body">
-            <h3><?php echo e($svc['title']); ?></h3>
-            <p><?php echo e($svc['body']); ?></p>
-          </div>
-        </div>
-        <?php endforeach; ?>
-      </div>
-    </div>
-  </section>
+  <?php endif; ?>
 
   <!-- 5 ── FLEET TEASER ─────────────────────────────────────
-       Two-image split. In-house trailers, lashing crew and open yard are
-       confirmed accurate by the client — no longer placeholder. -->
+       Two-image split. Copy upgraded 2026-08-19 with the client's own
+       equipment specifics (docs/source/emails.txt): deck height and yard
+       address from "Email Our Fleet", forklift tonnage from the "HOME
+       Page" email's CGS-advantage bullet — replacing the previous
+       generic bullets.
+       Hidden 2026-08-19 (client: "hide the Our own trailers section") —
+       left in place, not deleted, in case it comes back. -->
+  <?php if (false): ?>
   <section class="cgs-section">
     <div class="container-fluid px-4">
       <div class="cgs-split">
@@ -564,16 +717,20 @@ require __DIR__ . '/includes/header.php';
           </p>
           <ul class="cgs-split__points">
             <li>
-              <strong>Fleet</strong>
-              <span>Low-beds and flat-beds for oversized and heavy units.</span>
+              <strong>Low-bed & super low-bed trailers</strong>
+              <span>Deck heights from around 0.8m off the ground, for clearance on high and oversized cargo.</span>
             </li>
             <li>
-              <strong>In-house lashing</strong>
-              <span>Lifting and lashing calculations, certified gear, sea-worthy securing.</span>
+              <strong>Skeleton chassis & lifting equipment</strong>
+              <span>Various chassis sizes, plus forklifts from 3t to 16t for loading, positioning and project cargo.</span>
             </li>
             <li>
-              <strong>Open yard</strong>
-              <span>Cargo storage and re-working space between arrival and sailing.</span>
+              <strong>In-house lashing, lifting & fabrication</strong>
+              <span>Qualified rigging teams, plus in-house fabrication of boxes, frames and protective structures.</span>
+            </li>
+            <li>
+              <strong>Open yard storage</strong>
+              <span>14 Penjuru Road: space, accessibility and controlled handling before onward transportation.</span>
             </li>
           </ul>
           <a href="<?php echo url('our-fleet.php'); ?>" class="cgs-btn cgs-btn--ghost">
@@ -583,75 +740,98 @@ require __DIR__ . '/includes/header.php';
       </div>
     </div>
   </section>
+  <?php endif; ?>
 
-  <!-- 6 ── OPERATIONS GALLERY ───────────────────────────────
-       Contained carousel: dedicated prev/next arrows flank the frame and
-       autoplay steps through the photos on its own, same autoplay etiquette
-       as the hero carousel (see cgs.js) — pauses on hover/focus and while
-       off-screen, never starts under reduced motion. -->
-  <section class="cgs-section cgs-gallery-section">
+  <!-- 5b ── PROJECT DESK ────────────────────────────────────
+       "Contact Our Project Desk" from the client's HOME Page email — real
+       named roles and department addresses, not generic placeholders, so a
+       visitor with a live shipment reaches the right desk on the first
+       try instead of a general enquiry queue. -->
+  <section class="cgs-section cgs-section--tint cgs-desk">
     <div class="container-fluid px-4">
       <header class="cgs-section-head">
-        <h2>Recent operations</h2>
+        <h2>Contact our project desk</h2>
       </header>
+      <ul class="cgs-desk__grid">
+        <?php foreach ($projectDesk as $n => $contact): ?>
+        <li data-reveal style="--reveal-delay: <?php echo $n * 60; ?>ms">
+          <span class="cgs-desk__role"><?php echo e($contact['role']); ?></span>
+          <?php if (!empty($contact['name'])): ?>
+          <strong class="cgs-desk__name"><?php echo e($contact['name']); ?></strong>
+          <?php endif; ?>
+          <a class="cgs-desk__email" href="mailto:<?php echo e($contact['email']); ?>">
+            <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+            <?php echo e($contact['email']); ?>
+          </a>
+        </li>
+        <?php endforeach; ?>
+      </ul>
     </div>
-
-    <?php if ($galleryRows): ?>
-    <div class="cgs-gallery-carousel container-fluid px-4">
-      <button class="cgs-gallery__arrow cgs-gallery__arrow--prev" data-gallery-prev type="button" aria-label="Previous photo">
-        <i class="fa-solid fa-angle-left" aria-hidden="true"></i>
-      </button>
-
-      <div class="swiper cgs-gallery" data-gallery-swiper>
-        <div class="swiper-wrapper">
-          <?php foreach ($galleryRows as $shot): ?>
-          <div class="swiper-slide">
-            <img src="<?php echo url($shot['image_path']); ?>"
-                 alt="<?php echo e($shot['alt_text'] ?: 'Carriage Global project cargo operation'); ?>"
-                 loading="lazy" width="720" height="540">
-          </div>
-          <?php endforeach; ?>
-        </div>
-      </div>
-
-      <button class="cgs-gallery__arrow cgs-gallery__arrow--next" data-gallery-next type="button" aria-label="Next photo">
-        <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
-      </button>
-    </div>
-    <?php endif; ?>
   </section>
 
-  <!-- 7 ── FAQ ──────────────────────────────────────────────
-       Native <details>/<summary> accordion — no JS needed, accessible by
-       default. Verbatim Q&A from the old site (docs/CONTENT.md), pulled
-       from its live DOM since the source page only renders answer text
-       once a question is expanded. -->
-  <?php if ($faqs): ?>
-  <section class="cgs-section cgs-faq">
+  <!-- 5c ── GALLERY ─────────────────────────────────────────
+       Real operations photography, last content section on the page before
+       the closing CTA (client: "I need a gallery section at last also").
+       Masonry (CSS multi-column, not a fixed-height grid) so portrait and
+       landscape shots each keep their own natural aspect ratio rather than
+       being force-cropped into a uniform cell (client, earlier: "place
+       portrait images in correct layout"). All six files are freshly
+       pulled from client_assets/pic/ and confirmed unique via md5sum
+       against every other image already used on this page — none of these
+       repeat the Hero, Services or Division photography above. Each tile
+       opens the full photo in a Magnific Popup lightbox with gallery
+       navigation (init in includes/scripts.php, kept out of cgs.js since
+       Magnific Popup is jQuery-dependent).
+
+       Hidden 2026-08-19 (client: "hide the gallery section") — markup, CSS
+       (.cgs-gallery* in cgs.css) and the Magnific Popup init in
+       scripts.php are all left in place, just not rendered, so this can
+       come back with a one-line flip if the client wants it again. -->
+  <?php if (false): ?>
+  <?php
+  $galleryShots = [
+      ['src' => 'assets/img/gallery/ops-10.jpg', 'alt' => 'Green tarpaulin-wrapped cargo lifted by gantry crane at a Singapore container terminal'],
+      ['src' => 'assets/img/gallery/ops-11.jpg', 'alt' => 'Support vessel lifted clear of the water by twin shipyard cranes'],
+      ['src' => 'assets/img/gallery/ops-12.jpg', 'alt' => 'Large cylindrical pressure vessel lifted aboard a geared vessel at sea'],
+      ['src' => 'assets/img/gallery/ops-13.jpg', 'alt' => "Wrapped process vessel lowered into a ship's cargo hold"],
+      ['src' => 'assets/img/gallery/ops-14.jpg', 'alt' => 'Winch and crane equipment secured on a vessel deck alongside shipping containers'],
+      ['src' => 'assets/img/gallery/ops-15.jpg', 'alt' => 'Twin deck cranes lifting cylindrical tanks aboard a vessel'],
+  ];
+  ?>
+  <section class="cgs-section cgs-gallery" aria-label="Project photography">
     <div class="container-fluid px-4">
       <header class="cgs-section-head">
-        <h2>Frequently asked questions</h2>
+        <h2>Our operations, in the field</h2>
       </header>
-      <div class="cgs-faq__list">
-        <?php foreach ($faqs as $n => $faq): ?>
-        <details class="cgs-faq__item"<?php echo $n === 0 ? ' open' : ''; ?>>
-          <summary class="cgs-faq__question">
-            <span><?php echo e($faq['q']); ?></span>
-            <i class="fa-solid fa-plus" aria-hidden="true"></i>
-          </summary>
-          <div class="cgs-faq__answer">
-            <?php foreach (explode("\n\n", $faq['a']) as $para): ?>
-            <p><?php echo e($para); ?></p>
-            <?php endforeach; ?>
-          </div>
-        </details>
+
+      <div class="cgs-gallery__grid">
+        <?php foreach ($galleryShots as $g => $shot):
+          /* Real pixel dimensions, not a guessed 800x600 — masonry sizes
+             each tile from its image's own intrinsic ratio, so getting
+             width/height right here is what keeps a tall portrait shot
+             tall instead of the browser reserving a landscape-shaped box
+             for it before the file loads. */
+          $shotDims = @getimagesize(__DIR__ . '/' . $shot['src']);
+          $shotW = $shotDims[0] ?? 800;
+          $shotH = $shotDims[1] ?? 600;
+        ?>
+        <a class="cgs-gallery__tile cgs-gallery-trigger" href="<?php echo url($shot['src']); ?>"
+           data-reveal style="--reveal-delay: <?php echo $g * 60; ?>ms">
+          <img src="<?php echo url($shot['src']); ?>"
+               alt="<?php echo e($shot['alt']); ?>"
+               loading="lazy" width="<?php echo (int) $shotW; ?>" height="<?php echo (int) $shotH; ?>">
+          <span class="cgs-gallery__caption" aria-hidden="true">
+            <?php echo e($shot['alt']); ?>
+            <i class="fa-solid fa-expand" aria-hidden="true"></i>
+          </span>
+        </a>
         <?php endforeach; ?>
       </div>
     </div>
   </section>
   <?php endif; ?>
 
-  <!-- 8 ── CTA ──────────────────────────────────────────────
+  <!-- 6 ── CTA ──────────────────────────────────────────────
        One CTA intent on this page: "Get a Quote". Same label in the
        nav, the hero and here. Rounded navy card inset on a white section,
        copy on the left and actions on the right, with a hairline squiggle

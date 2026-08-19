@@ -372,6 +372,142 @@ a:hover { color: var(--cgs-navy-700); }
   transform: scale(1.25);
 }
 
+/* --- Credentials -----------------------------------------------------------
+   Sits directly after the video band (client: "move the section after
+   video"). Was a full dark band; now white (client: "for credentials
+   change background color to white") — cards switch from a solid
+   navy-700 fill to a white surface with a border and the same
+   --cgs-shadow-lg/--cgs-shadow-float elevation the rest of the light-mode
+   page uses for a card meant to lift off the surface. Entity names,
+   registration numbers and the UEN that used to sit in a left column here
+   now live in the navbar logo lockup (includes/header.php) instead, so
+   this band is certificates only, full width, large (client: "remove
+   company address and only shocase certificates in large size"). Cert
+   cards embed the real PDF live via <iframe> (client, earlier: "showcase
+   full certificate use it as pdf") rather than a screenshot or a cropped
+   logo mark — the docframe is sized by its own page's aspect ratio
+   (inline style, from the 'ratio' field in $certificates in index.php) so
+   the landscape WCA certificate isn't squeezed into a portrait box. The
+   iframe is pointer-events:none so a click anywhere on the card reaches
+   the wrapping <a> and opens the same PDF full-size in a Magnific Popup
+   lightbox instead of a new tab (client, earlier: "open pdf in popup") —
+   init lives in includes/scripts.php, popup sizing overrides are the
+   .cgs-pdf-popup rules right after this block. */
+.cgs-credentials__head {
+  max-width: 640px;
+  margin: 0 0 clamp(36px, 4.5vw, 56px);
+}
+.cgs-credentials__head h2 {
+  margin: 0;
+  font-size: clamp(26px, 3.4vw, 40px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: var(--cgs-navy-900);
+  text-wrap: balance;
+}
+
+.cgs-credentials__certs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(24px, 3vw, 40px);
+  max-width: 1360px;
+  margin-inline: auto;
+}
+.cgs-credentials__cert {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: clamp(20px, 2.2vw, 28px);
+  background: #fff;
+  border: 1px solid var(--cgs-line);
+  border-radius: var(--cgs-radius);
+  box-shadow: var(--cgs-shadow-lg);
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 200ms ease-out, box-shadow 200ms ease-out;
+}
+.cgs-credentials__cert:hover,
+.cgs-credentials__cert:focus-visible {
+  transform: translateY(-6px);
+  box-shadow: var(--cgs-shadow-float);
+}
+/* WCA's page is landscape, so its card is naturally shorter than the two
+   portrait certs beside it; grid items stretch to the row's full height by
+   default, which left the docframe+label block pinned to the top with all
+   the leftover space dumped below it. Centering the block vertically
+   (client: "make the certificate of wca middle center and adjust the
+   white space around it") splits that space evenly above and below
+   instead. */
+.cgs-credentials__certs .cgs-credentials__cert:nth-child(3) {
+  justify-content: center;
+}
+.cgs-credentials__docframe {
+  display: block;
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid var(--cgs-line);
+}
+.cgs-credentials__docframe iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  pointer-events: none; /* clicks fall through to the wrapping <a> */
+}
+.cgs-credentials__docframe img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cgs-credentials__meta {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--cgs-slate);
+  line-height: 1.35;
+}
+.cgs-credentials__cert .cgs-credentials__meta {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 13.5px;
+}
+
+@media (max-width: 991.98px) {
+  .cgs-credentials__certs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cgs-credentials__certs a:last-child {
+    grid-column: 1 / -1;
+    max-width: 380px;
+    margin-inline: auto;
+    width: 100%;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .cgs-credentials__certs { grid-template-columns: 1fr; }
+  .cgs-credentials__certs a:last-child { max-width: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cgs-credentials__cert { transition: none; }
+}
+
+/* Magnific Popup override for the certificate lightbox: the plugin's
+   default .mfp-iframe-scaler assumes 16:9 video, which leaves a portrait
+   A4 certificate letterboxed and tiny. mainClass: 'cgs-pdf-popup' (set in
+   the init in includes/scripts.php) scopes these to just that popup. */
+.cgs-pdf-popup .mfp-iframe-holder .mfp-content { max-width: 640px; }
+.cgs-pdf-popup .mfp-iframe-scaler { padding-top: 137%; }
+.cgs-pdf-popup .mfp-iframe-scaler iframe { background: #fff; }
+@media (max-width: 700px) {
+  .cgs-pdf-popup .mfp-iframe-holder .mfp-content { max-width: 92vw; }
+}
+
 /* --- Homepage video band (the brief's 20-second section) -----------------
    Inset in its own container and framed like a card, not full-bleed: the
    video floats over the section background instead of butting straight
@@ -476,40 +612,47 @@ a:hover { color: var(--cgs-navy-700); }
 .cgs-footer a { color: rgba(255, 255, 255, .72); text-decoration: none; transition: color .2s ease; }
 .cgs-footer a:hover { color: var(--cgs-cyan-300); }
 
-/* Type-only lockup, used until a knockout logo exists */
-.cgs-footer__wordmark { margin: 0 0 6px; line-height: 1.15; }
-.cgs-footer__wordmark strong {
-  display: block;
-  font-size: 24px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: #fff;
-}
-.cgs-footer__wordmark small {
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: var(--cgs-cyan-400);
-}
 .cgs-footer__logo { margin-bottom: 6px; height: auto; max-width: 180px; }
 
-/* Registration number, right under the logo/wordmark — company identity,
-   not a Singapore-office contact detail, so it moved out of that list. */
-.cgs-footer__uen {
+/* Slogan, directly under the logo/wordmark. settings.tagline — editable
+   from the admin like the rest of company identity, not hard-coded. */
+.cgs-footer__tagline {
+  margin: 0 0 14px;
+  font-size: 14px;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--cgs-cyan-400);
+}
+
+/* Both registered entities — the footer's actual company-name lockup now
+   that the separate wordmark title is gone (client: "like header remove
+   existing title and add both company name with uen no"). Mirrors the
+   header's .cgs-logo__line pair — same one entity name + its own
+   registration number per line, tight gap between the two lines via the
+   wrapper rather than each <p>'s own margin. Set in white and a larger
+   size (client: "change footer company name in white and bigger") since
+   this is now the primary identity line, not a small print-out under a
+   bigger title. */
+.cgs-footer__entities {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   margin: 0 0 16px;
-  font-size: 12.5px;
-  font-weight: 500;
-  letter-spacing: .04em;
-  color: rgba(255, 255, 255, .5);
+}
+.cgs-footer__uen {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #fff;
 }
 
 .cgs-footer__blurb { margin: 0 0 16px; line-height: 1.75; max-width: 42ch; }
 
+/* No icon (client: "in iso badge remove icons") — just the certification
+   text in its bordered pill. */
 .cgs-footer__iso {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  display: inline-block;
   margin: 0 0 20px;
   padding: 7px 14px;
   border: 1px solid rgba(255, 255, 255, .16);
@@ -517,7 +660,6 @@ a:hover { color: var(--cgs-navy-700); }
   font-size: 13px;
   color: #fff;
 }
-.cgs-footer__iso i { color: var(--cgs-cyan-400); }
 
 .cgs-footer__links,
 .cgs-footer__contact,
@@ -564,14 +706,14 @@ a:hover { color: var(--cgs-navy-700); }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
-  min-height: 44px;
+  gap: 16px;
+  min-height: 36px;
 }
 
 .cgs-topbar__contacts {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 14px;
 }
 .cgs-topbar__contact {
   display: inline-flex;
@@ -601,20 +743,8 @@ a:hover { color: var(--cgs-navy-700); }
 .cgs-topbar__right {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 12px;
 }
-
-.cgs-topbar__iso {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding-right: 18px;
-  border-right: 1px solid rgba(255, 255, 255, .28);
-  font-size: 13px;
-  white-space: nowrap;
-}
-/* White, not --cgs-cyan-400 — see .cgs-topbar__contact i above. */
-.cgs-topbar__iso i { color: #fff; font-size: 12px; }
 
 .cgs-topbar__socials {
   display: flex;
@@ -669,40 +799,47 @@ a:hover { color: var(--cgs-navy-700); }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: 16px;
   min-height: 84px;
 }
 
 /* Logo — the supplied file is a white-background JPEG, so it gets no
    surrounding fill and sits on the white bar. Revisit once a transparent
-   PNG/SVG arrives (see docs/ASSET-INVENTORY.md). */
+   PNG/SVG arrives (see docs/ASSET-INVENTORY.md). Both registered entities
+   plus their registration numbers sit next to the mark (client: "increase
+   logo width and height and add two company names near the logo with uen
+   number") — the same two entities and numbers already shown in the
+   homepage credentials section, not new facts. Two lines, each one entity
+   name and its own registration number together (client: "I want name-uen
+   below name-uen number" — each entity's own pair on one line, the second
+   entity's line below the first, rather than four separate lines) — the
+   Malaysia entity's own number reads "Reg. No." rather than "UEN" since
+   UEN is Singapore's registration scheme, not Malaysia's. Both lines still
+   share one .cgs-logo__line format (client, earlier: "both company name
+   and UEN number in same format") rather than a heading/sub-heading/label
+   hierarchy. */
 .cgs-logo {
   display: inline-flex;
   align-items: center;
   gap: 12px;
   text-decoration: none;
-  flex-shrink: 0;
+  min-width: 0; /* lets the combined name+number lines wrap instead of forcing the burger off-screen on narrow viewports */
 }
-.cgs-logo img { width: 56px; height: 56px; object-fit: contain; }
-.cgs-logo__text { display: flex; flex-direction: column; line-height: 1.15; }
-.cgs-logo__text strong {
-  font-size: clamp(17px, 2vw, 20px);
-  font-weight: 800;
-  letter-spacing: -0.02em;
+.cgs-logo img { width: 84px; height: 84px; object-fit: contain; flex-shrink: 0; }
+.cgs-logo__text { display: flex; flex-direction: column; gap: 2px; line-height: 1.3; min-width: 0; }
+/* Both entity names and the UEN read as one consistent format — same size,
+   weight and color — rather than a heading/sub-heading/label hierarchy. */
+.cgs-logo__line {
+  font-size: clamp(13px, 1.3vw, 14.5px);
+  font-weight: 700;
+  letter-spacing: -0.005em;
   color: var(--cgs-navy-900);
-}
-.cgs-logo__text small {
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: var(--cgs-muted);
 }
 
 .cgs-nav ul {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 0;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -712,7 +849,7 @@ a:hover { color: var(--cgs-navy-700); }
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 30px 16px;
+  padding: 26px 9px;
   font-size: 15.5px;
   font-weight: 600;
   color: var(--cgs-ink);
@@ -722,8 +859,8 @@ a:hover { color: var(--cgs-navy-700); }
 .cgs-nav > ul > li > a::after {
   content: "";
   position: absolute;
-  left: 16px;
-  right: 16px;
+  left: 9px;
+  right: 9px;
   bottom: 0;
   height: 3px;
   background: var(--cgs-gradient);
@@ -786,14 +923,14 @@ a:hover { color: var(--cgs-navy-700); }
 .cgs-header__actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   flex-shrink: 0;
 }
 
 .cgs-header__call {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   text-decoration: none;
 }
 .cgs-header__call-icon {
@@ -838,9 +975,9 @@ a:hover { color: var(--cgs-navy-700); }
 
 @media (max-width: 575.98px) {
   .cgs-header__inner { min-height: 72px; }
-  .cgs-logo img { width: 44px; height: 44px; }
-  .cgs-logo__text strong { font-size: 16px; }
-  .cgs-logo__text small { font-size: 10.5px; }
+  .cgs-logo { gap: 10px; }
+  .cgs-logo img { width: 58px; height: 58px; }
+  .cgs-logo__line { font-size: 11px; }
 }
 
 /* --- Mobile menu: dropdown, not a side panel -----------------------------
@@ -1446,88 +1583,270 @@ html.js [data-services-stage]:not(.swiper-initialized) [data-service-slide].is-a
   max-width: 160px;
   object-fit: contain;
 }
+/* Wordmark fallback for named clients with no verified logo file on disk
+   yet (see the $partners comment in index.php) — a plain type lockup
+   rather than a guessed-at mark for a real company. */
+.cgs-partners__tile--text {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--cgs-slate);
+  white-space: nowrap;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .cgs-partners__swiper { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
   .cgs-partners__swiper .swiper-wrapper { transform: none !important; }
 }
 
-/* --- The CGS approach ---------------------------------------------------- */
-
-.cgs-approach {
-  display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-  gap: clamp(32px, 5vw, 72px);
-  align-items: start;
+/* --- Divisions ------------------------------------------------------------
+   The two named in-house departments from the client's HOME Page email.
+   Each division is a numbered card with an intro and a checklist —
+   distinct from the services bento above it (photo-led, crossfading) and
+   the values grid below it (flat 5-across), so three different section
+   families sit back to back rather than three variants of the same card.
+   White section background (client: "change unrivaled into white
+   background") — was --cgs-teal-500 briefly, before that the shared
+   .cgs-section--dark navy. Every text color below is now the plain
+   on-light set (navy-900 headings, slate body) instead of the on-dark
+   white/cyan set the two earlier backgrounds needed. */
+.cgs-divisions { background: #fff; }
+.cgs-divisions__head {
+  max-width: 760px;
+  margin: 0 0 clamp(36px, 4.5vw, 56px);
 }
-.cgs-approach__intro h2 {
+.cgs-divisions__head h2 {
   margin: 0 0 16px;
   font-size: clamp(26px, 3.4vw, 40px);
   font-weight: 800;
   line-height: 1.15;
   letter-spacing: -0.025em;
+  color: var(--cgs-navy-900);
   text-wrap: balance;
 }
-.cgs-approach__intro p {
-  margin: 0 0 26px;
-  max-width: 52ch;
+.cgs-divisions__lede {
+  margin: 0;
   font-size: 16px;
   line-height: 1.75;
-  color: var(--cgs-ink);
+  color: var(--cgs-slate);
 }
 
-.cgs-approach__list { margin: 0; padding: 0; list-style: none; counter-reset: none; }
-.cgs-approach__list li {
-  display: flex;
-  gap: 22px;
-  padding: 26px 0;
-  border-top: 1px solid var(--cgs-line);
+/* Division feature module: title/subtitle/description on one side, 3
+   asymmetrical photos on the other, then that division's checklist items
+   as a card grid below — everything sits directly on the section's white
+   background. Shared by both divisions; --reverse (Division 02, client:
+   "likewise change division 2 with exact layout in reverse direction")
+   swaps which side the gallery lands on via grid order rather than
+   duplicating the markup. */
+.cgs-division-feature { margin-bottom: clamp(56px, 6vw, 88px); }
+.cgs-division-feature__top {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(32px, 4vw, 64px);
+  /* Text is shorter than the image stack beside it; pin it to the top of
+     the row instead of centering it against the gallery's height. */
+  align-items: start;
+  margin-bottom: clamp(40px, 5vw, 64px);
 }
-.cgs-approach__list li:last-child { border-bottom: 1px solid var(--cgs-line); }
-
-.cgs-approach__num {
-  flex-shrink: 0;
-  width: 46px;
-  font-family: var(--cgs-font);
+.cgs-division-feature--reverse .cgs-division-feature__text { order: 2; }
+.cgs-division-feature--reverse .cgs-division-feature__gallery { order: 1; }
+.cgs-division-feature__num {
+  display: block;
+  margin-bottom: 14px;
   font-size: 15px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  color: var(--cgs-cyan-400);
-  padding-top: 2px;
+  color: var(--cgs-blue-500);
 }
-.cgs-approach__text { display: flex; flex-direction: column; gap: 7px; }
-.cgs-approach__text strong {
-  font-size: 18px;
+.cgs-division-feature__text h3 {
+  margin: 0 0 14px;
+  font-size: clamp(24px, 2.6vw, 32px);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--cgs-navy-900);
+  text-wrap: balance;
+}
+.cgs-division-feature__tagline {
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--cgs-blue-500);
+}
+.cgs-division-feature__intro {
+  margin: 0;
+  font-size: 15.5px;
+  line-height: 1.75;
+  color: var(--cgs-slate);
+}
+
+/* Gallery: one wide shot, two narrower ones underneath — an asymmetrical
+   bento rather than 3 equal tiles. Contained to a viewport-relative
+   height (client: "make the 3 images fit with section viewport height in
+   a containered way") rather than stacking to whatever height each
+   image's own aspect ratio adds up to — the grid rows split that fixed
+   height, and object-fit: cover fills each cell without distorting the
+   source photos. */
+.cgs-division-feature__gallery {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: 1.3fr 1fr;
+  gap: 14px;
+  height: min(70vh, 620px);
+}
+.cgs-division-feature__gimg {
+  border-radius: var(--cgs-radius);
+  overflow: hidden;
+  background: var(--cgs-surface);
+}
+.cgs-division-feature__gimg--wide { grid-column: 1 / -1; }
+.cgs-division-feature__gimg img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* A division with only one non-duplicate real photo available (see the
+   $divisionMedia comment in index.php) gets a single full-bleed image
+   instead of forcing the 1-wide-plus-2-narrow composition with a repeat.
+   Sized to exactly match the top wide tile's own box in the 3-image
+   layout above (row 1 of the 1.3fr/1fr split, minus the 14px row gap) —
+   client: "I want that top 1st image height and width applied for this
+   single image" — rather than an independently-chosen aspect ratio, so a
+   division that later gains its other two photos back slots into the
+   same footprint the wide tile already occupies. Width needs no override:
+   the tile already spans the full grid width, same as the wide tile. */
+.cgs-division-feature__gallery--solo {
+  height: calc((min(70vh, 620px) - 14px) * 1.3 / 2.3);
+  align-self: center;
+}
+.cgs-division-feature__gallery--solo .cgs-division-feature__gimg {
+  grid-column: 1 / -1;
+  grid-row: 1 / -1;
+}
+
+.cgs-division-feature__points {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.cgs-point-card {
+  padding: clamp(20px, 2.2vw, 26px);
+  background: #fff;
+  border: 1px solid var(--cgs-line);
+  border-radius: var(--cgs-radius);
+  box-shadow: var(--cgs-shadow-lg);
+}
+.cgs-point-card i {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin-bottom: 14px;
+  border-radius: 50%;
+  background: var(--cgs-surface);
+  color: var(--cgs-blue-500);
+  font-size: 12px;
+}
+.cgs-point-card h4 {
+  margin: 0 0 8px;
+  font-size: 15.5px;
   font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--cgs-ink);
+  color: var(--cgs-navy-900);
 }
-.cgs-approach__text span {
-  font-size: 15px;
-  line-height: 1.7;
-  color: var(--cgs-ink);
-  max-width: 56ch;
+.cgs-point-card p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--cgs-slate);
 }
 
 @media (max-width: 991.98px) {
-  .cgs-approach { grid-template-columns: 1fr; }
+  .cgs-division-feature__top { grid-template-columns: 1fr; }
+  /* Order only matters for the desktop 2-column row; stacked single-column
+     it should always read text-then-gallery regardless of --reverse. */
+  .cgs-division-feature--reverse .cgs-division-feature__text,
+  .cgs-division-feature--reverse .cgs-division-feature__gallery { order: initial; }
+  .cgs-division-feature__points { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 575.98px) {
+  .cgs-division-feature__points { grid-template-columns: 1fr; }
+  /* 3 stacked images can't share the same fixed viewport-height box the
+     2-row desktop grid uses without squashing — fall back to each
+     image's own aspect ratio and let the gallery grow naturally. */
+  .cgs-division-feature__gallery { grid-template-columns: 1fr; grid-template-rows: none; height: auto; }
+  .cgs-division-feature__gimg--wide { grid-column: auto; }
+  .cgs-division-feature__gimg--wide img { aspect-ratio: 16 / 10; }
+  .cgs-division-feature__gimg:not(.cgs-division-feature__gimg--wide) img { aspect-ratio: 4 / 3; }
 }
 
-/* Dark-band variant, ported from the "Hyer" landing concept's approach
-   section: same hairline-row list, re-coloured for the navy ground the
-   light-mode tokens above are not readable against. */
-.cgs-section--dark .cgs-approach__intro p { color: rgba(255, 255, 255, .68); }
-.cgs-section--dark .cgs-approach__list li,
-.cgs-section--dark .cgs-approach__list li:last-child { border-color: rgba(255, 255, 255, .16); }
-.cgs-section--dark .cgs-approach__num { color: var(--cgs-cyan-300); }
-.cgs-section--dark .cgs-approach__text strong { color: #fff; }
-.cgs-section--dark .cgs-approach__text span { color: rgba(255, 255, 255, .6); }
+/* Closing "why choose CGS" strip: a tighter, icon-led rhythm inside the
+   same band, separated by a hairline rather than starting a new section —
+   the client wrote both halves as one continuous email. Text below is the
+   on-light set to match the section's white background; the icon badge
+   keeps its navy-900 fill unchanged, since a solid dark badge reads just
+   as well floating on white as it did on the darker backgrounds before. */
+.cgs-advantage {
+  padding-top: clamp(36px, 4.5vw, 56px);
+  border-top: 1px solid var(--cgs-line);
+}
+.cgs-advantage h3 {
+  margin: 0 0 clamp(28px, 3.5vw, 40px);
+  font-size: clamp(22px, 2.6vw, 30px);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--cgs-navy-900);
+  text-wrap: balance;
+}
+.cgs-advantage__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(20px, 2.4vw, 32px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cgs-advantage__icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  margin-bottom: 16px;
+  border-radius: 50%;
+  /* Solid navy-900 fill, not a translucent white circle: at 8% opacity the
+     badge was nearly invisible on --cgs-teal-500. Navy also ties the badge
+     back to the division cards' own material a few rows above. */
+  background: var(--cgs-navy-900);
+  color: var(--cgs-cyan-300);
+  font-size: 18px;
+}
+.cgs-advantage__grid strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--cgs-navy-900);
+}
+.cgs-advantage__grid p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--cgs-slate);
+}
+@media (max-width: 991.98px) {
+  .cgs-advantage__grid { grid-template-columns: repeat(2, 1fr); gap: 28px; }
+}
+@media (max-width: 575.98px) {
+  .cgs-advantage__grid { grid-template-columns: 1fr; }
+}
 
 /* --- Accent CTA card ------------------------------------------------------
    Single-use, single-accent card ("Send us your packing list"), ported from
    the "Hyer" landing concept's featured clay card. Full-bleed on the same
-   --cgs-teal-500 used for the top bar and closing CTA card, so all three
-   read as one accent rather than three different blues. */
+   --cgs-teal-500 used for the top bar, so the two read as one accent
+   rather than two different blues.
+   Divisions (directly above) is white now, so the white-to-teal boundary
+   is already a strong seam on its own — no extra hairline needed here
+   (a translucent white one would have half-vanished against the white
+   section feeding into it anyway). */
 .cgs-accent-cta { background: var(--cgs-teal-500); }
 .cgs-accent-cta__inner {
   padding-block: clamp(48px, 6vw, 72px);
@@ -1561,179 +1880,6 @@ html.js [data-services-stage]:not(.swiper-initialized) [data-service-slide].is-a
 /* Reusable tint background — a section that wants to stand apart from the
    plain-white sections around it without going full dark. */
 .cgs-section--tint { background: var(--cgs-surface); }
-
-/* --- Core values ----------------------------------------------------------
-   Five-item grid, numbered like the approach list further up but in the
-   light palette — a deliberate visual echo, not a repeat of the same
-   dark band twice in a row. */
-.cgs-values__grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 1px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  background: var(--cgs-line);
-  border: 1px solid var(--cgs-line);
-  border-radius: var(--cgs-radius);
-  overflow: hidden;
-}
-.cgs-values__grid li {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 26px 22px;
-  background: #fff;
-}
-.cgs-values__num {
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  color: var(--cgs-cyan-400);
-}
-.cgs-values__grid strong {
-  font-size: 15.5px;
-  font-weight: 700;
-  line-height: 1.3;
-  color: var(--cgs-ink);
-}
-.cgs-values__grid p {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--cgs-ink);
-}
-@media (max-width: 991.98px) {
-  .cgs-values__grid { grid-template-columns: repeat(2, 1fr); }
-  /* Five items in a 2-column grid leaves the 6th cell empty — the grid's
-     own gap background (--cgs-line) was showing through it as a blank
-     grey box next to "Embrace teamwork". Only meaningful while the grid
-     actually has 2 columns (there's no orphan cell in the single-column
-     mobile layout below, nor the 5-across desktop one above), so scoped
-     to that range and undone again at the 575.98px breakpoint. */
-  .cgs-values__grid li:nth-child(5) {
-    grid-column: 1 / -1;
-    align-items: center;
-    text-align: center;
-  }
-}
-@media (max-width: 575.98px) {
-  .cgs-values__grid { grid-template-columns: 1fr; }
-  .cgs-values__grid li:nth-child(5) {
-    grid-column: auto;
-    align-items: normal;
-    text-align: left;
-  }
-}
-/* This section's own header is just a bare "What we stand for" — no
-   textlink or arrows riding along the right like the other
-   .cgs-section-head instances (services, gallery) have, so unlike those
-   it reads better centred once the grid above drops out of its 5-across
-   row, from tablet's 2-column grid down through mobile's single column,
-   rather than left-hung with no reason to be. */
-@media (max-width: 991.98px) {
-  /* justify-content, not just align-items: the shared .cgs-section-head
-     rule only switches to flex-direction:column (where align-items
-     alone would centre it) below 767.98px — across 768-991.98px it's
-     still a row, so centring the lone h2 needs the main-axis property
-     too, or it just centres vertically and stays hugging the left. */
-  .cgs-values .cgs-section-head { justify-content: center; align-items: center; text-align: center; }
-}
-
-/* --- Special services -----------------------------------------------------
-   Photo card with a corner icon badge and bottom-anchored copy. The hover
-   choreography is cargokite.com's "Why us" cards: the card lifts on a soft
-   shadow and the icon tucks toward its own corner (transform-origin there,
-   not centre) instead of just sitting still — adapted onto a photograph
-   instead of their flat tint, so the icon shrinking also uncovers more of
-   the image behind it. */
-.cgs-special__grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-.cgs-special__card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  min-height: 320px;
-  padding: 22px;
-  overflow: hidden;
-  border-radius: var(--cgs-radius);
-  isolation: isolate;
-  transition: transform 260ms var(--ease-out), box-shadow 260ms var(--ease-out);
-}
-.cgs-special__media { position: absolute; inset: 0; z-index: -2; }
-.cgs-special__media img { width: 100%; height: 100%; object-fit: cover; transition: transform 600ms var(--ease-out); }
-/* Bottom-anchored scrim, same language as the video band overlay: clear at
-   the top for the photo to read, solid enough at the bottom for the copy. */
-.cgs-special__card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(to top, rgba(8, 20, 40, .82) 0%, rgba(8, 20, 40, .4) 48%, rgba(8, 20, 40, .05) 78%);
-}
-.cgs-special__icon {
-  display: grid;
-  place-items: center;
-  position: absolute;
-  top: 18px;
-  right: 18px;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  background: rgba(8, 20, 40, .55);
-  border: 1px solid rgba(255, 255, 255, .2);
-  backdrop-filter: blur(4px);
-  color: #fff;
-  font-size: 17px;
-  transform-origin: 100% 0;
-  transition: transform 400ms var(--ease-out);
-}
-.cgs-special__body h3 {
-  margin: 0;
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: #fff;
-}
-.cgs-special__body p {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.65;
-  color: rgba(255, 255, 255, .82);
-}
-@media (hover: hover) and (pointer: fine) {
-  /* Matches html.js [data-reveal].is-visible's own selector strength
-     (that rule includes a type selector, so a class-only override can't
-     outrank it) — the card carries data-reveal itself and needs to beat
-     its own translateY(0) once scrolled into view. */
-  html.js .cgs-special__grid .cgs-special__card:hover { transform: translateY(-4px); box-shadow: var(--cgs-shadow-lg); }
-  .cgs-special__card:hover .cgs-special__media img { transform: scale(1.06); }
-  .cgs-special__card:hover .cgs-special__icon { transform: scale(0.6); }
-
-  /* Title-only at rest; the description only earns its place once someone
-     is actually reading this card. Kept out of the touch/no-hover case
-     above (description stays visible there) since a tap has no equivalent
-     "I'm interested" signal to reveal it on. */
-  .cgs-special__body p {
-    margin-top: 0;
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    transition: max-height 320ms var(--ease-out), opacity 220ms var(--ease-out), margin-top 320ms var(--ease-out);
-  }
-  .cgs-special__card:hover .cgs-special__body p {
-    margin-top: 8px;
-    max-height: 160px;
-    opacity: 1;
-  }
-}
-@media (max-width: 767.98px) {
-  .cgs-special__grid { grid-template-columns: 1fr; }
-}
 
 /* --- Fleet split --------------------------------------------------------- */
 
@@ -1807,72 +1953,6 @@ html.js .cgs-split__media.is-visible img { opacity: 1; transform: none; }
 
 @media (max-width: 991.98px) {
   .cgs-split { grid-template-columns: 1fr; }
-}
-
-/* --- Operations gallery -------------------------------------------------- */
-
-/* Light tint, not the dark/accent fill this section carried before — same
-   token as the special-services section above it, so the page doesn't run
-   three plain-white sections in a row between the fleet teaser and FAQ. */
-.cgs-gallery-section { background: var(--cgs-surface); padding-bottom: clamp(40px, 5vw, 72px); }
-
-/* Arrows flank the frame; the frame itself is the Swiper instance. Arrows
-   are flex-shrink: 0 so they keep their own footprint regardless of how
-   many photos are in the track. */
-.cgs-gallery-carousel {
-  display: flex;
-  align-items: center;
-  gap: clamp(10px, 1.6vw, 20px);
-}
-
-.cgs-gallery {
-  flex: 1 1 auto;
-  min-width: 0;
-  overflow: hidden;
-  padding-bottom: 4px;
-}
-.cgs-gallery .swiper-slide {
-  width: clamp(240px, 30vw, 380px);
-  height: auto;
-}
-.cgs-gallery img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: var(--cgs-radius);
-  transition: transform 400ms var(--ease-out);
-}
-@media (hover: hover) and (pointer: fine) {
-  .cgs-gallery .swiper-slide:hover img { transform: scale(1.03); }
-}
-
-/* Same circular-arrow shape as the services section's prev/next, and the
-   same dark-on-light palette since this section's background is light too. */
-.cgs-gallery__arrow {
-  display: grid;
-  place-items: center;
-  width: 42px;
-  height: 42px;
-  flex-shrink: 0;
-  padding: 0;
-  border: 1.5px solid rgba(8, 34, 56, .35);
-  border-radius: 50%;
-  background: transparent;
-  color: var(--cgs-navy-900);
-  font-size: 14px;
-  cursor: pointer;
-  transition: transform 160ms var(--ease-out), background-color 200ms var(--ease-out),
-              border-color 200ms var(--ease-out), color 200ms var(--ease-out);
-}
-.cgs-gallery__arrow:active { transform: scale(0.94); }
-.cgs-gallery__arrow.swiper-button-disabled { opacity: .35; cursor: default; }
-@media (hover: hover) and (pointer: fine) {
-  .cgs-gallery__arrow:not(.swiper-button-disabled):hover {
-    background: var(--cgs-navy-900);
-    border-color: var(--cgs-navy-900);
-    color: #fff;
-  }
 }
 
 /* --- Closing CTA ---------------------------------------------------------
@@ -2010,46 +2090,188 @@ main:has(> .cgs-cta:last-child) + .cgs-footer { padding-top: var(--cgs-cta-overl
   .cgs-cta__actions .cgs-btn { width: 100%; justify-content: center; }
 }
 
-/* --- FAQ ------------------------------------------------------------------
-   Native <details>/<summary> — the disclosure behaviour (one control,
-   keyboard and screen-reader support, no JS) comes free from the element,
-   so nothing in cgs.js drives this. */
-.cgs-faq__list { display: flex; flex-direction: column; gap: 10px; }
-.cgs-faq__item {
+/* --- Project desk ----------------------------------------------------------
+   Role-based contact grid ("Contact Our Project Desk"), real named people
+   and department addresses from the client's HOME Page email. Plain cards,
+   left-aligned, no photos — this is a directory, not a team-bio section. */
+.cgs-desk {
+  /* Partners (above) and this section both use .cgs-section--tint's
+     --cgs-surface fill; with the accent CTA that used to sit between them
+     removed, they were fusing into one flat block. Same fix as the
+     Divisions/CTA seam: a hairline in the on-light color. */
+  border-top: 1px solid var(--cgs-line);
+  position: relative;
+  overflow: hidden;
+}
+/* Corner watermark, tried here after being rejected for the homepage in
+   general (client: "push this and try it in contact section" — this desk
+   grid is the closest thing this page has to a contact section). The
+   source file (assets/img/bg/Oil-rig-icon-background-2.png) is a
+   multi-tone grey clipart illustration that clashed with the rest of the
+   page's abstract line-art decoration (the CTA card's dashed orbit rings,
+   the hairline squiggle) and its all-real-photography content — so
+   instead of placing the raw asset, its alpha shape drives a CSS mask
+   filled with a single flat brand tone at low opacity, the same technique
+   the CTA card's ::after ring already uses, just fed by a raster mask
+   instead of an inline SVG one. assets/img/bg/oil-rig-illustration.png is
+   a cropped-to-content, downscaled, palette-quantized copy of that source
+   file (1000x893, 38KB) — the original 8000x4500 PNG is left untouched
+   on disk. */
+.cgs-desk::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  right: clamp(-10px, 1.5vw, 12px);
+  bottom: 0;
+  width: clamp(200px, 24vw, 380px);
+  aspect-ratio: 1000 / 893;
+  background-color: var(--cgs-blue-500);
+  opacity: .08;
+  -webkit-mask-image: url("../img/bg/oil-rig-illustration.png");
+          mask-image: url("../img/bg/oil-rig-illustration.png");
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-position: bottom right;
+          mask-position: bottom right;
+  -webkit-mask-size: contain;
+          mask-size: contain;
+  pointer-events: none;
+}
+.cgs-desk__grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: var(--cgs-line);
   border: 1px solid var(--cgs-line);
   border-radius: var(--cgs-radius);
-  padding: 0 22px;
+  overflow: hidden;
 }
-.cgs-faq__question {
+.cgs-desk__grid li {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 20px 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--cgs-ink);
-  cursor: pointer;
-  list-style: none;
+  flex-direction: column;
+  gap: 6px;
+  padding: 24px 20px;
+  background: #fff;
 }
-.cgs-faq__question::-webkit-details-marker { display: none; }
-.cgs-faq__question i {
-  flex-shrink: 0;
+.cgs-desk__role {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
   color: var(--cgs-blue-500);
-  transition: transform 220ms var(--ease-out);
 }
-.cgs-faq__item[open] .cgs-faq__question i { transform: rotate(45deg); }
-.cgs-faq__answer { padding: 0 0 20px; }
-.cgs-faq__answer p {
-  margin: 0 0 12px;
-  font-size: 14.5px;
-  line-height: 1.75;
-  color: var(--cgs-ink);
+.cgs-desk__name { font-size: 15.5px; font-weight: 700; color: var(--cgs-ink); }
+.cgs-desk__email {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--cgs-slate);
+  text-decoration: none;
+  word-break: break-word;
 }
-.cgs-faq__answer p:last-child { margin-bottom: 0; }
+.cgs-desk__email i { font-size: 11px; color: var(--cgs-cyan-400); }
+.cgs-desk__email:hover { color: var(--cgs-blue-500); }
 
+@media (max-width: 991.98px) {
+  .cgs-desk__grid { grid-template-columns: repeat(2, 1fr); }
+  /* 5 items in a 2-column grid leaves the 6th cell showing the grid's own
+     gap background as a blank box. Only meaningful at this 2-column
+     width. */
+  .cgs-desk__grid li:nth-child(5) { grid-column: 1 / -1; }
+}
+@media (max-width: 575.98px) {
+  .cgs-desk__grid { grid-template-columns: 1fr; }
+  .cgs-desk__grid li:nth-child(5) { grid-column: auto; }
+}
+
+/* --- Gallery ---------------------------------------------------------------
+   Real operations photography ($galleryShots, index.php), laid out as a
+   masonry column flow rather than a fixed-height grid so every photo —
+   portrait or landscape — keeps its own natural aspect ratio (client:
+   "place portrait images in correct layout"). break-inside: avoid keeps
+   each photo whole instead of splitting it across two columns. Click opens
+   the full photo in a Magnific Popup lightbox with gallery navigation
+   (init in includes/scripts.php). */
+.cgs-gallery { background: #fff; }
+.cgs-gallery__grid {
+  column-count: 3;
+  column-gap: 14px;
+}
+.cgs-gallery__tile {
+  position: relative;
+  display: block;
+  break-inside: avoid;
+  margin-bottom: 14px;
+  overflow: hidden;
+  border-radius: var(--cgs-radius);
+  background: var(--cgs-surface);
+  text-decoration: none;
+}
+.cgs-gallery__tile img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 400ms var(--ease-in-out);
+}
+.cgs-gallery__tile:hover img,
+.cgs-gallery__tile:focus-visible img { transform: scale(1.05); }
+
+.cgs-gallery__caption {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 16px;
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  background: linear-gradient(180deg, transparent, rgba(8, 34, 56, .82) 85%);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 220ms var(--ease-out), transform 220ms var(--ease-out);
+}
+.cgs-gallery__tile:hover .cgs-gallery__caption,
+.cgs-gallery__tile:focus-visible .cgs-gallery__caption { opacity: 1; transform: translateY(0); }
+.cgs-gallery__caption i {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .18);
+  font-size: 11px;
+}
+
+@media (max-width: 991.98px) {
+  .cgs-gallery__grid { column-count: 2; }
+  /* Hover-only caption is unreachable on touch; show it plainly instead. */
+  .cgs-gallery__caption {
+    position: static;
+    opacity: 1;
+    transform: none;
+    padding: 10px 2px 0;
+    color: var(--cgs-slate);
+    background: none;
+  }
+  .cgs-gallery__caption i { display: none; }
+}
+@media (max-width: 575.98px) {
+  .cgs-gallery__grid { column-count: 1; }
+}
 @media (prefers-reduced-motion: reduce) {
-  .cgs-faq__question i { transition: none; }
+  .cgs-gallery__tile:hover img,
+  .cgs-gallery__tile:focus-visible img { transform: none; }
 }
 
 /* --- Scroll reveal -------------------------------------------------------
@@ -2087,13 +2309,8 @@ html.js [data-reveal].is-visible {
   .cgs-btn:active,
   .cgs-service-card:hover,
   .cgs-service-card:active,
-  .cgs-special__card:hover,
-  .cgs-services__arrow:active,
-  .cgs-gallery__arrow:active { transform: none; }
-  .cgs-service-card:hover .cgs-service-card__media img,
-  .cgs-special__card:hover .cgs-special__media img,
-  .cgs-special__card:hover .cgs-special__icon,
-  .cgs-gallery .swiper-slide:hover img { transform: none; }
+  .cgs-services__arrow:active { transform: none; }
+  .cgs-service-card:hover .cgs-service-card__media img { transform: none; }
   .cgs-service-bento__cta:hover i,
   .cgs-service-bento__cta:hover .cgs-service-bento__cta-media img { transform: none; }
   .cgs-btn:hover i,
