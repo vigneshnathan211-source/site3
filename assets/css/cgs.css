@@ -3347,6 +3347,10 @@ html.js [data-reveal].is-visible {
   line-height: 1.7;
   color: rgba(255, 255, 255, .68);
 }
+/* In-copy link on the dark 404/thank-you panel — the global `a` rule's
+   --cgs-blue-500 is unreadable on this navy background. */
+.cgs-404__inline-link { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+.cgs-404__inline-link:hover { color: var(--cgs-cyan-300); }
 .cgs-404__actions { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 48px; }
 
 .cgs-404__links {
@@ -3369,3 +3373,350 @@ html.js [data-reveal].is-visible {
 @media (max-width: 767.98px) {
   .cgs-404__actions .cgs-btn { width: 100%; justify-content: center; }
 }
+
+/* --- Contact: reach split (photo + form) -----------------------------------
+   Asymmetric 5fr/7fr (DESIGN.md: never an even 1fr/1fr) — a real yard photo
+   left (assets/img/gallery/ops-09.jpg, unused anywhere else on the site),
+   the enquiry form right. The "call us now" chip overlapping the photo's
+   bottom edge is the one deliberate creative flourish on this page: same
+   overlap/float-shadow language as .cgs-cta__card dipping into the footer
+   below it, not a borrowed pattern. */
+.cgs-reach {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: clamp(32px, 5vw, 72px);
+  align-items: start;
+}
+.cgs-reach__media { position: relative; }
+.cgs-reach__photo {
+  border-radius: var(--cgs-radius);
+  overflow: hidden;
+  background: var(--cgs-line);
+  box-shadow: var(--cgs-shadow);
+}
+.cgs-reach__photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+}
+.cgs-reach__badge {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: -28px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  border-radius: var(--cgs-radius);
+  background: #fff;
+  box-shadow: var(--cgs-shadow-float);
+  text-decoration: none;
+  transition: transform 200ms var(--ease-out);
+}
+.cgs-reach__badge:hover { transform: translateY(-3px); }
+.cgs-reach__badge-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--cgs-navy-900);
+  color: #fff;
+  font-size: 16px;
+}
+.cgs-reach__badge-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.cgs-reach__badge-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--cgs-muted);
+}
+.cgs-reach__badge-value { font-size: 16px; font-weight: 700; color: var(--cgs-navy-900); }
+
+.cgs-form__head { max-width: 60ch; margin: 0 0 28px; }
+.cgs-form__head h2 {
+  margin: 0 0 12px;
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: var(--cgs-navy-900);
+  text-wrap: balance;
+}
+.cgs-form__head p { margin: 0; font-size: 15.5px; line-height: 1.7; color: var(--cgs-slate); }
+
+.cgs-form__alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0 0 24px;
+  padding: 14px 18px;
+  border-radius: var(--cgs-radius);
+  border: 1px solid rgba(214, 69, 80, .3);
+  background: rgba(214, 69, 80, .06);
+  color: var(--cgs-danger);
+  font-size: 14px;
+  line-height: 1.55;
+}
+.cgs-form__alert i { margin-top: 2px; flex-shrink: 0; }
+
+.cgs-field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+.cgs-field { display: flex; flex-direction: column; gap: 8px; }
+.cgs-field--full { grid-column: 1 / -1; }
+.cgs-field label { font-size: 13px; font-weight: 600; color: var(--cgs-ink); }
+.cgs-field label .req { color: var(--cgs-danger); margin-left: 2px; }
+.cgs-field input,
+.cgs-field select,
+.cgs-field textarea {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid var(--cgs-line);
+  border-radius: var(--cgs-radius);
+  background: #fff;
+  font-family: var(--cgs-font);
+  font-size: 14.5px;
+  color: var(--cgs-ink);
+  transition: border-color 180ms var(--ease-out), box-shadow 180ms var(--ease-out);
+}
+.cgs-field textarea { resize: vertical; min-height: 120px; }
+.cgs-field input:focus,
+.cgs-field select:focus,
+.cgs-field textarea:focus {
+  outline: none;
+  border-color: var(--cgs-cyan-400);
+  box-shadow: 0 0 0 4px rgba(46, 159, 214, .14);
+}
+/* Honeypot: off-screen, not display:none — screen readers and bots that
+   check computed visibility both still see it as "there", real bots that
+   fill every field trip it. Checked in submit-lead.php. */
+.cgs-field--trap {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.cgs-form__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 28px;
+  margin-top: 24px;
+}
+.cgs-form__note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--cgs-muted);
+}
+.cgs-form__note i { color: var(--cgs-success); }
+
+@media (max-width: 991.98px) {
+  .cgs-reach { grid-template-columns: 1fr; }
+  .cgs-reach__photo img { aspect-ratio: 16 / 10; }
+  .cgs-reach__media { margin-bottom: 44px; } /* room for the badge's overlap */
+}
+@media (max-width: 575.98px) {
+  .cgs-field-grid { grid-template-columns: 1fr; }
+  .cgs-reach__badge { flex-wrap: wrap; }
+  .cgs-form__foot .cgs-btn { width: 100%; justify-content: center; }
+}
+
+/* --- Contact: offices + map -------------------------------------------------
+   Asymmetric 7fr/5fr — real SG + MY office cards left, a map card right.
+   settings.map_embed_url is unset, so the map renders as a placeholder
+   (dot-grid ground, same decoration technique as .cgs-video-band, plus a
+   pin) with a real "Get Directions" link built from the real address,
+   rather than a fabricated iframe src. Swaps to a real embed automatically
+   once the client supplies one — see contact.php. */
+.cgs-offices-band__heading,
+.cgs-touch__heading {
+  margin: 4px 0 clamp(28px, 3.5vw, 40px);
+  font-size: clamp(26px, 3.4vw, 38px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: var(--cgs-navy-900);
+  text-wrap: balance;
+}
+.cgs-offices {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: clamp(32px, 5vw, 72px);
+  align-items: start;
+}
+.cgs-office-list { display: flex; flex-direction: column; gap: 20px; }
+.cgs-office-card {
+  position: relative;
+  padding: clamp(24px, 3vw, 30px) clamp(24px, 3vw, 28px);
+  border-radius: var(--cgs-radius);
+  background: #fff;
+  border: 1px solid var(--cgs-line);
+  box-shadow: var(--cgs-shadow);
+  overflow: hidden;
+}
+.cgs-office-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: var(--cgs-cyan-400);
+}
+.cgs-office-card__flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--cgs-blue-500);
+}
+.cgs-office-card h3 { margin: 0 0 4px; font-size: 19px; font-weight: 800; color: var(--cgs-navy-900); }
+.cgs-office-card__reg { margin: 0 0 16px; font-size: 12.5px; color: var(--cgs-muted); }
+.cgs-office-card__meta { margin: 0 0 18px; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.cgs-office-card__meta li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; line-height: 1.55; color: var(--cgs-slate); }
+.cgs-office-card__meta i { margin-top: 3px; flex-shrink: 0; width: 13px; color: var(--cgs-cyan-400); font-size: 13px; }
+.cgs-office-card__meta a { color: inherit; text-decoration: none; }
+.cgs-office-card__meta a:hover { color: var(--cgs-blue-500); }
+.cgs-office-card__soon { color: var(--cgs-muted); font-style: italic; }
+.cgs-office-card__soon i { color: var(--cgs-muted) !important; }
+.cgs-office-card__directions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--cgs-navy-900);
+  text-decoration: none;
+}
+.cgs-office-card__directions i { font-size: 11px; transition: transform 200ms var(--ease-out); }
+.cgs-office-card__directions:hover i { transform: translateX(3px); }
+
+.cgs-map-card {
+  position: sticky;
+  top: calc(var(--cgs-header-h, 80px) + 24px);
+  border-radius: var(--cgs-radius);
+  background: var(--cgs-navy-900);
+  box-shadow: var(--cgs-shadow);
+  overflow: hidden;
+}
+.cgs-map-card--embed { min-height: 360px; }
+.cgs-map-card--embed iframe { display: block; width: 100%; height: 100%; min-height: 360px; border: 0; }
+.cgs-map-card__placeholder {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  min-height: 360px;
+  padding: 40px 32px;
+  text-align: center;
+}
+.cgs-map-card__placeholder::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, .14) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+.cgs-map-card__pin {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--cgs-cyan-400);
+  color: #fff;
+  font-size: 20px;
+  box-shadow: 0 10px 30px rgba(46, 159, 214, .4);
+}
+.cgs-map-card__placeholder p { position: relative; z-index: 1; margin: 0; max-width: 30ch; font-size: 14px; line-height: 1.6; color: rgba(255, 255, 255, .68); }
+.cgs-map-card__placeholder strong { color: #fff; font-size: 15.5px; }
+
+@media (max-width: 991.98px) {
+  .cgs-offices { grid-template-columns: 1fr; }
+  .cgs-map-card { position: static; }
+}
+
+/* --- Contact: "other ways to reach us" --------------------------------------
+   Hairline 1px-gap grid, the same technique as the homepage's Project Desk
+   directory (.cgs-desk__grid) but built for contact-method tiles instead of
+   named people. WhatsApp has no number configured yet, so that tile renders
+   muted with a "coming soon" label instead of a dead wa.me link. */
+/* Flexbox, not grid: the tile count varies (3 to 5, depending on which
+   settings are configured — see contact.php), and a grid with a fixed
+   column count leaves dead cells showing the container's own hairline
+   background whenever the last row doesn't fill every column. Flex items
+   always fill the row they're in, so there's no dead-cell case to guard
+   against. */
+.cgs-touch__grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  background: var(--cgs-line);
+  border: 1px solid var(--cgs-line);
+  border-radius: var(--cgs-radius);
+  overflow: hidden;
+}
+.cgs-touch__item {
+  flex: 1 1 210px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 28px 24px;
+  background: #fff;
+}
+.cgs-touch__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--cgs-surface);
+  color: var(--cgs-cyan-400);
+  font-size: 15px;
+}
+.cgs-touch__item--muted .cgs-touch__icon { color: var(--cgs-muted); }
+.cgs-touch__label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--cgs-muted);
+}
+.cgs-touch__value { font-size: 15px; font-weight: 700; color: var(--cgs-navy-900); text-decoration: none; }
+.cgs-touch__value:hover { color: var(--cgs-blue-500); }
+.cgs-touch__soon { font-size: 13.5px; font-style: italic; color: var(--cgs-muted); }
+.cgs-touch__socials { display: flex; gap: 10px; margin-top: 2px; }
+.cgs-touch__socials a {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--cgs-surface);
+  color: var(--cgs-navy-900);
+  transition: background-color 180ms var(--ease-out), color 180ms var(--ease-out);
+}
+.cgs-touch__socials a:hover { background: var(--cgs-navy-900); color: #fff; }
+
+@media (max-width: 575.98px) { .cgs-touch__item { flex-basis: 100%; } }
