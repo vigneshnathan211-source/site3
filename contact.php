@@ -16,10 +16,11 @@
 |     convention), not invented.
 |   - whatsapp_number is unset, so the WhatsApp tile below renders as a
 |     visibly-marked "coming soon" cell instead of a dead wa.me link.
-|   - map_embed_url is unset, so the map card renders a placeholder (pin +
-|     copy) with a real, working "Get Directions" Google Maps search link
-|     built from the real address, rather than a fabricated iframe src.
-|     Swaps to a real iframe automatically once the client supplies one.
+|   - map_embed_url / my_map_embed_url: real Google Maps embed URLs the
+|     client sent 2026-08-24, one per office, each rendered in its own map
+|     card in the .cgs-map-stack. Either one falls back independently to a
+|     placeholder (pin + copy, real "Get Directions" search link) if its
+|     embed URL is ever unset again.
 |
 | Layout: two asymmetric splits (DESIGN.md's convention, never 1fr/1fr) —
 | photo/form, then office-cards/map — plus a hairline "other ways to reach
@@ -243,22 +244,47 @@ require __DIR__ . '/includes/header.php';
 
         </div>
 
-        <?php if (!empty($settings['map_embed_url'])): ?>
-        <div class="cgs-map-card cgs-map-card--embed">
-          <iframe src="<?php echo e($settings['map_embed_url']); ?>" loading="lazy"
-                  referrerpolicy="no-referrer-when-downgrade"
-                  title="Map to <?php echo e($settings['company_name']); ?>"></iframe>
-        </div>
-        <?php else: ?>
-        <div class="cgs-map-card">
-          <div class="cgs-map-card__placeholder">
-            <span class="cgs-map-card__pin"><i class="fa-solid fa-location-dot" aria-hidden="true"></i></span>
-            <p><strong>Map embed on the way.</strong><br>
-               Use "Get Directions" on either office card for turn-by-turn
-               directions in the meantime.</p>
+        <div class="cgs-map-stack">
+
+          <?php if (!empty($settings['map_embed_url'])): ?>
+          <div class="cgs-map-card cgs-map-card--embed">
+            <p class="cgs-map-card__label">Singapore (Head Office)</p>
+            <iframe src="<?php echo e($settings['map_embed_url']); ?>" loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    title="Map to <?php echo e($settings['company_name']); ?>"></iframe>
           </div>
+          <?php else: ?>
+          <div class="cgs-map-card">
+            <div class="cgs-map-card__placeholder">
+              <span class="cgs-map-card__pin"><i class="fa-solid fa-location-dot" aria-hidden="true"></i></span>
+              <p><strong>Map embed on the way.</strong><br>
+                 Use "Get Directions" on the Singapore office card for
+                 turn-by-turn directions in the meantime.</p>
+            </div>
+          </div>
+          <?php endif; ?>
+
+          <?php if (!empty($settings['my_address'])): ?>
+            <?php if (!empty($settings['my_map_embed_url'])): ?>
+            <div class="cgs-map-card cgs-map-card--embed">
+              <p class="cgs-map-card__label">Johor Bahru, Malaysia</p>
+              <iframe src="<?php echo e($settings['my_map_embed_url']); ?>" loading="lazy"
+                      referrerpolicy="no-referrer-when-downgrade"
+                      title="Map to <?php echo e($settings['my_office_name']); ?>"></iframe>
+            </div>
+            <?php else: ?>
+            <div class="cgs-map-card">
+              <div class="cgs-map-card__placeholder">
+                <span class="cgs-map-card__pin"><i class="fa-solid fa-location-dot" aria-hidden="true"></i></span>
+                <p><strong>Map embed on the way.</strong><br>
+                   Use "Get Directions" on the Johor Bahru office card for
+                   turn-by-turn directions in the meantime.</p>
+              </div>
+            </div>
+            <?php endif; ?>
+          <?php endif; ?>
+
         </div>
-        <?php endif; ?>
 
       </div>
     </div>

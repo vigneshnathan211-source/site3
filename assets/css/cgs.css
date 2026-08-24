@@ -2770,6 +2770,173 @@ main:has(> .cgs-cta:last-child) + .cgs-footer { padding-top: var(--cgs-cta-overl
   .cgs-gallery__tile:focus-visible img { transform: none; }
 }
 
+/* --- Past Projects: intro strip + filter bar --------------------------------
+   past-projects.php only. The filter itself is plain toggle buttons (not
+   .cgs-btn or a pill shape — this site's one corner-radius scale is 4px
+   everywhere, so filter chips share --cgs-radius rather than going fully
+   rounded). GSAP (loaded on that page only) animates .cgs-gallery__tile
+   in/out of the .is-filtered-out state; the CSS below only has to define
+   what that state looks like once the animation (or its no-JS fallback)
+   finishes. */
+.cgs-projects__intro { max-width: 62ch; margin: 0 0 clamp(28px, 3.5vw, 40px); }
+.cgs-projects__intro h2 {
+  margin: 0 0 12px;
+  font-size: clamp(26px, 3.2vw, 38px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: var(--cgs-navy-900);
+  text-wrap: balance;
+}
+.cgs-projects__intro p { margin: 0; font-size: 15.5px; line-height: 1.7; color: var(--cgs-slate); }
+.cgs-projects__intro p.cgs-projects__count {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cgs-blue-500);
+}
+.cgs-projects__count i { font-size: 11px; color: var(--cgs-cyan-400); }
+
+.cgs-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 28px;
+}
+.cgs-filter {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 18px;
+  border-radius: var(--cgs-radius);
+  border: 1.5px solid var(--cgs-line);
+  background: #fff;
+  color: var(--cgs-navy-900);
+  font-family: var(--cgs-font);
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  cursor: pointer;
+  transition: background-color 180ms var(--ease-out), border-color 180ms var(--ease-out), color 180ms var(--ease-out);
+}
+.cgs-filter:hover { border-color: var(--cgs-blue-500); color: var(--cgs-blue-500); }
+.cgs-filter.is-active {
+  background: var(--cgs-navy-900);
+  border-color: var(--cgs-navy-900);
+  color: #fff;
+}
+
+/* End state for a filtered-out tile. GSAP (or the reduced-motion/no-JS
+   fallback) adds this class only after the exit tween finishes, so the
+   fade-out is never cut short by an abrupt display:none. */
+.cgs-gallery__tile.is-filtered-out { display: none; }
+
+@media (max-width: 575.98px) {
+  .cgs-filter-bar { gap: 8px; }
+  .cgs-filter { padding: 9px 14px; font-size: 13px; }
+}
+
+/* --- Past Projects: video section ------------------------------------------
+   A real grid, sized for however many videos exist (currently one card per
+   gallery category — see the $pastVideos comment in past-projects.php),
+   not a single teaser box. Cards are legitimately uniform: this is a video
+   library, where identical-shaped tiles are the expected pattern, not the
+   forced three-card symmetry the Shape Consistency note above warns against
+   for thin feature copy. Card radius matches .cgs-cta__card's larger
+   "feature card" scale, not the 4px .cgs-filter/.cgs-gallery__tile scale —
+   this site's second, already-established radius tier for hero-weight
+   panels. .cgs-video-trigger (real youtube_id set) opens Magnific Popup's
+   iframe/YouTube lightbox in includes/scripts.php; a card without one falls
+   back to a plain link to settings.youtube_url and carries the "Coming
+   Soon" badge below instead of pretending to be playable. */
+.cgs-projects__video { padding-block: clamp(56px, 7vw, 96px); }
+.cgs-projects__video-head { max-width: 62ch; margin: 0 0 clamp(28px, 3.5vw, 40px); }
+.cgs-projects__video-head h2 {
+  margin: 0 0 12px;
+  font-size: clamp(26px, 3.2vw, 38px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: #fff;
+  text-wrap: balance;
+}
+.cgs-projects__video-head p { margin: 0; font-size: 15.5px; line-height: 1.7; color: rgba(255, 255, 255, 0.72); }
+
+.cgs-projects__video-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: clamp(20px, 2.5vw, 28px);
+  margin: 0 0 clamp(28px, 3.5vw, 40px);
+}
+.cgs-projects__video-card {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: clamp(16px, 1.6vw, 20px);
+  aspect-ratio: 4 / 3;
+}
+.cgs-projects__video-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 400ms var(--ease-out);
+}
+.cgs-projects__video-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(8, 34, 56, 0.1) 0%, rgba(8, 34, 56, 0.68) 100%);
+}
+.cgs-projects__video-card:hover img { transform: scale(1.05); }
+.cgs-projects__video-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(48px, 5vw, 60px);
+  height: clamp(48px, 5vw, 60px);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--cgs-navy-900);
+  font-size: 15px;
+  transform: translate(-50%, -50%);
+  transition: transform 220ms var(--ease-out);
+}
+.cgs-projects__video-play i { margin-left: 2px; }
+.cgs-projects__video-card:hover .cgs-projects__video-play { transform: translate(-50%, -50%) scale(1.08); }
+.cgs-projects__video-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 1;
+  padding: 5px 11px;
+  border-radius: var(--cgs-radius);
+  background: rgba(8, 34, 56, 0.55);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.cgs-projects__video-title {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 14px;
+  z-index: 1;
+  color: #fff;
+  font-size: 14.5px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
 /* --- Resources page --------------------------------------------------------
    Five DB-driven topics (database/schema.sql `resources` + `certificates`),
    read as one page in four visually distinct sections rather than one
@@ -2984,8 +3151,44 @@ main:has(> .cgs-cta:last-child) + .cgs-footer { padding-top: var(--cgs-cta-overl
   color: var(--cgs-navy-900);
   white-space: nowrap;
 }
+/* Below 575.98px a 3-column reference table (e.g. the Incoterms table in
+   the Shipping Essentials tabs) stops fitting the viewport at a readable
+   size — rather than falling back to a horizontal-scroll slider, each row
+   becomes its own card and each cell becomes a label/value line, using the
+   cell's own data-label attribute (set in the resources.content HTML
+   itself, e.g. <td data-label="Term">) as the label, so no JS is needed to
+   read it off the hidden <thead>. Admin-authored tables without a
+   data-label per cell just show an empty label rather than breaking. */
 @media (max-width: 575.98px) {
-  .cgs-prose table { display: block; overflow-x: auto; white-space: nowrap; }
+  .cgs-prose table { display: block; }
+  .cgs-prose thead { display: none; }
+  .cgs-prose tbody { display: block; }
+  .cgs-prose caption { margin-bottom: 12px; }
+  .cgs-prose tr {
+    display: block;
+    margin-bottom: 12px;
+    border: 1px solid var(--cgs-line);
+    border-radius: var(--cgs-radius);
+    overflow: hidden;
+  }
+  .cgs-prose tr:last-child { margin-bottom: 0; }
+  .cgs-prose td {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    border: none;
+    border-bottom: 1px solid var(--cgs-line);
+    white-space: normal;
+  }
+  .cgs-prose td:last-child { border-bottom: none; }
+  .cgs-prose td::before {
+    content: attr(data-label);
+    flex: 0 0 auto;
+    max-width: 40%;
+    font-weight: 700;
+    color: var(--cgs-navy-900);
+  }
 }
 
 /* --- Cargo Measurement: asymmetric split, prose left / formula card right */
@@ -3536,12 +3739,14 @@ html.js [data-reveal].is-visible {
 }
 
 /* --- Contact: offices + map -------------------------------------------------
-   Asymmetric 7fr/5fr — real SG + MY office cards left, a map card right.
-   settings.map_embed_url is unset, so the map renders as a placeholder
-   (dot-grid ground, same decoration technique as .cgs-video-band, plus a
-   pin) with a real "Get Directions" link built from the real address,
-   rather than a fabricated iframe src. Swaps to a real embed automatically
-   once the client supplies one — see contact.php. */
+   Asymmetric 7fr/5fr — real SG + MY office cards left, a sticky stack of
+   two map embeds right (.cgs-map-stack), one per office, each labelled so
+   it's clear which pin is which. settings.map_embed_url / my_map_embed_url
+   (client-supplied Google Maps embed URLs, 2026-08-24) drive the real
+   iframes; either falls back independently to a placeholder (dot-grid
+   ground, same decoration technique as .cgs-video-band, plus a pin) with a
+   real "Get Directions" link if its embed URL is ever unset again — see
+   contact.php. */
 .cgs-offices-band__heading,
 .cgs-touch__heading {
   margin: 4px 0 clamp(28px, 3.5vw, 40px);
@@ -3607,16 +3812,37 @@ html.js [data-reveal].is-visible {
 .cgs-office-card__directions i { font-size: 11px; transition: transform 200ms var(--ease-out); }
 .cgs-office-card__directions:hover i { transform: translateX(3px); }
 
-.cgs-map-card {
+.cgs-map-stack {
   position: sticky;
   top: calc(var(--cgs-header-h, 80px) + 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.cgs-map-card {
+  position: relative;
   border-radius: var(--cgs-radius);
   background: var(--cgs-navy-900);
   box-shadow: var(--cgs-shadow);
   overflow: hidden;
 }
-.cgs-map-card--embed { min-height: 360px; }
-.cgs-map-card--embed iframe { display: block; width: 100%; height: 100%; min-height: 360px; border: 0; }
+.cgs-map-card--embed { min-height: 280px; }
+.cgs-map-card--embed iframe { display: block; width: 100%; height: 100%; min-height: 280px; border: 0; }
+.cgs-map-card__label {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 1;
+  margin: 0;
+  padding: 6px 12px;
+  border-radius: var(--cgs-radius);
+  background: rgba(8, 34, 56, 0.72);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
 .cgs-map-card__placeholder {
   position: relative;
   display: flex;
@@ -3654,7 +3880,7 @@ html.js [data-reveal].is-visible {
 
 @media (max-width: 991.98px) {
   .cgs-offices { grid-template-columns: 1fr; }
-  .cgs-map-card { position: static; }
+  .cgs-map-stack { position: static; }
 }
 
 /* --- Contact: "other ways to reach us" --------------------------------------

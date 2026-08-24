@@ -252,3 +252,18 @@ verifiable claims a logistics buyer will check.
     a `#` placeholder so the icons are visible and wired up now — swap in
     the real URLs (via the admin Settings screen, or a fresh `database/
     schema.sql` default) the moment the client sends them.
+15. **Past Projects video IDs.** Client (Angeline, 2026-08-24) asked to link
+    "our YouTube videos" (plural) on the Past Projects page. Built as a
+    ready multi-video grid (`$pastVideos` in `past-projects.php`) that
+    plays in an in-page lightbox the moment a card has a real
+    `youtube_id`. One confirmed 2026-08-24:
+    `https://www.youtube.com/watch?v=1EcNNqCrtwc` ("398 TON Knuckle Crane
+    Installation") is wired to the "Chartering Heavy Lift and
+    Semi-Geared Vessels" card. **Still open:** video links for the other
+    two categories (Chartering of Tug and Barges, Project Freight
+    Forwarding) — those cards still show "Coming Soon" and fall back to
+    the `youtube_url` placeholder from #14. Also worth confirming with
+    the client: the supplied video is hosted on a personal-looking
+    channel ("ravi shankar", 2 subscribers) rather than an official
+    Carriage Global channel — flag this so they can swap in the
+    corporate channel's link if one exists.

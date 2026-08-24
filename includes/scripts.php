@@ -73,6 +73,18 @@
       image: { titleSrc: function (item) { return item.el.find('img').attr('alt'); } }
     });
   }
+
+  // Past Projects video grid: play the YouTube video in an in-page
+  // lightbox instead of leaving the site. Magnific Popup's built-in
+  // iframe "youtube" pattern (any href containing youtube.com) handles
+  // the embed conversion on its own — no custom markup needed here,
+  // unlike the PDF pattern above.
+  if (window.jQuery && jQuery.fn.magnificPopup) {
+    jQuery('.cgs-video-trigger').magnificPopup({
+      type: 'iframe',
+      mainClass: 'cgs-video-popup'
+    });
+  }
 </script>
 </body>
 </html>
