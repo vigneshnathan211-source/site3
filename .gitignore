@@ -28,5 +28,12 @@ desktop.ini
 *.log
 /database/*.backup.sql
 
+# Local backup/export archives — full project/asset zips, not part of the
+# build and too large for git (site3*.zip exceed GitHub's 100MB limit)
+/site3.zip
+/site3_v2.zip
+/site3_v3.zip
+/assets/img.zip
+
 # Playwright MCP scratch output (screenshots taken during verification)
 /.playwright-mcp/
