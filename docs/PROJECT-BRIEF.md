@@ -24,7 +24,7 @@ place. See *Deviations from the Roofer theme* below for what changes.
 | 1 | Home | `index.php` | Hero, then a 20-second video section, then services, fleet teaser, gallery, CTA |
 | 2 | Our Fleet | `our-fleet.php` | Three blocks: fleet · in-house lashing · open yard for cargo storage and re-working |
 | 3 | Services | `services.php` | Overview grid linking to the five detail pages; dropdown parent in the nav |
-| 4 | Resources | `resources.php` | Reinstated in the nav 2026-08-22 (client reply, emails.txt: nav should read "HOME- OUR FLEET- SERVICES- RESOURCES- CONTACT US"), reversing the 2026-08-17 swap to Projects. Not built yet. |
+| 4 | Resources | `resources.php` | Reinstated in the nav 2026-08-22 (client reply, emails.txt: nav should read "HOME- OUR FLEET- SERVICES- RESOURCES- CONTACT US"), reversing the 2026-08-17 swap to Projects. Built 2026-08-24 from the client's "Fwd: CGS website 1" email — see CONTENT.md's Resources page section for what it supplied and how each topic is laid out. |
 | 5 | Past Projects | `past-projects.php` | Added to the nav 2026-08-24 (client, "HOME PAGE and VIDEO REVIESD 1" thread: "f) Past projects (upload all the pictures given via email, zip, w/app avoid repetition)"). Photo gallery built on the existing `gallery` table — see open question 12, now resolved. |
 | 6 | Contact Us | `contact.php` | Enquiry form, SG + MY offices, map |
 
@@ -61,6 +61,38 @@ place. See *Deviations from the Roofer theme* below for what changes.
 **Read as one page with five anchored sections**, not five separate pages — the
 brief lists them inline under a single "Resources" nav item, and separate pages
 would push the site well past the stated page count.
+
+**Built 2026-08-24**, content supplied in full via the client's "Fwd: CGS
+website 1" email (originally sent 2026-08-14, forwarded to the build team
+2026-08-19) and confirmed back into the sitemap the same day as this build
+("HOME PAGE and VIDEO REVIESD 1" thread: "e) Resources... page is given").
+See CONTENT.md's Resources page section for exactly what was supplied and
+how it maps onto the four rendered sections (CBM/Freight Ton content is
+client-verbatim; Incoterms, Insurance and Chargeable Weight are original
+copy the client explicitly asked NOT be copied from the reference links she
+sent — "we do not want to copy but i need you to re write"). The five
+topics above collapse to four DB `resources` categories on the page:
+Incoterms and Insurance share a "Shipping Essentials" tab group with
+Chargeable Weight Calculation (the client's own instruction: "I want to
+show big tabs such as Incoterms... and third tab chargeable weight
+calculation" — chargeable weight was not one of the original five topics
+but arrived in the same email as an explicit third tab). General T&Cs is
+joined in its section by three policy PDFs that arrived as attachments on
+the same email (Code of Conduct, Alcohol & Drug Policy, Environmental
+Policy Statement) — not separately briefed topics, but grouped in because
+the client attached and referenced them together ("Certificates / General
+terms and conditions as attached / Code of conduct / Alcohol and Drug
+policy / Environmental policy statement. All attached.").
+
+**Revised 2026-08-24** on client feedback ("I want certifications to be
+shown not just logo and move it as first section. Total page looks so much
+content oriented add images, elements vectors etc."): the page order is now
+Certificates, Cargo Measurement, Shipping Essentials, Terms & Conditions —
+Certificates moved from third to first, its cards now show the full scanned
+document plus issuer/cert number/validity instead of a small badge, and the
+other three sections each gained a real photo or a decorative accent so the
+page reads as less of a text wall. See CONTENT.md's Resources page section
+for the per-certificate facts and their source.
 
 ## Homepage structure
 

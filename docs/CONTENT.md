@@ -220,22 +220,86 @@ capability-led copy is enough on its own.
 
 ## Resources page
 
-**NOT SUPPLIED.** Five topics named in the brief, no copy for any:
+**SUPPLIED 2026-08-24** (client, "Fwd: CGS website 1", originally sent
+2026-08-14, forwarded to the build team 2026-08-19; page confirmed back into
+the sitemap the same day as the build, "HOME PAGE and VIDEO REVIESD 1"
+thread: "e) Resources (cgs certificates, terms and conditions, CBM and
+chargeable weight, incoterms) page is given"). `resources.php` renders four
+sections, each pulling from the `resources` and `certificates` tables.
 
-1. CBM versus freight ton
-2. Incoterms
-3. Freight service liability insurance versus cargo insurance
-4. Our certificates
-5. CGS general terms and conditions
+**Revised 2026-08-24** on client feedback ("I want certifications to be
+shown not just logo and move it as first section. Total page looks so much
+content oriented add images, elements vectors etc."): Certificates now
+leads the page instead of sitting third, each card shows the full scanned
+document instead of a small badge, and the three reference/tab sections
+each carry a real photograph or a decorative accent (dot-grid backdrop,
+masked watermark — both reused from techniques already in `cgs.css`) so the
+page reads as more than a wall of reference text.
 
-Items 1–3 are educational explainers that CGS may want written for them; item
-5 (General T&Cs as a PDF or Word file) is still needed. Item 4 (our
-certificates) is partly supplied now — the client's real ISO 9001:2015,
-bizSAFE Level 4 and WCA Project membership PDFs arrived as email attachments
-(`client_assets/certificates/`, copied to `assets/certificates/` for the
-homepage credentials strip, 2026-08-19). This Resources page still doesn't
-exist to display them properly; for now they're only linked from the
-homepage.
+1. **Certificates.** Real ISO 9001:2015, bizSAFE Level 4 and WCA Project
+   Network PDFs (`client_assets/certificates/`, copied to
+   `assets/certificates/` 2026-08-19). Each card shows the full scanned
+   certificate (`certificates.preview_image` — full-page scans that were
+   already sitting in `assets/img/certificates/` from an earlier design
+   pass, unused until now) plus issuer, certificate number and validity
+   read directly off those scans, not invented: ISO 9001:2015 (United
+   Registrar of Systems, cert 123915/A/0001/UK/En, valid to 2028-09-11),
+   bizSAFE Level 4 (Workplace Safety and Health Council, cert E12697, valid
+   to 2028-07-30), WCA Project (WCA World, no cert number printed on the
+   membership certificate, valid to 2026-02-09). Same PDF-lightbox pattern
+   as the homepage's credentials strip; this page's cards are the richer
+   variant, the homepage keeps the small-badge strip.
+
+2. **Cargo Measurement — CBM and Freight Ton.** The client typed this
+   explainer out in full, in the email body (not a link) — CBM formula and
+   worked example, Gross Weight Ton / Metric Weight Ton formulas and a
+   worked example, then how the two relate for breakbulk cargo pricing. Kept
+   close to verbatim (US spelling throughout: "meters," "centimeters"), only
+   trimmed of filler sentences and restructured into HTML headings/lists per
+   the client's own closing instruction ("read these documents before
+   publishing to ensure accuracy and run the spelling errors"). Stored as
+   `resources.content` for the `cbm-versus-freight-ton` row. Led by a real
+   yard photo (`assets/img/gallery/ops-07.jpg`, already captioned in
+   `index.php`'s gallery array).
+
+3. **Shipping Essentials — a "big tabs" module.** The client's own
+   instruction, verbatim: *"I want to show big tabs such as Incoterms...
+   Freight service liability insurance versus cargo insurance, and third
+   tab chargeable weight calculation. I have given you links to click on
+   those to view them, we do not want to copy but i need you to re write."*
+   Three reference links were supplied for grounding only, not for copying:
+   - Incoterms — https://incodocs.com/blog/incoterms-2020-explained-the-complete-guide/
+   - Freight service liability insurance vs. cargo insurance — https://www.shipafreight.com/knowledge-series/difference-between-freight-insurance-and-cargo-insurance/
+   - Chargeable weight calculation (international air freight only, per the
+     client's own scoping note) — https://www.ups.com/us/en/supplychain/freight/chargeable-and-volumetric-weight-calculator
+
+   All three panels are original copy written from those references, not
+   reproductions of them. Chargeable Weight Calculation was not one of the
+   five topics originally named in `docs/PROJECT-BRIEF.md`'s brief, but the
+   client introduced it in this same email as an explicit third tab
+   alongside Incoterms and Insurance, so it is grouped with them under one
+   `Shipping Essentials` `resources.category` rather than folded into Cargo
+   Measurement above (which is about CBM/freight ton, not air freight
+   chargeable weight specifically). A real cargo photo
+   (`assets/img/gallery/ops-04.jpg`) sits beside the tabs.
+
+4. **Terms, Conduct and Policies.** The General Terms and Conditions PDF the
+   brief originally asked for, plus three policy PDFs that arrived as
+   attachments on the same "Fwd: CGS website 1" email — Code of Conduct,
+   Alcohol and Drug Policy, Environmental Policy Statement (client: *"General
+   terms and conditions as attached. Code of conduct. Alcohol and Drug
+   policy. Environmental policy statement. All attached."*). None of the
+   three policy documents were separately briefed topics; they are grouped
+   into this section because the client attached and referenced them
+   together, not as individually scoped page content. Originals in
+   `client_assets/documents/` (gitignored, matching the certificates
+   precedent), site copies in `assets/documents/`, all four rows sharing the
+   `Terms & Conditions` `resources.category`.
+
+The client also asked, in the same email, to be contacted directly for
+multimodal transport insurance and public liability insurance quotes rather
+than self-serve — that line became the page's closing CTA instead of a fifth
+content section.
 
 ---
 

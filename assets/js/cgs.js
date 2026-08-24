@@ -683,4 +683,47 @@
     }
   }
 
+  /* --- Resources page: "big tabs" -------------------------------------------
+     Standard ARIA tabs keyboard pattern (arrow keys move focus and activate;
+     Home/End jump to the ends) over the client's requested Incoterms /
+     Insurance / Chargeable Weight tab group. Plain class toggles, no
+     animation library — the panel swap is instant, same as any other
+     show/hide on this site. */
+  var tabList = document.querySelector('[data-cgs-tabs]');
+
+  if (tabList) {
+    var tabButtons = Array.prototype.slice.call(tabList.querySelectorAll('[data-cgs-tab]'));
+    var tabPanels  = Array.prototype.slice.call(tabList.querySelectorAll('[data-cgs-panel]'));
+
+    var activateTab = function (targetBtn, moveFocus) {
+      tabButtons.forEach(function (btn) {
+        var isTarget = btn === targetBtn;
+        btn.classList.toggle('is-active', isTarget);
+        btn.setAttribute('aria-selected', isTarget ? 'true' : 'false');
+        btn.setAttribute('tabindex', isTarget ? '0' : '-1');
+      });
+      tabPanels.forEach(function (panel) {
+        var isTarget = panel.id === targetBtn.getAttribute('aria-controls');
+        panel.classList.toggle('is-active', isTarget);
+      });
+      if (moveFocus) { targetBtn.focus(); }
+    };
+
+    tabButtons.forEach(function (btn, index) {
+      btn.addEventListener('click', function () { activateTab(btn, false); });
+
+      btn.addEventListener('keydown', function (event) {
+        var nextIndex = null;
+        if (event.key === 'ArrowRight' || event.key === 'ArrowDown') { nextIndex = (index + 1) % tabButtons.length; }
+        else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') { nextIndex = (index - 1 + tabButtons.length) % tabButtons.length; }
+        else if (event.key === 'Home') { nextIndex = 0; }
+        else if (event.key === 'End') { nextIndex = tabButtons.length - 1; }
+        if (nextIndex !== null) {
+          event.preventDefault();
+          activateTab(tabButtons[nextIndex], true);
+        }
+      });
+    });
+  }
+
 }());

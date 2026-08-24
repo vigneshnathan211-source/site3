@@ -202,6 +202,7 @@ a:hover { color: var(--cgs-navy-700); }
 .cgs-section       { padding-block: var(--cgs-section-y); }
 .cgs-section--tint { background: var(--cgs-surface); }
 .cgs-section--dark { background: var(--cgs-navy-900); color: #fff; }
+.cgs-section--dark h1,
 .cgs-section--dark h2,
 .cgs-section--dark h3 { color: #fff; }
 
@@ -2769,6 +2770,508 @@ main:has(> .cgs-cta:last-child) + .cgs-footer { padding-top: var(--cgs-cta-overl
   .cgs-gallery__tile:focus-visible img { transform: none; }
 }
 
+/* --- Resources page --------------------------------------------------------
+   Five DB-driven topics (database/schema.sql `resources` + `certificates`),
+   read as one page in four visually distinct sections rather than one
+   repeated accordion pattern: full document cards for Certificates (leads
+   the page), a reference-card split for CBM/Freight Ton, a "big tabs"
+   module for Incoterms/Insurance/Chargeable Weight (the client's own
+   instruction — "I want to show big tabs" — 2026-08-14 email,
+   docs/CONTENT.md), and a hairline document grid for Terms & Conditions/
+   policy PDFs. */
+
+/* --- Page banner: photo, title and breadcrumb only ------------------------
+   Same absolute-media-behind-content technique as .cgs-hero (see that
+   comment for why the photo is a separate positioned layer rather than a
+   CSS background-image), just a fixed, much shorter box instead of a
+   near-viewport-height carousel — this is an inner page, not the
+   homepage. A navy gradient scrim sits between the photo and the text
+   (client request, overriding DESIGN.md's No-Scrim Rule for this banner
+   specifically) — darkest at the bottom, where the title and breadcrumb
+   sit, fading out toward the top so the photo still reads clearly higher
+   up in the frame. */
+.cgs-page-banner {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: clamp(240px, 30vw, 380px);
+  padding-block: clamp(28px, 4vw, 44px);
+  background: var(--cgs-navy-900);
+  color: #fff;
+  overflow: hidden;
+}
+.cgs-page-banner__media { position: absolute; inset: 0; }
+.cgs-page-banner__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cgs-page-banner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(8, 34, 56, .2) 0%, rgba(8, 34, 56, .72) 100%);
+  pointer-events: none;
+}
+.cgs-page-banner > .container-fluid { position: relative; z-index: 2; }
+.cgs-page-banner h1 {
+  margin: 0;
+  color: #fff;
+  text-shadow: 0 2px 14px rgba(8, 34, 56, .55), 0 1px 4px rgba(8, 34, 56, .4);
+}
+.cgs-page-banner__crumbs { margin: 0 0 14px; }
+.cgs-page-banner__crumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.cgs-page-banner__crumbs li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, .8);
+  text-shadow: 0 1px 8px rgba(8, 34, 56, .5);
+}
+.cgs-page-banner__crumbs li:not(:last-child)::after { content: '/'; opacity: .5; }
+.cgs-page-banner__crumbs li[aria-current] { color: #fff; }
+.cgs-page-banner__crumbs a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 180ms var(--ease-out);
+}
+.cgs-page-banner__crumbs a:hover,
+.cgs-page-banner__crumbs a:focus-visible { color: #fff; }
+
+/* --- Certificates: full document cards, not the homepage's small-badge
+   strip. This page is where a buyer actually verifies our credentials, so
+   each card shows the real scanned certificate (certificates.preview_image)
+   plus issuer, certificate number and validity — the badge alone reused
+   from the homepage undersold this section, per client feedback. */
+.cgs-cert-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(24px, 3vw, 32px);
+}
+.cgs-cert-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #fff;
+  border: 1px solid var(--cgs-line);
+  border-radius: var(--cgs-radius);
+  overflow: hidden;
+  color: inherit;
+  text-decoration: none;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.cgs-cert-card:hover,
+.cgs-cert-card:focus-visible {
+  transform: translateY(-4px);
+  box-shadow: var(--cgs-shadow-lg);
+}
+.cgs-cert-card__frame {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 3 / 4;
+  padding: 22px;
+  background: var(--cgs-surface);
+  border-bottom: 1px solid var(--cgs-line);
+}
+.cgs-cert-card__frame img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  background: #fff;
+  box-shadow: var(--cgs-shadow);
+}
+.cgs-cert-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  padding: 22px 24px 24px;
+}
+.cgs-cert-card__body h3 {
+  margin: 0;
+  font-size: 18.5px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--cgs-navy-900);
+}
+.cgs-cert-card__issuer {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cgs-blue-500);
+}
+.cgs-cert-card__link {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: var(--cgs-blue-500);
+}
+.cgs-cert-card__link i { transition: transform 180ms var(--ease-out); }
+.cgs-cert-card:hover .cgs-cert-card__link i,
+.cgs-cert-card:focus-visible .cgs-cert-card__link i { transform: translateX(3px); }
+
+@media (max-width: 991.98px) {
+  .cgs-cert-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 575.98px) {
+  .cgs-cert-grid { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cgs-cert-card,
+  .cgs-cert-card__link i { transition: none; }
+}
+
+/* Rich text from resources.content (admin rich-text, sanitised on save —
+   see CLAUDE.md Security). Shared by every DB-driven copy block on this
+   page so a heading/list/table typed in the admin looks native to the
+   design system without per-page CSS. */
+.cgs-prose { max-width: 62ch; color: var(--cgs-slate); font-size: 15.5px; line-height: 1.75; }
+.cgs-prose h3 {
+  margin: 28px 0 12px;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--cgs-navy-900);
+}
+.cgs-prose h3:first-child { margin-top: 0; }
+.cgs-prose p { margin: 0 0 14px; }
+.cgs-prose ul { margin: 0 0 14px; padding-left: 20px; }
+.cgs-prose li { margin-bottom: 6px; }
+.cgs-prose strong { color: var(--cgs-ink); font-weight: 700; }
+.cgs-prose table {
+  width: 100%;
+  margin: 8px 0 20px;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+.cgs-prose caption {
+  margin-bottom: 8px;
+  text-align: left;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--cgs-blue-500);
+}
+.cgs-prose th,
+.cgs-prose td {
+  padding: 10px 12px;
+  border: 1px solid var(--cgs-line);
+  text-align: left;
+  vertical-align: top;
+}
+.cgs-prose th {
+  background: var(--cgs-surface);
+  font-weight: 700;
+  color: var(--cgs-navy-900);
+  white-space: nowrap;
+}
+@media (max-width: 575.98px) {
+  .cgs-prose table { display: block; overflow-x: auto; white-space: nowrap; }
+}
+
+/* --- Cargo Measurement: asymmetric split, prose left / formula card right */
+.cgs-measure {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: clamp(32px, 5vw, 72px);
+  align-items: start;
+}
+.cgs-measure__ref {
+  position: sticky;
+  top: calc(var(--cgs-header-h, 80px) + 24px);
+  padding: clamp(24px, 3vw, 32px);
+  border-radius: var(--cgs-radius);
+  background: var(--cgs-navy-900);
+  color: #fff;
+  box-shadow: var(--cgs-shadow);
+}
+.cgs-measure__ref-label {
+  margin: 0 0 18px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--cgs-cyan-300);
+}
+.cgs-measure__ref-list { margin: 0; padding: 0; }
+.cgs-measure__ref-list > div {
+  padding: 14px 0;
+  border-top: 1px solid rgba(255, 255, 255, .14);
+}
+.cgs-measure__ref-list > div:first-child { border-top: none; padding-top: 0; }
+.cgs-measure__ref-list dt {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, .64);
+}
+.cgs-measure__ref-list dd {
+  margin: 4px 0 0;
+  font-family: var(--cgs-font-mono);
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+@media (max-width: 991.98px) {
+  .cgs-measure { grid-template-columns: 1fr; }
+  .cgs-measure__ref { position: static; }
+}
+
+/* Right column: a real photo above the sticky reference card, not inside
+   it — the photo scrolls away normally, then the navy card picks up the
+   sticky hand-off, so the "follows you down the page" motion stays
+   visible instead of both elements pinning at once. Needs its own
+   align-self: stretch — .cgs-measure sets align-items: start for the grid
+   row itself, and without stretch this wrapper (not the sticky card
+   directly, now that it's nested inside one) would only be as tall as its
+   own short content, leaving the sticky child no room to travel and stay
+   pinned against the long prose column beside it. */
+.cgs-measure__col {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  gap: 20px;
+}
+
+/* Real yard photography, the same trailer/cargo shot already captioned in
+   index.php's $galleryShots. Styled like the homepage's Our Story photos
+   (.cgs-story__media: shadow instead of a hairline border, a tinted
+   fallback behind the crop, 4:3 not a full 16:9 strip). */
+.cgs-measure__media {
+  border-radius: var(--cgs-radius);
+  overflow: hidden;
+  background: var(--cgs-line);
+  box-shadow: var(--cgs-shadow);
+}
+.cgs-measure__media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+/* --- "Big tabs": Incoterms / Insurance / Chargeable Weight ----------------
+   Client's own brief ("Fwd: CGS website 1", 2026-08-14): "I want to show
+   big tabs such as Incoterms, Freight service liability insurance versus
+   cargo insurance, and third tab chargeable weight calculation." Built as
+   a proper ARIA tablist (keyboard support in cgs.js), styled with the same
+   fill-on-active language as .cgs-btn rather than Bootstrap's default
+   nav-tabs underline, so "big" reads as true at both mouse and touch size. */
+.cgs-tabs__list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin: 0 0 28px;
+  padding: 0;
+  list-style: none;
+}
+.cgs-tabs__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  border-radius: var(--cgs-radius);
+  border: 1.5px solid var(--cgs-line);
+  background: #fff;
+  color: var(--cgs-navy-900);
+  font-family: var(--cgs-font);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: border-color 180ms var(--ease-out), background-color 180ms var(--ease-out), color 180ms var(--ease-out), box-shadow 180ms var(--ease-out);
+}
+.cgs-tabs__btn i {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  font-size: 16px;
+  color: var(--cgs-cyan-400);
+  transition: color 180ms var(--ease-out);
+}
+.cgs-tabs__btn:hover,
+.cgs-tabs__btn:focus-visible {
+  border-color: var(--cgs-cyan-400);
+}
+.cgs-tabs__btn.is-active {
+  border-color: var(--cgs-navy-900);
+  background: var(--cgs-navy-900);
+  color: #fff;
+  box-shadow: var(--cgs-shadow);
+}
+.cgs-tabs__btn.is-active i { color: var(--cgs-cyan-300); }
+
+.cgs-tabs__panel { display: none; }
+.cgs-tabs__panel.is-active {
+  display: block;
+  padding: clamp(28px, 3.5vw, 40px);
+  border-radius: var(--cgs-radius);
+  background: var(--cgs-surface);
+}
+.cgs-tabs__panel .cgs-prose { max-width: none; }
+
+/* Each panel leads with its own photo, not one shared image beside the
+   whole module — a wide banner above the text, same framed-photo language
+   as .cgs-measure__media. */
+.cgs-tabs__media {
+  margin: 0 0 22px;
+  border-radius: var(--cgs-radius);
+  overflow: hidden;
+  border: 1px solid var(--cgs-line);
+}
+.cgs-tabs__media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 1;
+  object-fit: cover;
+}
+
+@media (max-width: 767.98px) {
+  .cgs-tabs__btn { flex: 1 1 100%; justify-content: flex-start; }
+  .cgs-tabs__media img { aspect-ratio: 16 / 9; }
+}
+
+/* Section backdrop: same dot-grid + soft colour-field technique as
+   .cgs-video-band, scaled down and sitting on --cgs-surface instead of
+   white — decoration behind the tabs since each panel now carries its own
+   photo instead of one shared image beside the module. */
+.cgs-shipping-decor { position: relative; overflow: hidden; }
+.cgs-shipping-decor::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--cgs-line) 1px, transparent 1px);
+  background-size: 26px 26px;
+  opacity: .7;
+  pointer-events: none;
+}
+.cgs-shipping-decor::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(360px circle at 102% 8%, rgba(46, 159, 214, .16), transparent 70%);
+  pointer-events: none;
+}
+.cgs-shipping-decor > .container-fluid { position: relative; z-index: 1; }
+
+/* --- Terms & Conditions / policy documents --------------------------------
+   Same hairline-grid technique as .cgs-desk__grid (1px background showing
+   through as dividers), sized for a file link instead of a contact card. */
+.cgs-docs__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: var(--cgs-line);
+  border: 1px solid var(--cgs-line);
+  border-radius: var(--cgs-radius);
+  overflow: hidden;
+}
+.cgs-docs__grid li { background: #fff; }
+.cgs-docs__link {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: 100%;
+  padding: 24px 22px;
+  color: inherit;
+  text-decoration: none;
+  transition: background-color 180ms var(--ease-out);
+}
+.cgs-docs__link:hover,
+.cgs-docs__link:focus-visible { background: var(--cgs-surface); }
+.cgs-docs__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--cgs-surface);
+  color: var(--cgs-blue-500);
+  font-size: 16px;
+}
+.cgs-docs__link:hover .cgs-docs__icon,
+.cgs-docs__link:focus-visible .cgs-docs__icon { background: #fff; }
+.cgs-docs__title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--cgs-navy-900);
+  line-height: 1.35;
+}
+.cgs-docs__desc { margin: 0; font-size: 13px; line-height: 1.55; color: var(--cgs-muted); }
+.cgs-docs__meta {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: var(--cgs-blue-500);
+}
+.cgs-docs__link:hover .cgs-docs__meta i,
+.cgs-docs__link:focus-visible .cgs-docs__meta i { transform: translateX(3px); }
+.cgs-docs__meta i { transition: transform 180ms var(--ease-out); }
+
+@media (max-width: 991.98px) {
+  .cgs-docs__grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 575.98px) {
+  .cgs-docs__grid { grid-template-columns: 1fr; }
+}
+
+/* Corner watermark, same masked-raster technique as .cgs-desk::after (see
+   that comment for the full rationale) — reused here top-left and in navy
+   rather than bottom-right and blue, so the two instances of the same
+   motif read as a family, not a copy-paste repeat. */
+.cgs-terms { position: relative; overflow: hidden; }
+.cgs-terms::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  right: clamp(-10px, 1.5vw, 12px);
+  bottom: 0;
+  width: clamp(200px, 24vw, 380px);
+  aspect-ratio: 1000 / 893;
+  background-color: var(--cgs-blue-500);
+  opacity: .08;
+  -webkit-mask-image: url("../img/bg/oil-rig-illustration.png");
+          mask-image: url("../img/bg/oil-rig-illustration.png");
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-position: bottom right;
+          mask-position: bottom right;
+  -webkit-mask-size: contain;
+          mask-size: contain;
+  pointer-events: none;
+}
+.cgs-terms > .container-fluid { position: relative; z-index: 1; }
+
 /* --- Scroll reveal -------------------------------------------------------
    cgs.js adds .is-visible via IntersectionObserver. The initial state only
    applies when JS is present (html.js), so a no-JS visitor sees the content
@@ -2806,6 +3309,8 @@ html.js [data-reveal].is-visible {
   .cgs-btn:hover i,
   .cgs-textlink:hover i,
   .cgs-topbar__contact:hover i { transform: none; }
+  .cgs-docs__link:hover .cgs-docs__meta i,
+  .cgs-docs__link:focus-visible .cgs-docs__meta i { transform: none; }
 }
 
 /* --- Focus visibility ---------------------------------------------------- */
