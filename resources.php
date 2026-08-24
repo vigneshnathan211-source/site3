@@ -300,21 +300,26 @@ require __DIR__ . '/includes/header.php';
   </section>
   <?php endif; ?>
 
-  <!-- 6 ── CTA ─────────────────────────────────────────────── -->
+  <!-- 6 ── CTA ─────────────────────────────────────────────────
+       Same content as index.php's closing CTA — one CTA intent site-wide
+       ("Get a Quote"), not a page-specific pitch, per client direction to
+       keep this consistent across pages. -->
   <section class="cgs-cta">
     <div class="container-fluid px-4">
       <div class="cgs-cta__card" data-reveal>
         <div class="cgs-cta__copy">
-          <h2>Need cover beyond our carrier liability?</h2>
+          <h2>Tell us what needs to move</h2>
           <p>
-            Multimodal transport insurance and public liability insurance
-            are arranged case by case. Send us the shipment details and we
-            will come back with the right cover for the cargo.
+            Send the dimensions and the deadline. We will come back with the mode,
+            the route and what it costs.
           </p>
         </div>
         <div class="cgs-cta__actions">
           <a href="<?php echo url('contact.php'); ?>" class="cgs-btn cgs-btn--on-dark">
-            Contact Our Team <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
+            Get a Quote <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
+          </a>
+          <a href="tel:<?php echo e($phoneTel); ?>" class="cgs-btn cgs-btn--outline-light">
+            <i class="fa-solid fa-phone" aria-hidden="true"></i> <?php echo e($settings['phone']); ?>
           </a>
         </div>
       </div>
