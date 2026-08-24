@@ -7,48 +7,69 @@
 | different on purpose: eight near-identical card rows is what makes a page
 | read as templated.
 |
-|   1. Hero                full-bleed media, copy on the left, black scrim
-|   2. Video band          inset video card (the brief's post-hero section)
-|   2b. Certifications     dark band, the 3 cert PDFs embedded live, large
-|                          (moved here, after the video band, on client
-|                          request; entity/registration details moved to the
-|                          navbar logo lockup, client: "remove company
-|                          address and only showcase certificates")
-|   3. Services            asymmetric bento, 5 cells for 5 services
-|   4. Divisions           white band, two-column capability lists + a
-|                          4-item "why choose CGS" strip underneath
-|   4b. Partners           logo marquee, continuous auto-scroll (moved
-|                          here from just after Certifications, client:
-|                          "I want partners at the above cta")
-|   4c. Accent CTA card    single-accent band, "Send us your packing list"
-|   5. Fleet teaser        two-image split, real equipment specifics
-|   5b. Project desk       role-based contact grid
-|   5c. Gallery            masonry of real operations photos, Magnific
-|                          Popup lightbox with gallery nav — hidden via
-|                          if (false) 2026-08-19, client: "hide the
-|                          gallery section" (markup/CSS/JS left in place)
-|   6. CTA                 rounded sea-blue card, inset on white
+|   1. Hero                full-bleed video (the old Video Band's footage),
+|                          copy on the left, black scrim, no CTA buttons
+|   2. Our Story            two columns, each its own photo + paragraph —
+|                          left closes on a 2x2 stat grid (real facts
+|                          only), right opens on an eyebrow + heading
+|   3. Mission & Vision     "Waypoint" — dark navy band, two waypoints on
+|                          one plotted course, one porthole photo each
+|                          (not repeated between the two)
+|   4. Services             asymmetric bento, 5 cells for 5 services
+|   5. The CGS Advantage    tinted band, 6-item icon grid
+|   6. Testimonials         3-up quote wall, real named clients
+|   7. Partners             logo marquee, continuous auto-scroll
+|   8. Project desk         role-based contact grid
+|   9. CTA                  rounded sea-blue card, inset on white
 |
-| 2026-08-19: pruned to hero, services, CTA (kept unconditionally) plus
-| only the sections the client's own emails actually supply content for.
-| Removed: core values, special services, the operations-gallery carousel
-| and the FAQ accordion — all old-site scrapes, not emails.txt content
-| (still real client copy, just not sourced from this document; they can
-| return once there's a page/placement the client has actually briefed for
-| them). The video band stays even though no email describes it, because
-| CLAUDE.md/the project brief fixes it as a required structural section
-| directly after the hero, independent of emails.txt.
+| 2026-08-21 "Home Page redesign" (client, docs/source/Home page CGS.docx +
+| docs/source/emails.txt): rebuilt around the client's own docx content.
+| Video band, the old "Unrivaled Control" Divisions section (with its
+| 4-item advantage strip) and, as of a same-day follow-up ("remove
+| credentials section"), Certifications too, are all hidden via if (false)
+| below rather than deleted — same convention as every other client
+| "remove X" request on this page (Fleet teaser, Accent CTA, Gallery) —
+| markup/CSS left in place in case any comes back. The ISO/WCA/bizSAFE
+| facts Certifications used to show aren't lost: they're now 3 of the 4
+| stats in Our Story's stat grid. Our Story itself was rebuilt a second
+| time the same day to match a layout the client referenced directly
+| (reference/roofer/about.php's "About" section) — two columns, photo +
+| paragraph + stats on the left, eyebrow + heading + paragraph + photo on
+| the right — with every stat cell a real sourced fact rather than that
+| reference's own invented placeholder counters. Mission & Vision and the
+| re-scoped 6-item CGS Advantage are also sourced verbatim from the docx.
+| Testimonials is new, the same source's 3 real client quotes (2 more added
+| 2026-08-22 from the client's follow-up reply). Services,
+| Partners, Project desk and the closing CTA are unchanged structurally,
+| just reordered around the new sections.
 |
-| Copy status: the credentials strip, divisions, CGS-advantage strip and
-| project-desk contacts are verbatim from the client's own "1st email on
-| HOME Page" (docs/source/emails.txt), the email the client wrote
-| specifically to brief this page. The fleet teaser's equipment specifics
-| are verbatim from the client's separate "Email Our Fleet". The partners
-| marquee list and the service blurbs are also real, client-supplied
-| content. Hero and CTA copy is original marketing phrasing written for
-| this build rather than a client quote, but it asserts no fleet size,
-| tonnage, headcount or project reference that was not supplied — nothing
-| on this page states an unverified fact.
+| Same-day follow-up ("in hero replace image with the old video section
+| video and overlay text and left bottom corner remove those two button"):
+| the Hero's per-slide photograph was replaced with the Video Band's
+| footage, playing continuously behind the whole carousel (not restarted
+| per slide) with the same dark overlay and slide copy on top; the
+| "Get a Quote" / "Our Services" button pair was removed from every slide.
+|
+| Second same-day follow-up ("add it above our service"): Mission & Vision
+| was redesigned around a nautical wayfinding concept prototyped and
+| approved as a standalone artifact first — see cgs-waypoint below — and
+| moved from after Services to before it. The old paired-card layout
+| (.cgs-pillars) is hidden via if (false), not deleted, same convention as
+| the rest of this file; $pillars now feeds both markups, though only the
+| live one reads its new 'marker' key.
+|
+| Copy status: Our Story, Mission, Vision, the 6-item CGS Advantage and the
+| first 3 testimonials are verbatim from docs/source/Home page CGS.docx (the
+| client's "Home page CGS" file); the 2 later testimonials (WTA Energy, Cory
+| Brothers B.V.) are verbatim from the client's 2026-08-22 reply in
+| docs/source/emails.txt. Our Story's WCA/ISO/bizSAFE stats and the
+| project-desk contacts are verbatim from the client's "1st email on HOME
+| Page" (docs/source/emails.txt). The partners marquee list and the service
+| blurbs are also real, client-supplied content. Hero and CTA copy is
+| original marketing phrasing written for this build rather than a client
+| quote, but it asserts no fleet size, tonnage, headcount or project
+| reference that was not supplied — nothing on this page states an
+| unverified fact.
 */
 
 require_once __DIR__ . '/includes/bootstrap.php';
@@ -95,7 +116,7 @@ if (!$galleryRows) {
     $galleryRows = [
         ['image_path' => 'assets/img/gallery/ops-01.jpg', 'alt_text' => 'Project cargo lifted aboard a geared vessel'],
         ['image_path' => 'assets/img/gallery/ops-02.jpg', 'alt_text' => 'Break bulk unit slung under a ship crane'],
-        ['image_path' => 'assets/img/gallery/ops-03.jpg', 'alt_text' => 'Heavy lift module on the quayside'],
+        ['image_path' => 'assets/img/gallery/ops-03.jpg', 'alt_text' => 'Wrapped tank hoisted by crane onto a vessel'],
         ['image_path' => 'assets/img/gallery/ops-04.jpg', 'alt_text' => 'Cargo transferred to a barge alongside'],
         ['image_path' => 'assets/img/gallery/ops-07.jpg', 'alt_text' => 'Carriage Global trailer loaded with a large cable reel and crated cargo at a yard'],
         ['image_path' => 'assets/img/gallery/ops-06.jpg', 'alt_text' => 'Barge operation in Singapore waters'],
@@ -107,48 +128,32 @@ if (!$galleryRows) {
    registration numbers, ISO number, Bizsafe". Rebuilt several times on
    client follow-ups — full PDF page as a card, then the compact registrar
    badge with a click-to-view popup, then a two-column entities+certs split,
-   and now (2026-08-19: "remove company address and only shocase
-   certificates in large size") certs only, full width — the two entity
-   names and the UEN moved up to the navbar logo lockup (includes/header.php)
-   instead of repeating them here.
+   then full-page pixel-faithful previews at large size, and now
+   (2026-08-21: "remove certification instead make it as badge with icons
+   only") back to the compact registrar badge treatment — the real
+   ISO/bizSAFE/WCA seal artwork (assets/img/certificates/badge-*.png)
+   instead of a scaled-down screenshot of the PDF's first page. The two
+   entity names and the UEN stayed up in the navbar logo lockup
+   (includes/header.php) from the previous redesign, not repeated here.
 
-   All three cards render a static image preview rather than a live
-   <iframe> of the real PDF. That started as a fix for just the WCA card —
-   Chrome's built-in PDF viewer draws a thin dark page-border around every
-   embedded PDF, barely visible on the ISO/bizSAFE white portrait pages but
-   a heavy black frame on WCA's landscape gold-toned page (client: "wca
-   certificate not look good make it correctly") — but the live iframe
-   turned out to have a second, worse problem on mobile: Android Chrome
-   doesn't reliably render an inline PDF preview inside an iframe at all,
-   showing its generic black "filename.pdf / Open" file card instead
-   (client screenshot, 2026-08-19: "in my mobile pdf are not showing").
-   Switching ISO and bizSAFE to the same static-render pattern WCA already
-   used fixes both problems at once. Each preview is a pixel-faithful
-   render of the real PDF's first page (assets/img/certificates/*.jpg,
-   rendered at 2.2x via PyMuPDF). Clicking the card still opens the real
-   PDF (not the preview image) in the Magnific Popup lightbox — 'file'
-   stays the actual PDF path, only the card face changed. 'ratio' is each
-   PDF's own page width/height in points, used as the frame's CSS
-   aspect-ratio so a landscape certificate isn't squeezed into a portrait
-   box. */
+   Clicking a badge still opens the real PDF in the Magnific Popup
+   lightbox (init in includes/scripts.php) — 'file' is unchanged, only the
+   card face is now the small badge icon instead of a full-page preview. */
 $certificates = [
     [
-        'label'   => 'ISO 9001:2015',
-        'file'    => 'assets/certificates/iso-9001-2015.pdf',
-        'ratio'   => '594 / 838',
-        'preview' => 'assets/img/certificates/iso9001.jpg',
+        'label' => 'ISO 9001:2015',
+        'file'  => 'assets/certificates/iso-9001-2015.pdf',
+        'badge' => 'assets/img/certificates/badge-iso9001.jpg',
     ],
     [
-        'label'   => 'bizSAFE Level 4',
-        'file'    => 'assets/certificates/bizsafe-4.pdf',
-        'ratio'   => '595 / 842',
-        'preview' => 'assets/img/certificates/bizsafe.jpg',
+        'label' => 'bizSAFE Level 4',
+        'file'  => 'assets/certificates/bizsafe-4.pdf',
+        'badge' => 'assets/img/certificates/badge-bizsafe.jpg',
     ],
     [
-        'label'   => 'WCA Project, 15 yrs',
-        'file'    => 'assets/certificates/wca-project-membership.pdf',
-        'ratio'   => '765 / 567',
-        'preview' => 'assets/img/certificates/wca-project-membership.jpg',
+        'label' => 'WCA Project, 15 yrs',
+        'file'  => 'assets/certificates/wca-project-membership.pdf',
+        'badge' => 'assets/img/certificates/badge-wca.png',
     ],
 ];
 
@@ -242,6 +247,169 @@ $partners = [
     ['name' => 'Oilstates',       'logo' => 'assets/img/partners/oil-states-1.png'],
 ];
 
+/* "Our Story" — verbatim from docs/source/Home page CGS.docx, split into
+   its own two paragraphs at the sentence break the source already has (the
+   "By investing..." sentence starts a new idea), one per column rather
+   than both stacked in one. 2026-08-21: rebuilt to the client-referenced
+   Roofer "About" layout (reference/roofer/about.php) — image + paragraph +
+   a 2x2 stat grid on the left, an eyebrow + heading + paragraph + second
+   image on the right. CLAUDE.md is explicit that this page invents no
+   unverified numbers, so unlike Roofer's own placeholder counters
+   ("2.5K+ Projects Completed", "84+ Specialists", "100% Client
+   Satisfaction" — none of which CGS supplied), every stat cell here is a
+   real, sourced fact: the founding year from this same docx paragraph, and
+   the WCA/ISO/bizSAFE credentials from the client's "1st email on HOME
+   Page" — which also means the credentials section removed from this page
+   (client, 2026-08-21: "remove credentials section") isn't lost, just
+   relocated into this stat grid. Two different photos, not one repeated
+   (winch-transport.jpg was already used here; self-geared-crane.jpg was
+   still unused anywhere on this page).
+
+   'paras' order is deliberately: [0] the "By investing..." paragraph,
+   [1] the "Founded in Singapore..." paragraph — the reverse of the source
+   document's own order (client: "swap place for paragraph") — because the
+   right column's own heading already says "Founded in Singapore in 2007",
+   so [1] sits directly underneath it, and the fleet/investment paragraph
+   sits with the first photo on the left instead. [1]'s own opening clause
+   ("Founded in Singapore in 2007,") is dropped (client: "remove this line
+   in description") since the heading right above it already says the same
+   thing — the rest of the sentence is untouched, verbatim from the docx.
+
+   ISO/bizSAFE stat cells render the real registrar badge artwork (client:
+   "for ISO and bizSAFE add only logo") instead of a text value — 'logo'
+   wins over 'value' in the template below when both could apply. The ISO
+   badge (assets/img/certificates/badge-iso9001.jpg) is the United
+   Registrar of Systems seal — client-supplied 2026-08-22 ("this is the
+   correct body we are accredited with", client_assets/certificates/
+   ISO-9001.jpg), replacing the generic "ISO 9001:2015 Certified Company"
+   seal used the day before, which the client flagged as the wrong
+   accrediting body. The bizSAFE badge (assets/img/certificates/
+   badge-bizsafe.jpg) is client-supplied the same day (assets/certificates/
+   bizSAFE-Level-4-logo.jpg) — the official mark with the "4" level
+   subscript, replacing an unlevelled "bizSAFE" wordmark.
+
+   The founding-year cell was swapped for the company motto 2026-08-21
+   (client: "in our story replace 2007 stats with company motto"). Pulled
+   from $settings['tagline'] rather than retyped here, so it stays in sync
+   with the same line already shown in the footer (includes/footer.php). */
+$ourStory = [
+    'paras' => [
+        'By investing in our own asset-based fleet, storage facilities, and marine transport services, CGS has enhanced its ability to deliver seamless, end-to-end supply chain management. We remain committed to providing dependable, safe, and tailor-made project logistics throughout Southeast Asia and across the global marketplace.',
+        'Carriage Global (S) Pte Ltd (CGS) began as a specialized logistics and project freight-forwarding provider. Through the years, we have cultivated deep technical proficiency in managing heavy-lift, out-of-gauge, and intricate shipments for the energy, offshore, mining, and infrastructure sectors.',
+    ],
+    'image'       => 'assets/img/fleet/winch-transport.jpg',
+    'alt'         => 'Carriage Global (S) Pte Ltd branded low-bed trailer carrying a FAGEO winch unit through an industrial yard',
+    'image_two'   => 'assets/img/hero/self-geared-crane.jpg',
+    'alt_two'     => 'Self-geared MacGregor ship crane hoisting cargo at a Singapore port',
+    'stats' => [
+        ['value' => $settings['tagline'], 'label' => 'Our motto'],
+        ['value' => '15+',  'label' => 'Years as a WCA Project member'],
+        ['logo'  => 'assets/img/certificates/badge-iso9001.jpg', 'label' => 'ISO 9001:2015 certified'],
+        ['logo'  => 'assets/img/certificates/badge-bizsafe.jpg', 'label' => 'bizSAFE Level 4 certified'],
+    ],
+];
+
+/* Mission & Vision — verbatim from the same docx. Rendered as $mvSection
+   below: an image-collage-plus-text feature row per pillar, sides
+   alternating (client, with a reference screenshot: "Mission right side
+   text left image ... total 2 images ... reverse the same for
+   [vision]") — Mission's collage sits left of its text, Vision's sits
+   right. Replaces the earlier "Waypoint" concept (kept hidden below, same
+   convention as every other superseded section on this page) rather than
+   deleting it.
+
+   Each pillar now carries two real photos for the collage instead of
+   one: 'image'/'alt' is the large lead photo, 'image_two'/'alt_two' is
+   the smaller overlapping accent photo (client: "use images but not
+   repeat it for mission and vision"). Mission keeps its original pair
+   (tank-transport.jpg + ops-05.jpg). Vision's pair was replaced 2026-08-21
+   (client: "replace vision images") — spmt-trailer.jpg and ops-09.jpg are
+   now unused anywhere on this page (freed up, not deleted, in case a
+   future section wants them) rather than reused elsewhere. The
+   replacements, ops-16.jpg and ops-17.jpg, are two fresh shots pulled
+   from client_assets/latest/ and copied into assets/img/gallery/ under
+   the next free ops- numbers — chosen because every other real photo
+   already on this page was already accounted for. 'marker' is dead data
+   now, read only by the hidden Waypoint markup below. */
+$pillars = [
+    [
+        'label'     => 'Mission',
+        'marker'    => 'present position',
+        'icon'      => 'fa-bullseye',
+        'body'      => "To provide integrated, customized and reliable logistics solutions that optimize customers' supply chains, while maintaining high standards of quality, compliance, health, safety and environmental responsibility.",
+        'image'     => 'assets/img/fleet/tank-transport.jpg',
+        'alt'       => 'Crane lowering a large process tank onto a low-bed trailer at a Singapore port',
+        'image_two' => 'assets/img/gallery/ops-05.jpg',
+        'alt_two'   => 'Large cable reel secured on a Carriage Global low-bed trailer at a container terminal at night',
+    ],
+    [
+        'label'     => 'Vision',
+        'marker'    => 'heading',
+        'icon'      => 'fa-binoculars',
+        'body'      => 'To achieve operational excellence and become a trusted global logistics partner, delivering safe, efficient and sustainable transportation solutions while consistently exceeding customer expectations.',
+        'image'     => 'assets/img/gallery/ops-16.jpg',
+        'alt'       => 'Large IQIP pressure vessel rigged for lifting on a Carriage Global low-bed trailer at a yard',
+        'image_two' => 'assets/img/gallery/ops-17.jpg',
+        'alt_two'   => 'Mobile crane lowering specialized equipment onto a low-bed trailer at a Singapore port, container cranes in the background',
+    ],
+];
+
+/* "The CGS Advantage" — verbatim from the docx's second section ("Why
+   Customers Choose an Asset-Based Project Logistics Partner"), 6 items.
+   Supersedes the old 4-item $advantage strip that used to live inside the
+   Divisions section below (now hidden along with it) — kept as a separate,
+   standalone section here since Divisions itself is gone. */
+$cgsAdvantage = [
+    ['icon' => 'fa-truck-ramp-box',  'title' => 'Asset-Backed Reliability',        'body' => 'CGS owns and operates specialized transport and handling equipment, including low-bed and super-low-bed trailers, skeleton chassis, forklifts and supporting equipment. This provides greater control over equipment availability, planning and execution.'],
+    ['icon' => 'fa-diagram-project', 'title' => 'Single-Source Accountability',    'body' => 'Our transport, technical, freight forwarding and marine capabilities work together. Customers have a coordinated project team rather than multiple disconnected service providers.'],
+    ['icon' => 'fa-calculator',      'title' => 'Engineering-Led Planning',        'body' => 'We assess the physical and operational requirements before execution.'],
+    ['icon' => 'fa-route',           'title' => 'Door-to-Door Coordination',       'body' => 'From packing and factory collection through inland transportation, port operations, ocean freight, discharge and final delivery, CGS coordinates the complete logistics chain.'],
+    ['icon' => 'fa-earth-asia',      'title' => 'Regional Execution. Global Reach.', 'body' => 'Our Singapore-based operations support regional project movements while our international network extends our capabilities across global trade lanes.'],
+    ['icon' => 'fa-handshake',       'title' => 'Established Project Network',     'body' => 'CGS has been a WCA Project member for 15 years. Over this period, we have developed long-standing relationships with project logistics partners, vessel owners and service providers. We prioritize partners based on operational capability, reliability and proven working relationships rather than simply selecting the lowest-cost option.'],
+];
+
+/* Testimonials — the first 3 client quotes from docs/source/Home page
+   CGS.docx, kept verbatim including their own capitalization and phrasing
+   (client convention on this page throughout: real content only, nothing
+   smoothed over or invented). Only stray double-spaces from the source
+   document's own formatting are collapsed to single spaces.
+
+   2 more added 2026-08-22, from the client's reply in emails.txt ("As
+   mentioned yesterday, I will give you a few more testimonials"). Same
+   verbatim convention: WTA Energy's is untouched; Cory Brothers B.V.'s
+   fixes the one obvious transcription typo the client's own email had
+   ("epeatedly" -> "repeatedly") — not a phrasing edit. The source email
+   signed off with a stray "C" instead of a role (unlike every other quote
+   here, which names one) — rendered as "Company" so the card's byline
+   line isn't a bare, meaningless initial. */
+$testimonials = [
+    [
+        'quote'   => 'We thank the Carriage Global team for their continued support, great service and very professional approach! Communication is clear, response times are fast and everything is handled with great care. A reliable logistics partner who are willing to go the extra mile. Much appreciate the support for the Sarens Team.',
+        'name'    => 'Group Logistic Manager',
+        'company' => 'Sarens NV, Belgium',
+    ],
+    [
+        'quote'   => 'We have been using CGS Since the start of this year to send our equipment to various part of Asia. what stands out is their efficiency and knowledge of the many custom requirements for the different countries. All our Equipment were shipped with NO issue and Delay.',
+        'name'    => 'Project Manager',
+        'company' => 'Pageo SubOcean Pte Ltd',
+    ],
+    [
+        'quote'   => 'Very Knowledgeable and Experienced in handling Global Shipping requirements. The team is highly responsive, providing quick and efficient support whenever needed.',
+        'name'    => 'Project Department',
+        'company' => 'Mansam Group',
+    ],
+    [
+        'quote'   => 'Without a doubt CGS have been giving us not only competitive pricing to beat the market for business, but also technical solutions which has given us an edge to compete for more complex business. The volume of business has increased tremendously due to your support. We are happy to continue this partnership for as long as we can.',
+        'name'    => 'Regional Managing Director',
+        'company' => 'WTA Energy',
+    ],
+    [
+        'quote'   => 'We are working with Carriage Global (S) Pte Ltd for quite some years now and very content with the cooperation. They have handled both OOG and BB cargoes, including pre-carriage, FOB handling and Ocean Freight. I would work with them repeatedly.',
+        'name'    => 'Company',
+        'company' => 'Cory Brothers B.V.',
+    ],
+];
+
 require __DIR__ . '/includes/head.php';
 require __DIR__ . '/includes/header.php';
 ?>
@@ -261,6 +429,38 @@ require __DIR__ . '/includes/header.php';
        flipped to "polite" once the visitor takes manual control, so a
        screen reader is not interrupted every few seconds. -->
   <section class="cgs-hero" aria-roledescription="carousel" aria-label="Carriage Global capabilities">
+
+    <?php /* Single persistent background across every slide — the footage
+             that used to run in its own Video Band section further down the
+             page (now hidden, see that section's comment). Sits behind the
+             swiper rather than inside each slide, so it keeps playing
+             uninterrupted as the copy rotates instead of restarting per
+             slide.
+
+             --cgs-hero-video-pos controls the object-position crop point
+             (see cgs.css): this footage carries its own logo watermark
+             near the top of the frame, and a plain center crop cut it off
+             under the header. Biased toward the top edge so the watermark
+             clears the header instead of being cropped away — tune this
+             one value if the source footage changes. */ ?>
+    <div class="cgs-hero__media" style="--cgs-hero-video-pos: center 15%;">
+      <video
+        src="<?php echo url($settings['video_band_src']); ?>"
+        poster="<?php echo url($settings['video_band_poster'] ?: $heroSlides[0]['image']); ?>"
+        autoplay muted loop playsinline preload="metadata"
+        aria-hidden="true"></video>
+    </div>
+
+    <?php /* Background footage autoplays muted (browser policy requires
+             that); this is the one control a visitor gets over it — sound
+             stays off until they ask for it. Wired up in cgs.js
+             (data-hero-sound), which is also what keeps aria-pressed and
+             the label in sync with the video's actual muted state. */ ?>
+    <button type="button" class="cgs-hero__sound" data-hero-sound aria-pressed="false" aria-label="Unmute background video">
+      <i class="fa-solid fa-volume-xmark" aria-hidden="true"></i>
+      <i class="fa-solid fa-volume-high" aria-hidden="true"></i>
+    </button>
+
     <div class="swiper cgs-hero__swiper" data-hero-swiper>
       <div class="swiper-wrapper">
         <?php foreach ($heroSlides as $i => $slide): ?>
@@ -269,74 +469,36 @@ require __DIR__ . '/includes/header.php';
              aria-roledescription="slide"
              aria-label="<?php echo ($i + 1) . ' of ' . count($heroSlides); ?>">
 
-          <div class="cgs-hero__media">
-            <?php if ($i === 0 && !empty($settings['hero_bg_video'])): ?>
-            <video
-              src="<?php echo url($settings['hero_bg_video']); ?>"
-              poster="<?php echo url($slide['image']); ?>"
-              autoplay muted loop playsinline preload="metadata"
-              aria-hidden="true"></video>
-            <?php else: ?>
-            <img src="<?php echo url($slide['image']); ?>"
-                 alt="<?php echo e($slide['alt_text'] ?: $slide['heading']); ?>"
-                 width="1600" height="1200"
-                 <?php echo $i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'; ?>>
-            <?php endif; ?>
-          </div>
-          <div class="cgs-hero__overlay" aria-hidden="true"></div>
-
-          <div class="container-fluid px-4">
-            <div class="cgs-hero__inner">
-              <?php if (!empty($slide['eyebrow'])): ?>
-              <p class="cgs-hero__eyebrow" data-hero-anim>
-                <i class="fa-solid fa-anchor" aria-hidden="true"></i>
-                <?php echo e($slide['eyebrow']); ?>
-              </p>
-              <?php endif; ?>
-
-              <?php /* One h1 per document: the first slide carries it, the rest are h2. */ ?>
-              <?php if ($i === 0): ?>
-                <h1 class="cgs-hero__title" data-hero-anim><?php echo e($slide['heading']); ?></h1>
-              <?php else: ?>
-                <h2 class="cgs-hero__title" data-hero-anim><?php echo e($slide['heading']); ?></h2>
-              <?php endif; ?>
-
-              <?php if (!empty($slide['subheading'])): ?>
-                <p class="cgs-hero__lead" data-hero-anim><?php echo e($slide['subheading']); ?></p>
-              <?php endif; ?>
-
-              <div class="cgs-hero__actions" data-hero-anim>
-                <a href="<?php echo url($slide['cta_link'] ?: 'contact.php'); ?>" class="cgs-btn cgs-btn--primary">
-                  <?php echo e($slide['cta_label'] ?: 'Get a Quote'); ?>
-                  <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
-                </a>
-                <a href="<?php echo url('services.php'); ?>" class="cgs-btn cgs-btn--on-dark">
-                  Our Services
-                </a>
-              </div>
-            </div>
-          </div>
+          <?php /* Client: "in hero remove overlay all text and pagination" —
+                   the eyebrow/heading/lead copy, the dark scrim behind it, and
+                   the dot pagination are all gone; just the video plays behind
+                   the sound toggle now. The one exception is slide 0's heading,
+                   kept as a visually-hidden h1 (Bootstrap's .visually-hidden)
+                   rather than deleted outright — every other page on this site
+                   has exactly one h1 and search engines/screen readers still
+                   expect this document to, even with the visible copy gone. */ ?>
+          <?php if ($i === 0): ?>
+          <h1 class="visually-hidden"><?php echo e($slide['heading']); ?></h1>
+          <?php endif; ?>
         </div>
         <?php endforeach; ?>
       </div>
-
-      <?php if (count($heroSlides) > 1): ?>
-      <div class="swiper-pagination cgs-hero__pagination"></div>
-      <?php endif; ?>
     </div>
   </section>
 
   <!-- 2 ── VIDEO BAND ───────────────────────────────────────
-       The brief places a video section directly after the hero. Real
-       client-supplied footage (assets/video/cgs-video-band.mp4), so
-       unlike the earlier AI-generated placeholder this needs no honesty
-       disclosure. Deliberately plain: no scrim, no overlay copy, just
-       the video — native controls so the visitor can pause/mute it
-       themselves. Muted + playsinline so mobile permits autoplay;
-       cgs.js skips autoplay under reduced motion (controls still let
-       someone start it manually). Settings keys are video_band_*, not
-       hero_* — this section is distinct from the hero's own optional
-       background video (hero_bg_video, above). -->
+       Hidden 2026-08-21 (client, "Home Page redesign": "remove ... video
+       section") — markup/CSS left in place, not deleted, same convention
+       as every other client "remove X" request on this page.
+
+       Its footage (video_band_src / video_band_poster) is no longer idle,
+       though: per a later client request the same day ("in hero replace
+       image with the old video section video"), it now plays as the Hero's
+       own persistent background — see the .cgs-hero__media block above,
+       outside the slide loop so playback isn't restarted on every slide
+       change. This standalone section stays hidden rather than doubling
+       the footage up on the page. -->
+  <?php if (false): ?>
   <section class="cgs-video-band" aria-label="Carriage Global operations">
     <div class="container-fluid px-4">
       <div class="cgs-video-band__frame">
@@ -349,25 +511,15 @@ require __DIR__ . '/includes/header.php';
       </div>
     </div>
   </section>
+  <?php endif; ?>
 
-  <!-- 2b ── CERTIFICATIONS ──────────────────────────────────
-       Client's own instruction for this exact page (docs/source/emails.txt,
-       "1st email on HOME Page") named the ISO/bizSAFE credentials here;
-       moved to directly after the video band on client request ("move the
-       section after video"). Entity names, registration numbers and the
-       UEN used to sit in a left column next to this — now shown in the
-       navbar logo lockup instead (includes/header.php), so this band is
-       certificates only, full width, large (client: "remove company
-       address and only shocase certificates in large size"). Each cert
-       embeds the real PDF live via <iframe> (client, earlier: "showcase
-       full certificate use it as pdf") instead of a screenshot or cropped
-       logo; clicking still opens the same PDF full-size in the Magnific
-       Popup lightbox (init in includes/scripts.php) — the iframe is
-       pointer-events:none (cgs.css) so the click reaches the wrapping <a>,
-       and the href still points at the real file as a no-JS fallback.
-       White background (client: "for credentials change background color
-       to white") — cards keep a light border/shadow instead of the navy
-       fill they used on the dark band. -->
+  <!-- 2 ── CERTIFICATIONS ───────────────────────────────────
+       Hidden 2026-08-21 (client: "remove credentials section") — markup/CSS
+       left in place, not deleted, same convention as every other client
+       "remove X" request on this page. The ISO/WCA/bizSAFE facts it used to
+       show aren't lost: they now live in the Our Story stat grid just below
+       (see $ourStory['stats'] and cgs-story__stat). -->
+  <?php if (false): ?>
   <section class="cgs-section cgs-credentials" aria-label="Certifications">
     <div class="container-fluid px-4">
       <header class="cgs-credentials__head">
@@ -375,16 +527,11 @@ require __DIR__ . '/includes/header.php';
         <h2>Certifications</h2>
       </header>
 
-      <div class="cgs-credentials__certs">
+      <div class="cgs-credentials__badges">
         <?php foreach ($certificates as $cert): ?>
-        <a class="cgs-credentials__cert cgs-pdf-trigger" href="<?php echo url($cert['file']); ?>" aria-label="<?php echo e($cert['label']); ?> — view full certificate PDF">
-          <span class="cgs-credentials__docframe" style="aspect-ratio: <?php echo e($cert['ratio']); ?>;">
-            <?php if (!empty($cert['preview'])): ?>
-              <img src="<?php echo url($cert['preview']); ?>" alt="" loading="lazy">
-            <?php else: ?>
-              <iframe src="<?php echo url($cert['file']); ?>#toolbar=0&amp;navpanes=0&amp;scrollbar=0&amp;view=FitH"
-                      tabindex="-1" aria-hidden="true" loading="lazy" title=""></iframe>
-            <?php endif; ?>
+        <a class="cgs-credentials__badge cgs-pdf-trigger" href="<?php echo url($cert['file']); ?>" aria-label="<?php echo e($cert['label']); ?> — view full certificate PDF">
+          <span class="cgs-credentials__badge-icon">
+            <img src="<?php echo url($cert['badge']); ?>" alt="" loading="lazy">
           </span>
           <span class="cgs-credentials__meta"><?php echo e($cert['label']); ?></span>
         </a>
@@ -392,8 +539,154 @@ require __DIR__ . '/includes/header.php';
       </div>
     </div>
   </section>
+  <?php endif; ?>
 
-  <!-- 3 ── SERVICES ─────────────────────────────────────────
+  <!-- 2 ── OUR STORY ────────────────────────────────────────
+       2026-08-21: rebuilt to the layout the client pointed at
+       (reference/roofer/about.php's "About" section) — image + paragraph +
+       a 2x2 stat grid on the left, an eyebrow + heading + paragraph +
+       second image on the right. Content is still verbatim from
+       docs/source/Home page CGS.docx; every stat is a real, sourced fact
+       (see the $ourStory comment above) rather than Roofer's own invented
+       placeholder counters. -->
+  <section class="cgs-section cgs-story">
+    <div class="container-fluid px-4">
+      <div class="cgs-story__grid">
+
+        <div class="cgs-story__col">
+          <div class="cgs-story__media" data-reveal>
+            <img src="<?php echo url($ourStory['image']); ?>"
+                 alt="<?php echo e($ourStory['alt']); ?>"
+                 loading="lazy" width="1000" height="720">
+          </div>
+          <p data-reveal style="--reveal-delay: 80ms"><?php echo e($ourStory['paras'][0]); ?></p>
+          <div class="cgs-story__stats" data-reveal style="--reveal-delay: 140ms">
+            <?php foreach ($ourStory['stats'] as $stat): ?>
+            <div class="cgs-story__stat">
+              <?php if (!empty($stat['logo'])): ?>
+              <img class="cgs-story__stat-logo" src="<?php echo url($stat['logo']); ?>" alt="<?php echo e($stat['label']); ?>" loading="lazy">
+              <?php else: ?>
+              <strong><?php echo e($stat['value']); ?></strong>
+              <?php endif; ?>
+              <span><?php echo e($stat['label']); ?></span>
+            </div>
+            <?php endforeach; ?>
+          </div>
+        </div>
+
+        <div class="cgs-story__col">
+          <p class="cgs-story__eyebrow" data-reveal>
+            <i class="fa-solid fa-flag" aria-hidden="true"></i>
+            Our Story
+          </p>
+          <h2 data-reveal style="--reveal-delay: 60ms">Founded in Singapore in 2007</h2>
+          <p data-reveal style="--reveal-delay: 120ms"><?php echo e($ourStory['paras'][1]); ?></p>
+          <div class="cgs-story__media" data-reveal style="--reveal-delay: 180ms">
+            <img src="<?php echo url($ourStory['image_two']); ?>"
+                 alt="<?php echo e($ourStory['alt_two']); ?>"
+                 loading="lazy" width="1000" height="900">
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 ── MISSION & VISION ─────────────────────────────────
+       Moved ahead of Services (client: "add it above our service").
+       Rebuilt again 2026-08-21 (client, with a reference screenshot):
+       "Mission right side text left image on top a image total 2
+       images ... reverse the same for [vision]" — an image-collage-plus-
+       text feature row per pillar rather than the "Waypoint" nautical
+       concept this replaces (kept hidden below, same convention as every
+       other superseded section on this page — not deleted). Same dark
+       navy background Waypoint used (client: "with same background"),
+       just a different layout inside it. Mission's collage sits left of
+       its text; Vision mirrors it via --reverse, text left, collage
+       right — literal alternation, not decorative, so the two rows never
+       repeat the same shape twice in a row. Boxed in a real Bootstrap
+       .container (nested inside the page's usual .container-fluid px-4,
+       client: "make it in container") rather than running the row
+       full-bleed — that's what was making the photo balloon to an
+       unreasonable size on wide screens. Gallery/text are actual
+       col-lg-6 columns now (client: "make the image suitable for the
+       col6"), so the photo fills a real half-width column inside a
+       width-capped container instead of a custom small box. -->
+  <section class="cgs-section cgs-section--dark cgs-mv" aria-label="Mission and vision">
+    <div class="container-fluid px-4">
+      <div class="container">
+        <div class="cgs-mv__list">
+          <?php foreach ($pillars as $p => $pillar): ?>
+          <?php $reverse = ($p % 2) === 1; ?>
+          <article class="cgs-mv-feature row align-items-stretch g-4 g-lg-5">
+            <div class="cgs-mv-feature__gallery col-lg-6 order-1<?php echo $reverse ? ' order-lg-2' : ' order-lg-1'; ?>" data-reveal>
+              <div class="cgs-mv-feature__img cgs-mv-feature__img--main">
+                <img src="<?php echo url($pillar['image']); ?>"
+                     alt="<?php echo e($pillar['alt']); ?>"
+                     loading="lazy" width="640" height="760">
+              </div>
+              <div class="cgs-mv-feature__img cgs-mv-feature__img--accent">
+                <img src="<?php echo url($pillar['image_two']); ?>"
+                     alt="<?php echo e($pillar['alt_two']); ?>"
+                     loading="lazy" width="360" height="360">
+              </div>
+            </div>
+            <div class="cgs-mv-feature__text col-lg-6 order-2<?php echo $reverse ? ' order-lg-1' : ' order-lg-2'; ?>" data-reveal style="--reveal-delay: 120ms">
+              <span class="cgs-mv-feature__icon"><i class="fa-solid <?php echo e($pillar['icon']); ?>" aria-hidden="true"></i></span>
+              <h3>Our <?php echo e($pillar['label']); ?></h3>
+              <p><?php echo e($pillar['body']); ?></p>
+            </div>
+          </article>
+          <?php endforeach; ?>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3b ── MISSION & VISION ("Waypoint", superseded) ─────────
+       Hidden 2026-08-21 — replaced same day by the image-collage layout
+       above per a direct client request with a reference screenshot.
+       Markup/CSS left in place, not deleted, same convention as every
+       other superseded section on this page. -->
+  <?php if (false): ?>
+  <section class="cgs-section cgs-section--dark cgs-waypoint" aria-label="Mission and vision">
+    <div class="container-fluid px-4">
+      <div class="cgs-waypoint__head">
+        <p class="cgs-waypoint__eyebrow" data-reveal>
+          <i class="fa-solid fa-compass" aria-hidden="true"></i>
+          Plotted course
+        </p>
+        <h2 data-reveal style="--reveal-delay: 60ms">Where we stand, where we're headed</h2>
+      </div>
+
+      <div class="cgs-waypoint__route">
+        <?php foreach ($pillars as $p => $pillar): ?>
+        <article class="cgs-waypoint-card" data-reveal style="--reveal-delay: <?php echo $p * 120; ?>ms">
+          <p class="cgs-waypoint-card__marker">
+            <span class="cgs-waypoint-card__dot" aria-hidden="true"><span></span></span>
+            Waypoint &middot; <b><?php echo e($pillar['marker']); ?></b>
+          </p>
+          <div class="cgs-waypoint-card__medallion">
+            <span class="cgs-waypoint-card__porthole">
+              <img src="<?php echo url($pillar['image']); ?>"
+                   alt="<?php echo e($pillar['alt']); ?>"
+                   loading="lazy" width="168" height="168">
+              <span class="cgs-waypoint-card__glare" aria-hidden="true"></span>
+            </span>
+            <span class="cgs-waypoint-card__badge" aria-hidden="true">
+              <i class="fa-solid <?php echo e($pillar['icon']); ?>" aria-hidden="true"></i>
+            </span>
+          </div>
+          <h3><?php echo e($pillar['label']); ?></h3>
+          <p><?php echo e($pillar['body']); ?></p>
+        </article>
+        <?php endforeach; ?>
+      </div>
+    </div>
+  </section>
+  <?php endif; ?>
+
+  <!-- 4 ── SERVICES ─────────────────────────────────────────
        Scroll-pin: on desktop, with motion allowed, the section holds one
        screen (cgs-services-pin__sticky) while its own extra height
        (services-count x 100vh, added by cgs.js as .is-pinned) is scrolled
@@ -407,7 +700,10 @@ require __DIR__ . '/includes/header.php';
        The secondary photo cell uses a general operations shot (real
        company photography, not stock), cycled by index so no two
        services show the same picture — the feature cell keeps the one
-       photo actually tied to that specific service. -->
+       photo actually tied to that specific service. The Read More CTA
+       cell has its own distinct background (`services.cta_image`,
+       falls back to `image` when a service has none set), so a service
+       card never shows the same photo twice across its three cells. -->
   <section class="cgs-section cgs-services-pin" id="services" data-services-pin
            style="--services-count: <?php echo max(1, count($services)); ?>;">
     <div class="cgs-services-pin__sticky">
@@ -471,10 +767,11 @@ require __DIR__ . '/includes/header.php';
             </div>
             <?php endif; ?>
 
+            <?php $ctaImage = $svc['cta_image'] ?: $svc['image']; ?>
             <a class="cgs-service-bento__cell cgs-service-bento__cta" href="<?php echo url($svc['link']); ?>">
-              <?php if (!empty($svc['image'])): ?>
+              <?php if (!empty($ctaImage)): ?>
               <span class="cgs-service-bento__cta-media" aria-hidden="true">
-                <img src="<?php echo url($svc['image']); ?>" alt="" loading="lazy" width="300" height="220">
+                <img src="<?php echo url($ctaImage); ?>" alt="" loading="lazy" width="300" height="220">
               </span>
               <?php endif; ?>
               <span class="cgs-service-bento__cta-label">
@@ -501,14 +798,20 @@ require __DIR__ . '/includes/header.php';
   </section>
 
   <!-- 4 ── DIVISIONS ────────────────────────────────────────
-       The client's own two named in-house departments, verbatim from the
-       HOME Page email, followed by a 4-item "why choose CGS" strip from
-       the same email's second section — one band, two distinct rhythms
-       within it. White section background (client: "change unrivaled
-       into white background"). Each division is its own "feature module"
-       (title/description + 3 asymmetrical photos + a card grid of its
-       checklist items), alternating text/gallery sides left-to-right —
-       see $divisionMedia below and cgs.css's .cgs-division-feature block. -->
+       Hidden 2026-08-21 (client, "Home Page redesign": "remove unrivaled
+       control") — markup/CSS left in place, not deleted, same convention
+       as every other client "remove X" request on this page. Its "why
+       choose CGS" strip is superseded by the new, docx-sourced
+       $cgsAdvantage section further down (now standalone, since this
+       section is gone); $advantage below is the old 4-item strip, kept
+       only for this hidden block. The client's own two named in-house
+       departments, verbatim from the HOME Page email, followed by that old
+       4-item strip — one band, two distinct rhythms within it. Each
+       division is its own "feature module" (title/description + 3
+       asymmetrical photos + a card grid of its checklist items),
+       alternating text/gallery sides left-to-right — see $divisionMedia
+       below and cgs.css's .cgs-division-feature block. -->
+  <?php if (false): ?>
   <section class="cgs-section cgs-divisions">
     <div class="container-fluid px-4">
       <header class="cgs-divisions__head">
@@ -609,13 +912,120 @@ require __DIR__ . '/includes/header.php';
       </div>
     </div>
   </section>
+  <?php endif; ?>
 
-  <!-- 4b ── PARTNERS ────────────────────────────────────────
-       Continuous auto-scroll logo marquee, moved directly above the
-       accent CTA (client: "I want partners at the above cta"). The exact
-       client list from the HOME Page email (docs/PROJECT-BRIEF.md open
-       question 13) — five of the eight names have no verified logo file
-       yet and render as text. -->
+  <!-- 4 ── MISSION & VISION (card layout) ─────────────────────
+       Hidden 2026-08-21 (superseded same day by the "Waypoint" redesign —
+       see cgs-waypoint above, moved ahead of Services) — markup/CSS left
+       in place, not deleted, same convention as every other client
+       "remove/replace X" request on this page. Was: two paired feature
+       cards side by side, not the alternating text/image rows the retired
+       Divisions section above used to use. -->
+  <?php if (false): ?>
+  <section class="cgs-section cgs-pillars">
+    <div class="container-fluid px-4">
+      <div class="cgs-pillars__grid">
+        <?php foreach ($pillars as $p => $pillar): ?>
+        <article class="cgs-pillar-card" data-reveal style="--reveal-delay: <?php echo $p * 100; ?>ms">
+          <div class="cgs-pillar-card__media">
+            <img src="<?php echo url($pillar['image']); ?>"
+                 alt="<?php echo e($pillar['alt']); ?>"
+                 loading="lazy" width="900" height="600">
+          </div>
+          <div class="cgs-pillar-card__body">
+            <span class="cgs-pillar-card__icon"><i class="fa-solid <?php echo e($pillar['icon']); ?>" aria-hidden="true"></i></span>
+            <h3><?php echo e($pillar['label']); ?></h3>
+            <p><?php echo e($pillar['body']); ?></p>
+          </div>
+        </article>
+        <?php endforeach; ?>
+      </div>
+    </div>
+  </section>
+  <?php endif; ?>
+
+  <!-- 5 ── THE CGS ADVANTAGE ────────────────────────────────
+       New 2026-08-21, verbatim from docs/source/Home page CGS.docx
+       ("Why Customers Choose an Asset-Based Project Logistics Partner"),
+       6 items. Standalone tinted band — supersedes the old 4-item
+       $advantage strip that used to live inside Divisions (now hidden
+       above). Reuses the .cgs-advantage__grid icon-card pattern already
+       built for that strip. -->
+  <section class="cgs-section cgs-section--tint">
+    <div class="container-fluid px-4">
+      <header class="cgs-section-head">
+        <h2>The CGS Advantage</h2>
+      </header>
+      <ul class="cgs-advantage__grid">
+        <?php foreach ($cgsAdvantage as $a => $point): ?>
+        <li data-reveal style="--reveal-delay: <?php echo $a * 60; ?>ms">
+          <span class="cgs-advantage__icon"><i class="fa-solid <?php echo e($point['icon']); ?>" aria-hidden="true"></i></span>
+          <strong><?php echo e($point['title']); ?></strong>
+          <p><?php echo e($point['body']); ?></p>
+        </li>
+        <?php endforeach; ?>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 6 ── TESTIMONIALS ─────────────────────────────────────
+       New 2026-08-21, the 3 real client quotes from
+       docs/source/Home page CGS.docx, kept verbatim (2 more added
+       2026-08-22 from the client's follow-up reply — see $testimonials
+       above). Rebuilt as a Swiper
+       carousel (client: "make the testimonials swiper with pagination and
+       controls and it moves autoplay"), then back to 3 cards side by side
+       on desktop (client: "make the testimonial three cards") — still a
+       Swiper underneath so mobile/tablet, which only fit 1-2 cards at a
+       time, keep real pagination/arrow/autoplay movement (see cgs.js).
+       Same autoplay etiquette as the hero and services carousels: pauses
+       on hover, on keyboard focus and while off-screen, never starts
+       under reduced motion. -->
+  <?php if ($testimonials): ?>
+  <section class="cgs-section cgs-testimonials">
+    <div class="container-fluid px-4">
+      <header class="cgs-section-head">
+        <h2>What our clients say</h2>
+        <?php if (count($testimonials) > 1): ?>
+        <div class="cgs-section-head__right">
+          <div class="cgs-testimonials__arrows">
+            <button class="cgs-testimonials__arrow" data-testimonials-prev type="button" aria-label="Previous testimonial">
+              <i class="fa-solid fa-angle-left" aria-hidden="true"></i>
+            </button>
+            <button class="cgs-testimonials__arrow" data-testimonials-next type="button" aria-label="Next testimonial">
+              <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+        <?php endif; ?>
+      </header>
+
+      <div class="swiper cgs-testimonials__swiper" data-testimonials-swiper>
+        <ul class="swiper-wrapper cgs-testimonials__grid">
+          <?php foreach ($testimonials as $t => $item): ?>
+          <li class="swiper-slide cgs-testimonial">
+            <i class="fa-solid fa-quote-left cgs-testimonial__icon" aria-hidden="true"></i>
+            <blockquote><?php echo e($item['quote']); ?></blockquote>
+            <footer>
+              <span class="cgs-testimonial__name"><?php echo e($item['name']); ?></span>
+              <span class="cgs-testimonial__company"><?php echo e($item['company']); ?></span>
+            </footer>
+          </li>
+          <?php endforeach; ?>
+        </ul>
+
+        <?php if (count($testimonials) > 1): ?>
+        <div class="swiper-pagination cgs-testimonials__pagination"></div>
+        <?php endif; ?>
+      </div>
+    </div>
+  </section>
+  <?php endif; ?>
+
+  <!-- 7 ── PARTNERS ─────────────────────────────────────────
+       Continuous auto-scroll logo marquee. The exact client list from the
+       HOME Page email (docs/PROJECT-BRIEF.md open question 13) — five of
+       the eight names have no verified logo file yet and render as text. -->
   <?php if ($partners): ?>
   <section class="cgs-section cgs-partners" aria-label="Partners and carriers">
     <div class="container-fluid px-4">
@@ -742,7 +1152,7 @@ require __DIR__ . '/includes/header.php';
   </section>
   <?php endif; ?>
 
-  <!-- 5b ── PROJECT DESK ────────────────────────────────────
+  <!-- 8 ── PROJECT DESK ─────────────────────────────────────
        "Contact Our Project Desk" from the client's HOME Page email — real
        named roles and department addresses, not generic placeholders, so a
        visitor with a live shipment reaches the right desk on the first
@@ -831,7 +1241,7 @@ require __DIR__ . '/includes/header.php';
   </section>
   <?php endif; ?>
 
-  <!-- 6 ── CTA ──────────────────────────────────────────────
+  <!-- 9 ── CTA ──────────────────────────────────────────────
        One CTA intent on this page: "Get a Quote". Same label in the
        nav, the hero and here. Rounded navy card inset on a white section,
        copy on the left and actions on the right, with a hairline squiggle

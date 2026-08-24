@@ -127,13 +127,13 @@ $settingsRows = db_all($pdo, 'SELECT * FROM settings ORDER BY id DESC LIMIT 1');
 $settings     = $settingsRows[0] ?? [];
 
 $settingDefaults = [
-    'logo'              => 'assets/img/logo/cgs-logo.jpg',
+    'logo'              => 'assets/img/logo/cgs-mark.png',
     'logo_light'        => null,
     'favicon'           => 'assets/img/logo/cgs-favicon.jpg',
     'hero_bg_image'     => 'assets/img/bg/hero-bg.jpg',
     'hero_heading'      => 'Cargo that does not fit a container, moved anyway',
     'hero_subheading'   => 'Heavy lift, break bulk and project cargo by sea, air and road, planned from your packing list.',
-    'video_band_src'    => 'assets/video/cgs-video-band-v2.mp4',
+    'video_band_src'    => 'assets/video/hero_video.mp4',
     'video_band_poster' => null,
     'hero_bg_video'     => null,
     'company_name'      => 'Carriage Global (S) Pte Ltd',
@@ -155,11 +155,11 @@ $settingDefaults = [
     'my_address'        => 'Suite 28.02, 28th Floor, Menara Zurich No.15, Jalan Dato Abdullah Tahir, Johor Bahru, Johor',
     'my_phone'          => null,
     'my_email'          => null,
-    'facebook_url'      => null,
+    'facebook_url'      => '#',
     'instagram_url'     => null,
-    'linkedin_url'      => null,
+    'linkedin_url'      => '#',
     'twitter_url'       => null,
-    'youtube_url'       => null,
+    'youtube_url'       => '#',
     'lead_notify_email' => null,
 ];
 

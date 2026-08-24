@@ -54,6 +54,9 @@
 
   /* Type — Plus Jakarta Sans, as the Roofer build uses */
   --cgs-font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  /* Instrument-panel chrome only (cgs-waypoint's coordinate-style labels) —
+     never body copy or headings, which stay on --cgs-font. */
+  --cgs-font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
 
   /* Easing. The built-in CSS keywords are too weak to read as intentional;
      these are the stronger variants. ease-in is deliberately absent: it
@@ -217,14 +220,28 @@ a:hover { color: var(--cgs-navy-700); }
 
 /* --- Hero ---------------------------------------------------------------- */
 
-/* dvh, not vh: on iOS Safari the address bar makes vh taller than the real
-   viewport, so the CTA lands below the fold on first paint. */
+/* Desktop: a flat 100dvh + cover, not the video's own aspect-ratio — locking
+   the section to 16:9 guarantees zero cropping, but on any desktop window
+   proportionally wider than 16:9 (a maximized 1920x1080-ish browser, once
+   its chrome eats some height, easily lands here) that forces the section
+   TALLER than the viewport to keep full width, pushing everything below it
+   off-screen. 100dvh always matches the screen exactly — full width, cover
+   filling the full height too, a little of the footage's own edges trimmed
+   off wherever the window's aspect isn't exactly 16:9 — which is the
+   tradeoff for a section that always fills the display. Tablet/mobile
+   don't have that overflow risk (they're rarely wider-than-16:9), so they
+   keep the video's own ratio below instead, for zero cropping there. */
 .cgs-hero {
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: clamp(560px, 82dvh, 760px);
+  /* 100dvh minus the topbar+header actually sitting above it (--cgs-header-h,
+     set in cgs.js), not a flat 100dvh — the header is sticky, not fixed, so
+     it still consumes real space in normal flow at the top of the page.
+     A flat 100dvh hero pushed the section's own bottom edge (and the sound
+     toggle pinned to it) below the first fold, off-screen until scrolled. */
+  min-height: calc(100dvh - var(--cgs-header-h, 130px));
   background: var(--cgs-navy-900);
   color: #fff;
   overflow: hidden;
@@ -232,16 +249,17 @@ a:hover { color: var(--cgs-navy-700); }
 
 .cgs-hero__media { position: absolute; inset: 0; }
 .cgs-hero__media img,
-.cgs-hero__media video { width: 100%; height: 100%; object-fit: cover; }
-
-/* Flat black scrim, not a directional gradient: with the facts card gone,
-   the whole slide needs to hold white text on any photograph, not just the
-   copy's own left-aligned column. */
-.cgs-hero__overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, .48);
-  pointer-events: none;
+.cgs-hero__media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Adjustable per-instance via the --cgs-hero-video-pos custom property
+     (see index.php) rather than a fixed value here, since footage framed
+     for a different crop (a logo watermark, a subject off-centre) needs a
+     different crop point without editing this rule each time. On
+     tablet/mobile the section is locked to the video's own 16:9 ratio
+     below, so cover has nothing left to crop there either. */
+  object-position: var(--cgs-hero-video-pos, center);
 }
 
 /* --- Hero carousel ------------------------------------------------------- */
@@ -265,137 +283,91 @@ a:hover { color: var(--cgs-navy-700); }
      circular through a flex-grow ancestor — so the slide (and the image
      inside it) came up short of the hero's actual bottom edge, leaving a
      visible strip of the section's navy background below the photograph.
-     Sizing both to the same clamp() sidesteps the percentage chain. */
-  min-height: clamp(560px, 82dvh, 760px);
+     Sizing both to the same calc() sidesteps the percentage chain. */
+  min-height: calc(100dvh - var(--cgs-header-h, 130px));
   height: auto;
   overflow: hidden;
 }
 
-/* Slide copy animates in on the active slide only. `transform` and `opacity`
-   exclusively: they skip layout and paint and run on the GPU. */
-.cgs-hero__slide [data-hero-anim] {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 620ms var(--ease-out), transform 620ms var(--ease-out);
-}
-.cgs-hero__slide.swiper-slide-active [data-hero-anim] { opacity: 1; transform: translateY(0); }
-/* Short stagger so the block resolves in reading order rather than as one
-   slab. 70ms steps: long enough to read as sequence, short enough not to
-   feel like waiting. */
-.cgs-hero__slide.swiper-slide-active [data-hero-anim]:nth-child(1) { transition-delay: 120ms; }
-.cgs-hero__slide.swiper-slide-active [data-hero-anim]:nth-child(2) { transition-delay: 190ms; }
-.cgs-hero__slide.swiper-slide-active [data-hero-anim]:nth-child(3) { transition-delay: 260ms; }
-.cgs-hero__slide.swiper-slide-active [data-hero-anim]:nth-child(4) { transition-delay: 330ms; }
-
-/* Slow drift on the active slide's photograph. Purely atmospheric, so it is
-   the first thing dropped under reduced motion. */
-.cgs-hero__slide.swiper-slide-active .cgs-hero__media img {
-  animation: cgs-hero-drift 14s var(--ease-in-out) forwards;
-}
-@keyframes cgs-hero-drift {
-  from { transform: scale(1.06); }
-  to   { transform: scale(1); }
-}
-
-.cgs-hero__inner {
-  position: relative;
-  z-index: 1;
-  max-width: 720px;
-  margin-block: auto;
-  /* Capped: more padding than this and the hero copy floats halfway down
-     the viewport and reads as a layout bug. */
-  padding-block: clamp(48px, 6vw, 88px);
-}
-
-.cgs-hero__eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  margin: 0 0 20px;
-  padding: 7px 15px;
-  /* No scrim behind the hero copy now, so the pill needs its own fill —
-     a border and blur alone have nothing translucent to blur against. */
-  background: rgba(8, 20, 40, .38);
-  border: 1px solid rgba(255, 255, 255, .24);
-  border-radius: 100px;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: .04em;
-  color: #fff;
-  backdrop-filter: blur(4px);
-}
-.cgs-hero__eyebrow i { color: var(--cgs-cyan-400); }
-
-.cgs-hero__title {
-  margin: 0 0 20px;
-  font-size: clamp(32px, 5vw, 56px);
-  font-weight: 800;
-  line-height: 1.12;
-  letter-spacing: -0.025em;
-  color: #fff;
-  text-wrap: balance;
-  /* Same reasoning: a text-shadow is the minimum needed to keep white
-     type readable directly on a photograph with no scrim behind it. */
-  text-shadow: 0 2px 20px rgba(0, 0, 0, .55);
-}
-
-.cgs-hero__lead {
-  margin: 0 0 32px;
-  max-width: 58ch;
-  font-size: clamp(15.5px, 1.7vw, 18px);
-  line-height: 1.7;
-  color: rgba(255, 255, 255, .84);
-  text-shadow: 0 1px 12px rgba(0, 0, 0, .5);
-}
-
 .cgs-hero__actions { display: flex; flex-wrap: wrap; gap: 14px; }
 
+/* Tablet/mobile: the desktop clamp() above is sized for a wide window, so
+   object-fit:cover was cropping the sides off the (16:9) footage on any
+   narrower/taller viewport. Sizing the section to the video's own 16:9
+   ratio instead means cover has nothing left to crop — the full width of
+   the frame is always in view. Doesn't risk the desktop overflow problem
+   (see the .cgs-hero comment above) since these viewports are essentially
+   never wider-than-16:9 in the first place. .cgs-hero__slide's own
+   min-height floor has to drop too, or its flex content would just force
+   the section taller than the aspect-ratio again. */
+@media (max-width: 991.98px) {
+  .cgs-hero { min-height: 0; aspect-ratio: 16 / 9; }
+  .cgs-hero__slide { min-height: 0; height: 100%; }
+}
+
 @media (max-width: 767.98px) {
-  .cgs-hero { min-height: 0; }
   .cgs-hero__actions .cgs-btn { width: 100%; justify-content: center; }
 }
 
-/* Hero pagination — the same "how many, which one" visibility the services
-   section gives a few scrolls later. */
-.cgs-hero__pagination {
-  bottom: clamp(20px, 3vw, 32px) !important;
+/* Hero sound toggle — the one control a visitor gets over the background
+   footage (it autoplays muted; browser policy leaves no other option).
+   Circular pill/blur treatment, pinned to the corner. Both icons are
+   always in the DOM; only opacity/scale swap on state, so the toggle
+   never repaints layout. */
+.cgs-hero__sound {
+  position: absolute;
+  z-index: 2;
+  right: clamp(20px, 3vw, 32px);
+  bottom: clamp(20px, 3vw, 32px);
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(8, 20, 40, .38);
+  border: 1px solid rgba(255, 255, 255, .24);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 200ms var(--ease-out), border-color 200ms var(--ease-out), transform 160ms var(--ease-out);
 }
-.cgs-hero__pagination .swiper-pagination-bullet {
-  width: 8px;
-  height: 8px;
-  background: rgba(255, 255, 255, .5);
-  opacity: 1;
-  transition: background-color 200ms var(--ease-out), transform 200ms var(--ease-out);
+.cgs-hero__sound:hover,
+.cgs-hero__sound:focus-visible {
+  background: rgba(8, 20, 40, .6);
+  border-color: var(--cgs-cyan-400);
 }
-.cgs-hero__pagination .swiper-pagination-bullet-active {
-  background: var(--cgs-cyan-400);
-  transform: scale(1.25);
+.cgs-hero__sound:active { transform: scale(.94); }
+.cgs-hero__sound i {
+  grid-area: 1 / 1;
+  font-size: 15px;
+  transition: opacity 160ms var(--ease-out), transform 160ms var(--ease-out);
+}
+.cgs-hero__sound .fa-volume-high { opacity: 0; transform: scale(.8); }
+.cgs-hero__sound.is-unmuted .fa-volume-xmark { opacity: 0; transform: scale(.8); }
+.cgs-hero__sound.is-unmuted .fa-volume-high { opacity: 1; transform: scale(1); color: var(--cgs-cyan-400); }
+
+@media (max-width: 575.98px) {
+  .cgs-hero__sound { width: 38px; height: 38px; }
+  .cgs-hero__sound i { font-size: 13px; }
 }
 
 /* --- Credentials -----------------------------------------------------------
-   Sits directly after the video band (client: "move the section after
-   video"). Was a full dark band; now white (client: "for credentials
-   change background color to white") — cards switch from a solid
-   navy-700 fill to a white surface with a border and the same
-   --cgs-shadow-lg/--cgs-shadow-float elevation the rest of the light-mode
-   page uses for a card meant to lift off the surface. Entity names,
-   registration numbers and the UEN that used to sit in a left column here
-   now live in the navbar logo lockup (includes/header.php) instead, so
-   this band is certificates only, full width, large (client: "remove
-   company address and only shocase certificates in large size"). Cert
-   cards embed the real PDF live via <iframe> (client, earlier: "showcase
-   full certificate use it as pdf") rather than a screenshot or a cropped
-   logo mark — the docframe is sized by its own page's aspect ratio
-   (inline style, from the 'ratio' field in $certificates in index.php) so
-   the landscape WCA certificate isn't squeezed into a portrait box. The
-   iframe is pointer-events:none so a click anywhere on the card reaches
-   the wrapping <a> and opens the same PDF full-size in a Magnific Popup
-   lightbox instead of a new tab (client, earlier: "open pdf in popup") —
-   init lives in includes/scripts.php, popup sizing overrides are the
-   .cgs-pdf-popup rules right after this block. */
+   Sits directly after the hero. Entity names, registration numbers and the
+   UEN that used to sit in a left column here now live in the navbar logo
+   lockup (includes/header.php) instead.
+   2026-08-21 (client: "remove certification instead make it as badge with
+   icons only"): the old full-page PDF-preview cards are retired in favor
+   of a compact row of round badges — the real registrar seal artwork
+   (assets/img/certificates/badge-*.png), not a screenshot of the PDF's
+   first page. Each badge is still a real link: clicking it opens the
+   actual PDF in a Magnific Popup lightbox instead of a new tab (client,
+   earlier: "open pdf in popup") — init lives in includes/scripts.php,
+   popup sizing overrides are the .cgs-pdf-popup rules right after this
+   block. */
 .cgs-credentials__head {
   max-width: 640px;
-  margin: 0 0 clamp(36px, 4.5vw, 56px);
+  margin: 0 0 clamp(28px, 3.5vw, 40px);
 }
 .cgs-credentials__head h2 {
   margin: 0;
@@ -407,94 +379,57 @@ a:hover { color: var(--cgs-navy-700); }
   text-wrap: balance;
 }
 
-.cgs-credentials__certs {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(24px, 3vw, 40px);
-  max-width: 1360px;
-  margin-inline: auto;
+.cgs-credentials__badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: clamp(28px, 4vw, 56px);
 }
-.cgs-credentials__cert {
+.cgs-credentials__badge {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
-  padding: clamp(20px, 2.2vw, 28px);
-  background: #fff;
-  border: 1px solid var(--cgs-line);
-  border-radius: var(--cgs-radius);
-  box-shadow: var(--cgs-shadow-lg);
+  gap: 12px;
+  width: 128px;
   text-align: center;
   text-decoration: none;
   color: inherit;
-  transition: transform 200ms ease-out, box-shadow 200ms ease-out;
+  transition: transform 200ms var(--ease-out);
 }
-.cgs-credentials__cert:hover,
-.cgs-credentials__cert:focus-visible {
-  transform: translateY(-6px);
-  box-shadow: var(--cgs-shadow-float);
+.cgs-credentials__badge:hover,
+.cgs-credentials__badge:focus-visible {
+  transform: translateY(-4px);
 }
-/* WCA's page is landscape, so its card is naturally shorter than the two
-   portrait certs beside it; grid items stretch to the row's full height by
-   default, which left the docframe+label block pinned to the top with all
-   the leftover space dumped below it. Centering the block vertically
-   (client: "make the certificate of wca middle center and adjust the
-   white space around it") splits that space evenly above and below
-   instead. */
-.cgs-credentials__certs .cgs-credentials__cert:nth-child(3) {
-  justify-content: center;
-}
-.cgs-credentials__docframe {
-  display: block;
-  width: 100%;
-  border-radius: 10px;
-  overflow: hidden;
+.cgs-credentials__badge-icon {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  padding: 16px;
+  border-radius: 50%;
   background: #fff;
   border: 1px solid var(--cgs-line);
+  box-shadow: var(--cgs-shadow);
+  overflow: hidden;
 }
-.cgs-credentials__docframe iframe {
+.cgs-credentials__badge-icon img {
   display: block;
   width: 100%;
   height: 100%;
-  border: 0;
-  pointer-events: none; /* clicks fall through to the wrapping <a> */
-}
-.cgs-credentials__docframe img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 .cgs-credentials__meta {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 600;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
   color: var(--cgs-slate);
   line-height: 1.35;
 }
-.cgs-credentials__cert .cgs-credentials__meta {
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-size: 13.5px;
-}
-
-@media (max-width: 991.98px) {
-  .cgs-credentials__certs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .cgs-credentials__certs a:last-child {
-    grid-column: 1 / -1;
-    max-width: 380px;
-    margin-inline: auto;
-    width: 100%;
-  }
-}
-
-@media (max-width: 575.98px) {
-  .cgs-credentials__certs { grid-template-columns: 1fr; }
-  .cgs-credentials__certs a:last-child { max-width: none; }
-}
 
 @media (prefers-reduced-motion: reduce) {
-  .cgs-credentials__cert { transition: none; }
+  .cgs-credentials__badge { transition: none; }
 }
 
 /* Magnific Popup override for the certificate lightbox: the plugin's
@@ -625,41 +560,37 @@ a:hover { color: var(--cgs-navy-700); }
 }
 
 /* Both registered entities — the footer's actual company-name lockup now
-   that the separate wordmark title is gone (client: "like header remove
-   existing title and add both company name with uen no"). Mirrors the
-   header's .cgs-logo__line pair — same one entity name + its own
-   registration number per line, tight gap between the two lines via the
-   wrapper rather than each <p>'s own margin. Set in white and a larger
-   size (client: "change footer company name in white and bigger") since
-   this is now the primary identity line, not a small print-out under a
-   bigger title. */
+   that the separate wordmark title is gone. Rebuilt 2026-08-21 (client:
+   "in footer change company name to like header") into the same 3-line
+   shape as the header's .cgs-logo lockup: two equal-weight entity names,
+   then the ISO statement as a smaller caption underneath — .cgs-logo__line
+   and .cgs-logo__line--iso's proportions, just white-on-navy instead of
+   navy-on-white and a size step up (client, earlier: "change footer
+   company name in white and bigger") since this is the primary identity
+   line here, not a small print-out under a bigger title. */
 .cgs-footer__entities {
   display: flex;
   flex-direction: column;
   gap: 4px;
   margin: 0 0 16px;
 }
-.cgs-footer__uen {
+.cgs-footer__entity-name {
   margin: 0;
   font-size: 19px;
   font-weight: 700;
   letter-spacing: -0.01em;
   color: #fff;
 }
+.cgs-footer__entity-iso {
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  color: var(--cgs-cyan-400);
+}
 
 .cgs-footer__blurb { margin: 0 0 16px; line-height: 1.75; max-width: 42ch; }
-
-/* No icon (client: "in iso badge remove icons") — just the certification
-   text in its bordered pill. */
-.cgs-footer__iso {
-  display: inline-block;
-  margin: 0 0 20px;
-  padding: 7px 14px;
-  border: 1px solid rgba(255, 255, 255, .16);
-  border-radius: var(--cgs-radius);
-  font-size: 13px;
-  color: #fff;
-}
 
 .cgs-footer__links,
 .cgs-footer__contact,
@@ -800,40 +731,50 @@ a:hover { color: var(--cgs-navy-700); }
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  min-height: 84px;
+  min-height: 116px; /* clears the 100px logo plus breathing room */
 }
 
-/* Logo — the supplied file is a white-background JPEG, so it gets no
-   surrounding fill and sits on the white bar. Revisit once a transparent
-   PNG/SVG arrives (see docs/ASSET-INVENTORY.md). Both registered entities
-   plus their registration numbers sit next to the mark (client: "increase
-   logo width and height and add two company names near the logo with uen
-   number") — the same two entities and numbers already shown in the
-   homepage credentials section, not new facts. Two lines, each one entity
-   name and its own registration number together (client: "I want name-uen
-   below name-uen number" — each entity's own pair on one line, the second
-   entity's line below the first, rather than four separate lines) — the
-   Malaysia entity's own number reads "Reg. No." rather than "UEN" since
-   UEN is Singapore's registration scheme, not Malaysia's. Both lines still
-   share one .cgs-logo__line format (client, earlier: "both company name
-   and UEN number in same format") rather than a heading/sub-heading/label
-   hierarchy. */
+/* Logo — 2026-08-21 home page redesign (client: "the logo must be bigger.
+   Do not write the UEN number in the top left corner; instead, write the
+   company names and below company name our ISO 9001:2015 Certified").
+   Now rendered from the transparent-background mark
+   (assets/img/logo/cgs-mark.png, cropped from the client's supplied JPEG
+   via background removal) instead of the old white-boxed JPEG, sized by
+   height with width following its own aspect ratio rather than forced
+   into a square box — the mark itself is a wide oval, not a square
+   monogram. The two entity names stay (still real facts, not new ones),
+   but their UEN/registration numbers are dropped from this lockup and the
+   settings.iso_statement line takes that third row instead; the full
+   entity+UEN detail still lives in the footer (includes/footer.php),
+   unchanged. */
 .cgs-logo {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   text-decoration: none;
-  min-width: 0; /* lets the combined name+number lines wrap instead of forcing the burger off-screen on narrow viewports */
+  min-width: 0; /* lets the name+ISO lines wrap instead of forcing the burger off-screen on narrow viewports */
 }
-.cgs-logo img { width: 84px; height: 84px; object-fit: contain; flex-shrink: 0; }
+.cgs-logo img { height: 100px; width: auto; object-fit: contain; flex-shrink: 0; }
 .cgs-logo__text { display: flex; flex-direction: column; gap: 2px; line-height: 1.3; min-width: 0; }
-/* Both entity names and the UEN read as one consistent format — same size,
-   weight and color — rather than a heading/sub-heading/label hierarchy. */
+/* Both entity names read as one consistent format — same size, weight and
+   color — rather than a heading/sub-heading hierarchy. */
 .cgs-logo__line {
   font-size: clamp(13px, 1.3vw, 14.5px);
   font-weight: 700;
   letter-spacing: -0.005em;
   color: var(--cgs-navy-900);
+}
+/* The ISO line reads as a certification caption under the identity, not a
+   third equal-weight name — smaller, the brand's link-blue rather than
+   navy, and a touch of tracking like the site's other credential badges
+   (.cgs-footer__entity-iso, .cgs-eyebrow). */
+.cgs-logo__line--iso {
+  margin-top: 1px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  color: var(--cgs-blue-500);
 }
 
 .cgs-nav ul {
@@ -974,10 +915,11 @@ a:hover { color: var(--cgs-navy-700); }
 .cgs-burger[aria-expanded="true"] .cgs-burger__close { display: block; }
 
 @media (max-width: 575.98px) {
-  .cgs-header__inner { min-height: 72px; }
+  .cgs-header__inner { min-height: 88px; }
   .cgs-logo { gap: 10px; }
-  .cgs-logo img { width: 58px; height: 58px; }
+  .cgs-logo img { height: 68px; }
   .cgs-logo__line { font-size: 11px; }
+  .cgs-logo__line--iso { font-size: 10px; }
 }
 
 /* --- Mobile menu: dropdown, not a side panel -----------------------------
@@ -1796,9 +1738,13 @@ html.js [data-services-stage]:not(.swiper-initialized) [data-service-slide].is-a
   color: var(--cgs-navy-900);
   text-wrap: balance;
 }
+/* 3 columns, not 4: the standalone 6-item "CGS Advantage" section
+   (index.php) reads as a clean 2x3 grid this way. The card content and
+   icon badge styling below is unchanged from when this lived inside
+   Divisions with 4 items. */
 .cgs-advantage__grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: clamp(20px, 2.4vw, 32px);
   margin: 0;
   padding: 0;
@@ -1836,6 +1782,555 @@ html.js [data-services-stage]:not(.swiper-initialized) [data-service-slide].is-a
 }
 @media (max-width: 575.98px) {
   .cgs-advantage__grid { grid-template-columns: 1fr; }
+}
+
+/* --- Our Story --------------------------------------------------------------
+   2026-08-21: rebuilt to match the layout the client pointed at
+   (reference/roofer/about.php's "About" section) — two plain columns, each
+   its own photo + paragraph, the left one closing on a 2x2 stat grid and
+   the right one opening on an eyebrow + heading. Unlike the Roofer
+   reference, every stat below is a real, sourced fact (see the $ourStory
+   comment in index.php) — no invented counters. */
+.cgs-story__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: start;
+}
+.cgs-story__col { display: flex; flex-direction: column; }
+.cgs-story__media {
+  border-radius: var(--cgs-radius);
+  overflow: hidden;
+  background: var(--cgs-line);
+  box-shadow: var(--cgs-shadow);
+}
+.cgs-story__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+.cgs-story__col > .cgs-story__media { margin-bottom: 28px; }
+/* Right column's photo comes last (eyebrow, heading, paragraph, then the
+   image) — no trailing margin needed once it's the final element. */
+.cgs-story__col > .cgs-story__media:last-child { margin-bottom: 0; }
+.cgs-story__col > p {
+  margin: 0 0 32px;
+  font-size: 15.5px;
+  line-height: 1.75;
+  color: var(--cgs-slate);
+}
+
+.cgs-story__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 16px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--cgs-blue-500);
+}
+.cgs-story__eyebrow i { font-size: 12px; color: var(--cgs-cyan-400); }
+
+.cgs-story__col h2 {
+  margin: 0 0 16px;
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: var(--cgs-navy-900);
+  text-wrap: balance;
+}
+
+/* Plain 2x2 stat grid, no card chrome — a big bold value and a short
+   caption underneath, same rhythm as the reference's counter blocks but
+   sourced facts (founding year, WCA membership, ISO/bizSAFE certification)
+   in place of its placeholder project/staff/satisfaction counters. */
+.cgs-story__stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px 24px;
+  padding-top: 28px;
+  border-top: 1px solid var(--cgs-line);
+}
+.cgs-story__stat strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: clamp(24px, 2.4vw, 30px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--cgs-navy-900);
+}
+/* ISO/bizSAFE cells: the real registrar badge in place of the bold
+   number, sized to sit on the same baseline the other two cells' text
+   occupies rather than at its own native size. */
+.cgs-story__stat-logo {
+  display: block;
+  height: 46px;
+  width: auto;
+  max-width: 100%;
+  margin-bottom: 10px;
+  object-fit: contain;
+  object-position: left center;
+}
+/* The ISO seal is a tight circle with a lot of its own internal padding,
+   so at the same height as the bizSAFE wordmark it reads visibly smaller
+   (client: "make it bigger like bizsafe logo") — sized up on its own
+   rather than raising the shared height, which would blow up bizSAFE too. */
+.cgs-story__stat-logo[src*="badge-iso9001"] {
+  height: 62px;
+  margin-bottom: 4px;
+}
+.cgs-story__stat span {
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--cgs-muted);
+}
+
+@media (max-width: 991.98px) {
+  .cgs-story__grid { grid-template-columns: 1fr; gap: 40px; }
+  /* Stacked order, mobile/tablet only: the right column (eyebrow, heading,
+     narrative, closing photo) reads as the section's opener, so it goes on
+     top; the left column (opening photo, paragraph, WCA/ISO/bizSAFE stat
+     grid) follows underneath. Desktop keeps its left/right layout as-is —
+     this is purely a stacking-order swap, not a rewrite of the grid. */
+  .cgs-story__col:first-child { order: 2; }
+  .cgs-story__col:last-child { order: 1; }
+}
+@media (max-width: 575.98px) {
+  .cgs-story__stats { grid-template-columns: 1fr; gap: 20px; }
+  /* Single-column stack reads better centered than left-hugging one narrow
+     line at a time — value/logo and caption both center under each other. */
+  .cgs-story__stat { text-align: center; }
+  .cgs-story__stat-logo { margin-left: auto; margin-right: auto; object-position: center; }
+}
+
+/* --- Mission & Vision -------------------------------------------------------
+   Replaces the "Waypoint" concept below (now hidden, same convention as
+   the rest of this file) — client, with a reference screenshot: "Mission
+   right side text left image on top a image total 2 images ... reverse
+   the same for [vision]". One feature row per pillar: a two-photo
+   collage (a large lead photo with a smaller accent photo overlapping
+   its lower-right corner, bordered in the section's own background so it
+   reads as sitting on top rather than pasted over the edge) beside the
+   heading and body copy, sides alternating via --reverse. Same dark navy
+   band as Waypoint used (.cgs-section--dark — client: "with same
+   background"), so this is a layout change inside an unchanged section,
+   not a new one-off. */
+.cgs-mv__list {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(64px, 8vw, 100px);
+}
+
+/* Column split, ordering and the mobile stack are all plain Bootstrap
+   (.row / .col-lg-6 / .order-lg-*) on the markup side now — this file only
+   styles what those columns contain. The row is align-items-stretch
+   (client: "make the image exactly align with text height"), and unlike
+   CSS Grid's auto tracks, a stretched flex item gets a real, definite
+   height its children can resolve percentages against — so height: 100%
+   below actually reaches the text column's height instead of falling
+   back to the photo's own intrinsic ratio. */
+.cgs-mv-feature__gallery { position: relative; height: 100%; }
+
+.cgs-mv-feature__img--main {
+  height: 100%;
+  border-radius: var(--cgs-radius);
+  overflow: hidden;
+}
+.cgs-mv-feature__img--main img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* The accent photo overlaps the main one rather than sitting beside it —
+   the border matches the section's own navy so it reads as a second
+   print laid on top, not a thumbnail pasted over the edge. */
+.cgs-mv-feature__img--accent {
+  position: absolute;
+  right: 6%;
+  bottom: -8%;
+  width: 46%;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--cgs-radius);
+  overflow: hidden;
+  border: 6px solid var(--cgs-navy-900);
+  box-shadow: var(--cgs-shadow-lg);
+}
+.cgs-mv-feature__img--accent img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* The column is as tall as the stretched photo beside it now, so its
+   content is centered in that height rather than pinned to the top. */
+.cgs-mv-feature__text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.cgs-mv-feature__icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  margin-bottom: 20px;
+  border-radius: 50%;
+  background: rgba(46, 159, 214, 0.14);
+  border: 1px solid rgba(46, 159, 214, 0.32);
+  color: var(--cgs-cyan-300);
+  font-size: 18px;
+}
+.cgs-mv-feature__text h3 {
+  margin: 0 0 16px;
+  font-size: clamp(24px, 2.8vw, 32px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.cgs-mv-feature__text p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.72);
+  max-width: 46ch;
+}
+
+/* Below lg, .col-lg-6 stacks the gallery and text into separate flex
+   lines, so stretch no longer ties the photo's height to the text — back
+   to the photo asserting its own ratio here. */
+@media (max-width: 991.98px) {
+  .cgs-mv-feature__gallery { height: auto; }
+  .cgs-mv-feature__img--main { height: auto; aspect-ratio: 4 / 5; }
+}
+
+@media (max-width: 767.98px) {
+  .cgs-mv-feature__img--accent { width: 50%; right: 4%; bottom: -6%; }
+}
+
+/* --- Mission & Vision: "Waypoint" (superseded, hidden) --------------------
+   Retained only because the markup that used it is hidden via if (false)
+   in index.php, not deleted — same convention as every other superseded
+   section on this page. Superseded 2026-08-21 by .cgs-mv above. Mission
+   and Vision read as two waypoints on one plotted course: a dashed
+   bearing line between the cards with a vessel icon drifting along it,
+   and each card's photo set inside a circular "porthole" bezel instead
+   of a rectangular thumbnail. */
+.cgs-waypoint {
+  position: relative;
+  overflow: hidden;
+}
+.cgs-waypoint > .container-fluid { position: relative; }
+
+.cgs-waypoint__head {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto clamp(40px, 5vw, 60px);
+}
+.cgs-waypoint__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 18px;
+  padding: 7px 16px;
+  font-family: var(--cgs-font-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cgs-cyan-300);
+  background: rgba(8, 34, 56, 0.55);
+  border: 1px solid rgba(46, 159, 214, 0.34);
+  border-radius: 100px;
+}
+.cgs-waypoint__eyebrow i { color: var(--cgs-cyan-400); }
+.cgs-waypoint__head h2 {
+  margin: 0;
+  font-size: clamp(24px, 3vw, 34px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.cgs-waypoint__route {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(24px, 3vw, 40px);
+}
+
+.cgs-waypoint-card {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(26px, 3vw, 34px) clamp(24px, 3vw, 32px);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(46, 159, 214, 0.22);
+  border-radius: var(--cgs-radius);
+}
+
+.cgs-waypoint-card__marker {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 22px;
+  font-family: var(--cgs-font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+.cgs-waypoint-card__marker b { color: var(--cgs-cyan-300); font-weight: 600; }
+.cgs-waypoint-card__dot {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--cgs-navy-900);
+  border: 1px solid rgba(46, 159, 214, 0.34);
+}
+.cgs-waypoint-card__dot span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cgs-cyan-400);
+}
+
+/* Porthole: a ship's-window bezel around the real operations photo,
+   rather than a rectangular card thumbnail — the icon that used to sit in
+   a plain badge moves to a small corner rivet on the rim instead. */
+.cgs-waypoint-card__medallion {
+  position: relative;
+  width: 76px;
+  margin: 0 0 20px;
+}
+.cgs-waypoint-card__porthole {
+  display: block;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  box-shadow:
+    0 0 0 4px var(--cgs-navy-900),
+    0 0 0 5px rgba(46, 159, 214, 0.4),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.07);
+}
+.cgs-waypoint-card__porthole img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.92) brightness(0.9);
+}
+.cgs-waypoint-card__porthole::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, rgba(8, 34, 56, 0.08), rgba(8, 34, 56, 0.6));
+  mix-blend-mode: multiply;
+}
+.cgs-waypoint-card__glare {
+  position: absolute;
+  top: 7%;
+  left: 15%;
+  width: 42%;
+  height: 20%;
+  border-radius: 50%;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.38), transparent 75%);
+  filter: blur(1px);
+}
+.cgs-waypoint-card__badge {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--cgs-navy-900);
+  border: 1px solid rgba(46, 159, 214, 0.4);
+  color: var(--cgs-cyan-300);
+  font-size: 12px;
+}
+
+.cgs-waypoint-card h3 {
+  margin: 0 0 12px;
+  font-size: clamp(20px, 2.2vw, 24px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.cgs-waypoint-card p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.72;
+  color: rgba(255, 255, 255, 0.72);
+  flex: 1 0 auto;
+}
+
+@media (max-width: 767.98px) {
+  .cgs-waypoint__route { grid-template-columns: 1fr; }
+}
+
+/* --- Mission & Vision (old paired-card layout, hidden) --------------------
+   Retained only because the markup that used it is hidden via if (false)
+   in index.php, not deleted — same convention as every other superseded
+   section on this page. Superseded 2026-08-21 by .cgs-waypoint above. */
+.cgs-pillars__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(24px, 3vw, 40px);
+}
+.cgs-pillar-card {
+  overflow: hidden;
+  border-radius: var(--cgs-radius);
+  background: #fff;
+  border: 1px solid var(--cgs-line);
+  box-shadow: var(--cgs-shadow);
+}
+.cgs-pillar-card__media { background: var(--cgs-line); }
+.cgs-pillar-card__media img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+}
+.cgs-pillar-card__body { padding: clamp(24px, 3vw, 32px); }
+/* Plain in-flow badge, same treatment as .cgs-advantage__icon — not
+   overlaid on the photo above it. */
+.cgs-pillar-card__icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 16px;
+  border-radius: 50%;
+  background: var(--cgs-navy-900);
+  color: var(--cgs-cyan-300);
+  font-size: 17px;
+}
+.cgs-pillar-card h3 {
+  margin: 0 0 12px;
+  font-size: clamp(20px, 2.2vw, 24px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--cgs-navy-900);
+}
+.cgs-pillar-card p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--cgs-slate);
+}
+
+@media (max-width: 767.98px) {
+  .cgs-pillars__grid { grid-template-columns: 1fr; }
+}
+
+/* --- Testimonials -------------------------------------------------------
+   New for the 2026-08-21 redesign, the 3 real client quotes from
+   docs/source/Home page CGS.docx. Rebuilt 2026-08-21 as a single-quote
+   Swiper carousel (client: "make the testimonials swiper with pagination
+   and controls and it moves autoplay") — replaces the old divided 3-up
+   grid, since a carousel that already shows every slide at once has
+   nothing left to move. Arrow buttons reuse the same visual treatment as
+   .cgs-services__arrow (kept as its own class rather than shared, same
+   per-section-prefix convention as the rest of this file). */
+.cgs-testimonials__arrows { display: flex; align-items: center; gap: 10px; }
+.cgs-testimonials__arrow {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  padding: 0;
+  border: 1.5px solid var(--cgs-line);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--cgs-navy-900);
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 200ms var(--ease-out),
+              border-color 200ms var(--ease-out),
+              color 200ms var(--ease-out),
+              transform 160ms var(--ease-out);
+}
+.cgs-testimonials__arrow:active { transform: scale(0.94); }
+.cgs-testimonials__arrow:disabled { opacity: .38; cursor: default; }
+@media (hover: hover) and (pointer: fine) {
+  .cgs-testimonials__arrow:not(:disabled):hover {
+    background: var(--cgs-navy-900);
+    border-color: var(--cgs-navy-900);
+    color: #fff;
+  }
+}
+
+.cgs-testimonials__swiper {
+  padding-bottom: clamp(44px, 5vw, 56px);
+  overflow: hidden;
+}
+.cgs-testimonials__grid { margin: 0; padding: 0; list-style: none; }
+
+/* Fixed height, not auto or 100% — Swiper positions slides with transforms
+   rather than flex layout, so it never actually stretched these to match
+   each other despite slidesPerView:3 putting three different-length quotes
+   side by side. A flat height (comfortably above the longest quote at any
+   breakpoint) keeps every card the same size instead; blockquote's flex:1
+   below still pins the footer to the bottom on the shorter ones. */
+.cgs-testimonial {
+  display: flex;
+  flex-direction: column;
+  height: 490px;
+  padding: clamp(32px, 4vw, 44px);
+  background: #fff;
+  border: 1px solid var(--cgs-line);
+  border-radius: var(--cgs-radius);
+  box-shadow: var(--cgs-shadow);
+}
+.cgs-testimonial__icon {
+  margin-bottom: 18px;
+  font-size: 22px;
+  color: var(--cgs-cyan-400);
+}
+.cgs-testimonial blockquote {
+  flex: 1 1 auto;
+  margin: 0 0 24px;
+  font-size: clamp(16px, 1.8vw, 18px);
+  line-height: 1.75;
+  color: var(--cgs-ink);
+}
+.cgs-testimonial footer {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 18px;
+  border-top: 1px solid var(--cgs-line);
+}
+.cgs-testimonial__name { font-size: 14.5px; font-weight: 700; color: var(--cgs-navy-900); }
+.cgs-testimonial__company { font-size: 13px; color: var(--cgs-muted); }
+
+/* Pagination — same clickable-dot language as the hero carousel, tuned
+   for a light section instead of the hero's dark scrim. */
+.cgs-testimonials__pagination {
+  bottom: 0 !important;
+}
+.cgs-testimonials__pagination .swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  background: var(--cgs-line);
+  opacity: 1;
+  transition: background-color 200ms var(--ease-out), transform 200ms var(--ease-out);
+}
+.cgs-testimonials__pagination .swiper-pagination-bullet-active {
+  background: var(--cgs-blue-500);
+  transform: scale(1.25);
 }
 
 /* --- Accent CTA card ------------------------------------------------------
@@ -2296,11 +2791,6 @@ html.js [data-reveal].is-visible {
 
 @media (prefers-reduced-motion: reduce) {
   html.js [data-reveal] { opacity: 1; transform: none; }
-  /* Hero: copy appears without travelling, and the photo drift stops.
-     Autoplay is disabled in JS, so slides only change on request. */
-  .cgs-hero__slide [data-hero-anim] { opacity: 1; transform: none; transition: none; }
-  .cgs-hero__slide.swiper-slide-active .cgs-hero__media img { animation: none; transform: none; }
-  .cgs-hero__pagination .swiper-pagination-bullet-active { transform: none; }
   html.js .cgs-split__media img { opacity: 1; transform: none; transition: none; }
   .cgs-mobile-panel { transition: opacity 120ms ease, visibility 120ms; transform: none; }
   .cgs-mobile-panel.is-open { transform: none; }

@@ -11,9 +11,14 @@
 | navy panel, so no image renders in that slot until the client sends a
 | knockout version (settings.logo_light) — see docs/ASSET-INVENTORY.md.
 | The two entity lines below it (.cgs-footer__entities) carry the identity
-| in the meantime, mirroring the header's .cgs-logo__line pair rather than
-| a separate wordmark title (client: "like header remove existing title
-| and add both company name with uen no").
+| in the meantime. Rebuilt 2026-08-21 (client: "in footer change company
+| name to like header") to actually mirror includes/header.php's
+| .cgs-logo three-line lockup — two plain entity names then the ISO
+| statement as a third caption line, same order and grouping as the
+| header — rather than the UEN/Reg.-No. suffixes and separate pill badge
+| the previous "add both company name with uen no" pass had used. The
+| UEN/Reg. numbers themselves aren't shown anywhere on this page anymore;
+| they're still real facts, just not part of this identity lockup.
 */
 ?>
 <footer class="cgs-footer">
@@ -28,8 +33,11 @@
         <?php endif; ?>
 
         <div class="cgs-footer__entities">
-          <p class="cgs-footer__uen">Carriage Global (S) Pte Ltd &middot; UEN 200714170K</p>
-          <p class="cgs-footer__uen">Carriage Global Sdn Bhd &middot; Reg. No. 201701022532</p>
+          <p class="cgs-footer__entity-name">Carriage Global (S) Pte Ltd</p>
+          <p class="cgs-footer__entity-name">Carriage Global Sdn Bhd</p>
+          <?php if (!empty($settings['iso_statement'])): ?>
+          <p class="cgs-footer__entity-iso"><?php echo e($settings['iso_statement']); ?></p>
+          <?php endif; ?>
         </div>
 
         <?php if (!empty($settings['tagline'])): ?>
@@ -41,10 +49,6 @@
           heavy lift, energy, construction and mining sectors, managing and
           optimizing supply chains from origin to final site.
         </p>
-
-        <?php if (!empty($settings['iso_statement'])): ?>
-          <p class="cgs-footer__iso"><?php echo e($settings['iso_statement']); ?></p>
-        <?php endif; ?>
 
         <?php if (!empty($activeSocials)): ?>
         <ul class="cgs-footer__socials">
@@ -66,7 +70,8 @@
           <li><a href="<?php echo url('index.php'); ?>">Home</a></li>
           <li><a href="<?php echo url('our-fleet.php'); ?>">Our Fleet</a></li>
           <li><a href="<?php echo url('services.php'); ?>">Services</a></li>
-          <li><a href="<?php echo url('projects.php'); ?>">Projects</a></li>
+          <li><a href="<?php echo url('resources.php'); ?>">Resources</a></li>
+          <li><a href="<?php echo url('past-projects.php'); ?>">Past Projects</a></li>
           <li><a href="<?php echo url('contact.php'); ?>">Contact Us</a></li>
         </ul>
       </div>

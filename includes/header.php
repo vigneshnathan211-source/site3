@@ -30,7 +30,8 @@ $navItems = [
         'match'    => array_merge(['services.php'], array_column($services, 'link')),
         'children' => $servicesLinks,
     ],
-    ['label' => 'Projects',   'href' => 'projects.php',  'match' => ['projects.php', 'project-single.php']],
+    ['label' => 'Resources',  'href' => 'resources.php', 'match' => ['resources.php']],
+    ['label' => 'Past Projects', 'href' => 'past-projects.php', 'match' => ['past-projects.php']],
     ['label' => 'Contact Us', 'href' => 'contact.php',   'match' => ['contact.php']],
 ];
 ?>
@@ -102,10 +103,13 @@ $activeSocials = array_filter(
       <a class="cgs-logo" href="<?php echo url('index.php'); ?>">
         <img src="<?php echo url($settings['logo']); ?>"
              alt="<?php echo e($settings['company_name']); ?>"
-             width="84" height="84">
+             width="141" height="100">
         <span class="cgs-logo__text">
-          <span class="cgs-logo__line">Carriage Global (S) Pte Ltd &middot; UEN 200714170K</span>
-          <span class="cgs-logo__line">Carriage Global Sdn Bhd &middot; Reg. No. 201701022532</span>
+          <span class="cgs-logo__line">Carriage Global (S) Pte Ltd</span>
+          <span class="cgs-logo__line">Carriage Global Sdn Bhd</span>
+          <?php if (!empty($settings['iso_statement'])): ?>
+          <span class="cgs-logo__line cgs-logo__line--iso"><?php echo e($settings['iso_statement']); ?></span>
+          <?php endif; ?>
         </span>
       </a>
 

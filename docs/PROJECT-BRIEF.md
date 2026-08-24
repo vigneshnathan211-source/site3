@@ -24,24 +24,26 @@ place. See *Deviations from the Roofer theme* below for what changes.
 | 1 | Home | `index.php` | Hero, then a 20-second video section, then services, fleet teaser, gallery, CTA |
 | 2 | Our Fleet | `our-fleet.php` | Three blocks: fleet · in-house lashing · open yard for cargo storage and re-working |
 | 3 | Services | `services.php` | Overview grid linking to the five detail pages; dropdown parent in the nav |
-| 4 | Projects | `projects.php` | Replaced Resources in the nav on the client's instruction, 2026-08-17. Not built yet. |
-| 5 | Contact Us | `contact.php` | Enquiry form, SG + MY offices, map |
+| 4 | Resources | `resources.php` | Reinstated in the nav 2026-08-22 (client reply, emails.txt: nav should read "HOME- OUR FLEET- SERVICES- RESOURCES- CONTACT US"), reversing the 2026-08-17 swap to Projects. Not built yet. |
+| 5 | Past Projects | `past-projects.php` | Added to the nav 2026-08-24 (client, "HOME PAGE and VIDEO REVIESD 1" thread: "f) Past projects (upload all the pictures given via email, zip, w/app avoid repetition)"). Photo gallery built on the existing `gallery` table — see open question 12, now resolved. |
+| 6 | Contact Us | `contact.php` | Enquiry form, SG + MY offices, map |
 
-> **Resources is currently unrouted.** `requirements.txt` specifies a Resources
-> page with five topics, and the `resources` table and its seeds are still in
-> `database/schema.sql`, but nothing links to it since Projects took its nav
-> slot. Either it comes back somewhere (footer, or a child of Projects), or it
-> is dropped and the table should go with it. See open question 11.
+> Resources is back in both the header nav (`includes/header.php`) and footer
+> (`includes/footer.php`) as of 2026-08-22; the `resources` table and its
+> seeds in `database/schema.sql` are no longer orphaned. Open question 11
+> (below) is resolved by this — Projects is dropped from the nav entirely,
+> not moved elsewhere. Past Projects (a gallery page, not case studies) was
+> added back in as its own nav item 2026-08-24 — see open question 12.
 
 ### Service detail pages (children of Services)
 
 | # | Page | File | Copy status |
 |---|---|---|---|
-| 6 | Project Freight Forwarding | `project-freight-forwarding.php` | ✅ supplied verbatim |
-| 7 | Chartering Heavy Lift & Semi-Geared Vessels | `heavy-lift-chartering.php` | ✅ supplied verbatim |
-| 8 | Chartering Tug & Barge | `tug-and-barge-chartering.php` | ❌ not supplied |
-| 9 | Roll On / Roll Off | `roll-on-roll-off.php` | ❌ not supplied |
-| 10 | Air Freight | `air-freight.php` | ✅ supplied verbatim |
+| 7 | Project Freight Forwarding | `project-freight-forwarding.php` | ✅ supplied verbatim |
+| 8 | Chartering Heavy Lift & Semi-Geared Vessels | `heavy-lift-chartering.php` | ✅ supplied verbatim |
+| 9 | Chartering Tug & Barge | `tug-and-barge-chartering.php` | ❌ not supplied |
+| 10 | Roll On / Roll Off | `roll-on-roll-off.php` | ❌ not supplied |
+| 11 | Air Freight | `air-freight.php` | ✅ supplied verbatim — page/copy kept, but `services.status` set to `inactive` 2026-08-24 (client's "finalized" menu list that day dropped it from the Services nav; see `database/schema.sql`). Not counted in the primary nav below until reactivated. |
 
 ### Supporting pages (not counted in the brief, still required)
 
@@ -185,15 +187,16 @@ verifiable claims a logistics buyer will check.
    on whether that's enough or they warrant full service pages of their own.
    Cross Border Trucking and Sea Freight remain unaddressed.
 10. **Analytics.** Reuse a GTM container, or set up a new one?
-11. **Resources vs Projects.** Projects replaced Resources in the nav on
-    2026-08-17. Is Resources dropped entirely, or does it move somewhere else?
-    Its five topics were an explicit client requirement, and two of them
-    (certificates, general T&Cs) are documents a logistics buyer looks for.
-12. **What is a "project"?** Two readings, and they need different builds:
-    a photo gallery of past moves (the existing `gallery` table already
-    covers it), or written case studies with cargo, mode, route and outcome
-    (needs a `projects` table and, more to the point, needs the client to
-    approve naming the cargo and the client involved).
+11. ~~**Resources vs Projects.**~~ Resolved 2026-08-22: client's reply gave
+    the nav order explicitly as Home / Our Fleet / Services / Resources /
+    Contact Us — Projects is out, Resources is back, in both header and
+    footer nav.
+12. ~~**What is a "project"?**~~ Resolved 2026-08-24: client's "pages and sub
+    pages" list names it "Past projects (upload all the pictures given via
+    email, zip, w/app avoid repetition)" — reading #1, a photo gallery of
+    past moves. Built as `past-projects.php` on the existing `gallery`
+    table, added to the nav after Resources. No `projects` table, no
+    written case studies, no client/cargo naming approval needed.
 13. **Partner/client logos for the homepage marquee.** Superseded 2026-08-19.
     The client's own "1st email on HOME Page" names the exact eight clients
     to show ("google the logo of following clients to insert them"): Sarens,
@@ -210,3 +213,10 @@ verifiable claims a logistics buyer will check.
     **Open:** get real logo artwork (or explicit confirmation to keep the
     text treatment) for those five, and the client's sign-off that all
     eight relationships carry over to the new site before this goes live.
+14. **Social page URLs.** Client asked 2026-08-22 to link the Facebook,
+    LinkedIn and YouTube icons in the header/footer to CGS's actual channels
+    ("very common function in today's website") but hasn't sent the URLs.
+    `settings.facebook_url` / `linkedin_url` / `youtube_url` are seeded with
+    a `#` placeholder so the icons are visible and wired up now — swap in
+    the real URLs (via the admin Settings screen, or a fresh `database/
+    schema.sql` default) the moment the client sends them.

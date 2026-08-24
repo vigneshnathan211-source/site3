@@ -6,7 +6,7 @@ Guidance for Claude Code working in this repository.
 
 Website + custom CMS for **Carriage Global (S) Pte Ltd** (CGS) — a Singapore
 project-logistics and freight-forwarding company (ISO 9001:2015, UEN 200714170K,
-with a second office in Johor Bahru). Ten pages plus a PHP admin dashboard.
+with a second office in Johor Bahru). Eleven pages plus a PHP admin dashboard.
 
 Being **built from scratch in this root folder**. The Roofer theme in
 `reference/roofer/` is the visual and architectural model — read from it, copy
@@ -44,8 +44,10 @@ active; check `head.php` and `scripts.php` before assuming a plugin is loaded.
 ├── our-fleet.php            fleet · in-house lashing · open yard
 ├── services.php             overview grid
 ├── resources.php            5 anchored sections
+├── past-projects.php        photo gallery, pulls from the `gallery` table
 ├── contact.php
 ├── <service>.php            5 flat service pages, filenames match services.link
+│                            (air-freight.php kept but unlinked from nav — see below)
 ├── thankyou.php             form success — the Google Ads conversion URL
 ├── 404.php
 ├── submit-lead.php          shared form handler for every form on the site
@@ -177,9 +179,13 @@ which uses Bootstrap's offcanvas for its mobile menu; ours does not.
 
 ## Content rules
 
-Only three of ten pages have client copy (Project Freight Forwarding, Heavy Lift
+Only three pages have client copy (Project Freight Forwarding, Heavy Lift
 Chartering, and Air Freight; all three are reproduced verbatim in
-`docs/CONTENT.md`).
+`docs/CONTENT.md`). Air Freight's `services` row is currently `status =
+'inactive'` (client's 2026-08-24 "finalized" menu list dropped it from the
+Services nav — see `database/schema.sql`), so its page still exists with
+real client copy but isn't linked from the nav, footer, or homepage grid
+until reactivated.
 
 Build the remaining pages with real structure and **visibly marked placeholder
 copy**, so they are ready the moment text arrives. Do not invent facts — fleet

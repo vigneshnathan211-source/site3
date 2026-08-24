@@ -23,12 +23,18 @@
   var header = document.getElementById('cgs-header');
 
   /* Exposed as a CSS var so the services scroll-pin can sit its sticky
-     stage directly under the header instead of behind it. Read from the
-     real element rather than hard-coded, so a header height change never
-     silently desyncs the two. */
+     stage directly under the header instead of behind it (and the hero
+     can size itself to what's actually left of the viewport below it).
+     header.offsetTop, not just offsetHeight: .cgs-topbar sits in normal
+     flow above #cgs-header and is real height on desktop/lg+ (it's
+     display:none below that, so offsetTop is naturally 0 there) — using
+     offsetTop + offsetHeight captures topbar-plus-header as one figure
+     without measuring the topbar separately. Read from the real elements
+     rather than hard-coded, so a height change on either never silently
+     desyncs this. */
   var setHeaderHeightVar = function () {
     if (!header) { return; }
-    document.documentElement.style.setProperty('--cgs-header-h', header.offsetHeight + 'px');
+    document.documentElement.style.setProperty('--cgs-header-h', (header.offsetTop + header.offsetHeight) + 'px');
   };
   setHeaderHeightVar();
   window.addEventListener('resize', setHeaderHeightVar);
@@ -152,18 +158,15 @@
 
   /* --- Hero carousel -------------------------------------------------------
      Purpose: storytelling. Three capabilities get the hero slot in rotation
-     instead of one winning it permanently. Only the copy and the photograph
-     move; the CTA, the facts card and the layout are fixed, so autoplay never
-     shifts a target the visitor is reaching for.
-
-     Clickable dot pagination gives sighted users the same "how many, which
-     one" visibility the services section already provides a few scrolls
-     later — the two carousels on this page now match instead of one being
-     silent. Autoplay still pauses on hover, on keyboard focus, and while
-     the tab or section is off-screen, and it never starts at all under
-     reduced motion — WCAG 2.2.2's automatic-only mitigations, kept as a
-     second layer on top of the manual control rather than a substitute
-     for it. */
+     instead of one winning it permanently — just the background photograph
+     now (client, 2026-08-21: "in hero remove overlay all text and
+     pagination" — the scrim, the slide copy and the dot pagination are all
+     gone from the markup; heroPaginationEl below resolves to null and
+     Swiper's pagination option just turns itself off). Autoplay still
+     pauses on hover, on keyboard focus, and while the tab or section is
+     off-screen, and it never starts at all under reduced motion — WCAG
+     2.2.2's automatic-only mitigations, kept as a second layer on top of
+     the manual (arrow-key) control rather than a substitute for it. */
   var heroEl = document.querySelector('[data-hero-swiper]');
 
   if (heroEl && typeof window.Swiper === 'function') {
@@ -178,8 +181,6 @@
       autoHeight: false,
       grabCursor: slideCount > 1,
       watchSlidesProgress: true,
-      /* The slide copy is decorative motion on top of a content change, so
-         it is the first thing dropped under reduced motion (see CSS). */
       autoplay: autoplayOn
         ? { delay: 6000, disableOnInteraction: false, pauseOnMouseEnter: true }
         : false,
@@ -393,6 +394,65 @@
     if (servicesNext) { servicesNext.addEventListener('click', function () { stepService(1); }); }
   }
 
+  /* --- Testimonials carousel -------------------------------------------------
+     Three cards side by side on desktop (client: "make the testimonial
+     three cards"), two on tablet, one on mobile — still a Swiper so the
+     narrower breakpoints keep pagination dots, arrows and autoplay doing
+     real work even though desktop, with all 3 real quotes visible at
+     once, has nothing left to advance to. rewind (not loop) takes it back
+     to slide 1 after the last position without Swiper's loop mode cloning
+     slides, which only makes sense with a slide count well past
+     slidesPerView — same etiquette as the hero and services carousels
+     above: pauses on hover, on keyboard focus, and while the section is
+     off-screen, and autoplay never starts at all under reduced motion. */
+  var testimonialsEl = document.querySelector('[data-testimonials-swiper]');
+  if (testimonialsEl && typeof window.Swiper === 'function') {
+    var testimonialsSlideCount = testimonialsEl.querySelectorAll('.swiper-slide').length;
+    var testimonialsAutoplayOn = testimonialsSlideCount > 1 && !reduceMotion.matches;
+    var testimonialsPaginationEl = testimonialsEl.querySelector('.cgs-testimonials__pagination');
+    var testimonialsPrev = document.querySelector('[data-testimonials-prev]');
+    var testimonialsNext = document.querySelector('[data-testimonials-next]');
+
+    var testimonialsSwiper = new Swiper(testimonialsEl, {
+      slidesPerView: 1,
+      spaceBetween: 24,
+      breakpoints: {
+        768:  { slidesPerView: 2, spaceBetween: 24 },
+        992:  { slidesPerView: 3, spaceBetween: 28 }
+      },
+      rewind: testimonialsSlideCount > 1,
+      speed: reduceMotion.matches ? 0 : 500,
+      grabCursor: testimonialsSlideCount > 1,
+      autoplay: testimonialsAutoplayOn
+        ? { delay: 5500, disableOnInteraction: false, pauseOnMouseEnter: true }
+        : false,
+      pagination: (testimonialsSlideCount > 1 && testimonialsPaginationEl)
+        ? { el: testimonialsPaginationEl, clickable: true }
+        : false,
+      navigation: { prevEl: testimonialsPrev, nextEl: testimonialsNext },
+      a11y: { enabled: true },
+      keyboard: { enabled: true, onlyInViewport: true }
+    });
+
+    if ('IntersectionObserver' in window && testimonialsAutoplayOn) {
+      new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!testimonialsSwiper.autoplay) { return; }
+          if (entry.isIntersecting) { testimonialsSwiper.autoplay.start(); }
+          else { testimonialsSwiper.autoplay.stop(); }
+        });
+      }, { threshold: 0.2 }).observe(testimonialsEl);
+    }
+
+    if (testimonialsAutoplayOn) {
+      testimonialsEl.addEventListener('focusin', function () { testimonialsSwiper.autoplay.stop(); });
+      testimonialsEl.addEventListener('focusout', function (event) {
+        if (testimonialsEl.contains(event.relatedTarget)) { return; }
+        testimonialsSwiper.autoplay.start();
+      });
+    }
+  }
+
   /* --- Partners marquee ------------------------------------------------------
      Purpose: a continuous drift, not a carousel someone steps through. Loop
      mode plus slidesPerView:'auto' plus a near-zero autoplay delay reads as
@@ -512,6 +572,26 @@
           if (entry.isIntersecting) { play(); } else { entry.target.pause(); }
         });
       }, { threshold: 0.25 }).observe(video);
+    }
+
+    /* Sound toggle: the only control a visitor gets over otherwise-decorative
+       footage. Starts muted (autoplay requires it); a click is a direct user
+       gesture, so unmuting from there is never blocked by autoplay policy. */
+    var heroSection = video.closest('.cgs-hero');
+    var soundBtn = heroSection && heroSection.querySelector('[data-hero-sound]');
+    if (soundBtn) {
+      var syncSoundButton = function () {
+        var muted = video.muted;
+        soundBtn.classList.toggle('is-unmuted', !muted);
+        soundBtn.setAttribute('aria-pressed', String(!muted));
+        soundBtn.setAttribute('aria-label', muted ? 'Unmute background video' : 'Mute background video');
+      };
+      syncSoundButton();
+      soundBtn.addEventListener('click', function () {
+        video.muted = !video.muted;
+        if (!video.muted) { play(); }
+        syncSoundButton();
+      });
     }
   });
 
