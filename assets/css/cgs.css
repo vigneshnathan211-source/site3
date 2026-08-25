@@ -2738,6 +2738,11 @@ main:has(> .cgs-cta:last-child) + .cgs-footer { padding-top: var(--cgs-cta-overl
 }
 .cgs-gallery__tile:hover .cgs-gallery__caption,
 .cgs-gallery__tile:focus-visible .cgs-gallery__caption { opacity: 1; transform: translateY(0); }
+/* Past Projects: client wants the hover caption gone — the filter bar above
+   the grid already identifies each photo's service, so this is redundant.
+   Scoped to this page only; the homepage's hidden gallery section (see
+   comment above) keeps captions. */
+.page-past-projects .cgs-gallery__caption { display: none; }
 .cgs-gallery__caption i {
   flex-shrink: 0;
   display: grid;
@@ -3028,15 +3033,10 @@ main:has(> .cgs-cta:last-child) + .cgs-footer { padding-top: var(--cgs-cta-overl
   gap: clamp(24px, 3vw, 32px);
 }
 .cgs-cert-card {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  background: #fff;
-  border: 1px solid var(--cgs-line);
+  display: block;
   border-radius: var(--cgs-radius);
   overflow: hidden;
-  color: inherit;
-  text-decoration: none;
+  box-shadow: var(--cgs-shadow);
   transition: transform .25s ease, box-shadow .25s ease;
 }
 .cgs-cert-card:hover,
@@ -3044,56 +3044,13 @@ main:has(> .cgs-cta:last-child) + .cgs-footer { padding-top: var(--cgs-cta-overl
   transform: translateY(-4px);
   box-shadow: var(--cgs-shadow-lg);
 }
-.cgs-cert-card__frame {
-  display: grid;
-  place-items: center;
-  aspect-ratio: 3 / 4;
-  padding: 22px;
-  background: var(--cgs-surface);
-  border-bottom: 1px solid var(--cgs-line);
-}
-.cgs-cert-card__frame img {
+.cgs-cert-card img {
   display: block;
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
+  width: 100%;
   height: auto;
-  background: #fff;
-  box-shadow: var(--cgs-shadow);
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
 }
-.cgs-cert-card__body {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  flex: 1;
-  padding: 22px 24px 24px;
-}
-.cgs-cert-card__body h3 {
-  margin: 0;
-  font-size: 18.5px;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  color: var(--cgs-navy-900);
-}
-.cgs-cert-card__issuer {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--cgs-blue-500);
-}
-.cgs-cert-card__link {
-  margin-top: auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12.5px;
-  font-weight: 700;
-  letter-spacing: .03em;
-  text-transform: uppercase;
-  color: var(--cgs-blue-500);
-}
-.cgs-cert-card__link i { transition: transform 180ms var(--ease-out); }
-.cgs-cert-card:hover .cgs-cert-card__link i,
-.cgs-cert-card:focus-visible .cgs-cert-card__link i { transform: translateX(3px); }
 
 @media (max-width: 991.98px) {
   .cgs-cert-grid { grid-template-columns: repeat(2, 1fr); }
@@ -3102,8 +3059,7 @@ main:has(> .cgs-cta:last-child) + .cgs-footer { padding-top: var(--cgs-cta-overl
   .cgs-cert-grid { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .cgs-cert-card,
-  .cgs-cert-card__link i { transition: none; }
+  .cgs-cert-card { transition: none; }
 }
 
 /* Rich text from resources.content (admin rich-text, sanitised on save —
@@ -3578,12 +3534,8 @@ html.js [data-reveal].is-visible {
 }
 
 /* --- Contact: reach split (photo + form) -----------------------------------
-   Asymmetric 5fr/7fr (DESIGN.md: never an even 1fr/1fr) — a real yard photo
-   left (assets/img/gallery/ops-09.jpg, unused anywhere else on the site),
-   the enquiry form right. The "call us now" chip overlapping the photo's
-   bottom edge is the one deliberate creative flourish on this page: same
-   overlap/float-shadow language as .cgs-cta__card dipping into the footer
-   below it, not a borrowed pattern. */
+   Asymmetric 5fr/7fr (DESIGN.md: never an even 1fr/1fr) — a real ops photo
+   left (assets/img/gallery/ops-18.jpg), the enquiry form right. */
 .cgs-reach {
   display: grid;
   grid-template-columns: 5fr 7fr;
@@ -3604,44 +3556,6 @@ html.js [data-reveal].is-visible {
   aspect-ratio: 3 / 4;
   object-fit: cover;
 }
-.cgs-reach__badge {
-  position: absolute;
-  left: 20px;
-  right: 20px;
-  bottom: -28px;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 18px 20px;
-  border-radius: var(--cgs-radius);
-  background: #fff;
-  box-shadow: var(--cgs-shadow-float);
-  text-decoration: none;
-  transition: transform 200ms var(--ease-out);
-}
-.cgs-reach__badge:hover { transform: translateY(-3px); }
-.cgs-reach__badge-icon {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: var(--cgs-navy-900);
-  color: #fff;
-  font-size: 16px;
-}
-.cgs-reach__badge-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.cgs-reach__badge-label {
-  font-size: 11.5px;
-  font-weight: 700;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  color: var(--cgs-muted);
-}
-.cgs-reach__badge-value { font-size: 16px; font-weight: 700; color: var(--cgs-navy-900); }
-
 .cgs-form__head { max-width: 60ch; margin: 0 0 28px; }
 .cgs-form__head h2 {
   margin: 0 0 12px;
@@ -3734,7 +3648,6 @@ html.js [data-reveal].is-visible {
 }
 @media (max-width: 575.98px) {
   .cgs-field-grid { grid-template-columns: 1fr; }
-  .cgs-reach__badge { flex-wrap: wrap; }
   .cgs-form__foot .cgs-btn { width: 100%; justify-content: center; }
 }
 

@@ -25,10 +25,14 @@
 | Layout: two asymmetric splits (DESIGN.md's convention, never 1fr/1fr) —
 | photo/form, then office-cards/map — plus a hairline "other ways to reach
 | us" grid, the same 1px-gap-grid technique as the homepage's Project Desk
-| section but built for contact-method tiles instead of named people. The
-| one deliberate creative move is the "call us now" chip overlapping the
-| form photo's bottom edge, the same overlap-shadow language this codebase
-| already uses for the closing CTA card dipping into the footer.
+| section but built for contact-method tiles instead of named people.
+|
+| 2026-08-25: the floating "call us now" phone badge over the form photo
+| was removed per client feedback (the phone number is already covered in
+| the "Other Ways To Reach Us" grid below). The form photo itself was
+| swapped the same day to ops-18.jpg — a new client photo supplied
+| directly for this spot (copied in from client_assets/pic/contact_image.jpeg,
+| which stays untouched per the read-only rule below).
 */
 
 require_once __DIR__ . '/includes/bootstrap.php';
@@ -71,9 +75,7 @@ require __DIR__ . '/includes/header.php';
   </section>
 
   <!-- 2 ── ENQUIRY FORM ───────────────────────────────────────
-       Asymmetric 5fr/7fr split: a real yard photo (never used elsewhere on
-       the site) left, the form right. The floating badge over the photo's
-       bottom edge is the one deliberate creative flourish here. -->
+       Asymmetric 5fr/7fr split: a real ops photo left, the form right. -->
   <section class="cgs-section" id="contact-form" aria-labelledby="contact-form-heading">
     <div class="container-fluid px-4">
       <div class="row">
@@ -82,17 +84,10 @@ require __DIR__ . '/includes/header.php';
 
             <div class="cgs-reach__media" data-reveal>
               <div class="cgs-reach__photo">
-                <img src="<?php echo url('assets/img/gallery/ops-09.jpg'); ?>"
-                     width="1152" height="2048" loading="lazy"
-                     alt="Green mobile crane lowering equipment onto a trailer at a Singapore port, seen from a Carriage Global vehicle">
+                <img src="<?php echo url('assets/img/gallery/ops-18.jpg'); ?>"
+                     width="2048" height="1536" loading="lazy"
+                     alt="Ship crane lowering large pipe sections onto an SPMT trailer at a project cargo berth">
               </div>
-              <a href="tel:<?php echo e($phoneTel); ?>" class="cgs-reach__badge">
-                <span class="cgs-reach__badge-icon"><i class="fa-solid fa-phone" aria-hidden="true"></i></span>
-                <span class="cgs-reach__badge-text">
-                  <span class="cgs-reach__badge-label">Prefer to talk now?</span>
-                  <span class="cgs-reach__badge-value"><?php echo e($settings['phone']); ?></span>
-                </span>
-              </a>
             </div>
 
             <div class="cgs-reach__form">

@@ -20,9 +20,9 @@
 | a single long block of reference copy:
 |
 |   Certificates           -> full cards (certificates table), each showing
-|                             the real scanned certificate, issuer, cert
-|                             number, validity and scope — opens the actual
-|                             PDF in the existing Magnific Popup lightbox.
+|                             just the real scanned certificate image — opens
+|                             the actual PDF in the existing Magnific Popup
+|                             lightbox.
 |   Cargo Measurement      -> asymmetric split, prose left (led by a real
 |                             yard photo) / formula reference card right
 |                             (client supplied this copy verbatim, in-line
@@ -128,9 +128,9 @@ require __DIR__ . '/includes/header.php';
 
   <!-- 2 ── CERTIFICATES ───────────────────────────────────────
        Full document cards, not the homepage's small-badge strip — the real
-       scanned certificate, issuer, cert number, validity and scope, per
-       client feedback (2026-08-24: "not just logo"). Leads the page, ahead
-       of the reference material, per the same feedback. -->
+       scanned certificate image, no frame or caption text underneath (per
+       2026-08-25 feedback). Leads the page, ahead of the reference
+       material, per client feedback (2026-08-24: "not just logo"). -->
   <?php if ($certificateRows): ?>
   <section class="cgs-section cgs-credentials" id="certificates" aria-labelledby="certificates-heading">
     <div class="container-fluid px-4">
@@ -148,18 +148,9 @@ require __DIR__ . '/includes/header.php';
         <a class="cgs-cert-card cgs-pdf-trigger"
            href="<?php echo url($cert['file_path']); ?>"
            aria-label="<?php echo e($cert['title']); ?> — view full certificate PDF">
-          <span class="cgs-cert-card__frame">
-            <img src="<?php echo url($cert['preview_image'] ?? $cert['image']); ?>"
-                 alt="Scanned <?php echo e($cert['title']); ?> certificate document"
-                 loading="lazy">
-          </span>
-          <span class="cgs-cert-card__body">
-            <h3><?php echo e($cert['title']); ?></h3>
-            <?php if (!empty($cert['issuer'])): ?>
-            <span class="cgs-cert-card__issuer"><?php echo e($cert['issuer']); ?></span>
-            <?php endif; ?>
-            <span class="cgs-cert-card__link">View Certificate PDF <i class="fa-solid fa-angle-right" aria-hidden="true"></i></span>
-          </span>
+          <img src="<?php echo url($cert['preview_image'] ?? $cert['image']); ?>"
+               alt="Scanned <?php echo e($cert['title']); ?> certificate document"
+               loading="lazy">
         </a>
         <?php endforeach; ?>
       </div>
