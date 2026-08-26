@@ -21,13 +21,15 @@
 | that plan predates this content.
 |
 |   Specialized Fleet & Infrastructure -> an asymmetric five-cell
-|                             showcase: three real equipment photos
-|                             (Modular Trailers/SPMT, Low Bed/tank
-|                             transport, Skeleton Chassis/flatbed) sized by
-|                             how well each reads at scale, plus two
-|                             icon-led cells (Forklifts, Open Storage Yard)
-|                             where no matching photo exists in the
-|                             current asset set — see the seed comment in
+|                             showcase. 2026-08-26: Angeline asked to
+|                             replace the stand-in photos with the real
+|                             WhatsApp fleet photos she sent; all five
+|                             tiles now carry a real Carriage Global
+|                             operations photo. Open Storage Yard has no
+|                             photo of an actual yard in the asset set, so
+|                             it reuses the Lashing section's photo below
+|                             (client request) rather than staying
+|                             icon-led — see the seed comment in
 |                             schema.sql.
 |   Port & Terminal Operations -> a dark, connected three-node process
 |                             row, real container-terminal photography
@@ -41,9 +43,13 @@
 |                             generic [data-reveal] mechanism every other
 |                             section already uses — no new JS.
 |   In-House Lashing & Lifting -> the existing two-photo .cgs-split
-|                             composition (lashing.jpg, winch-transport.jpg)
-|                             carrying the two trust points as its bullet
-|                             list.
+|                             composition. lashing.jpg was removed from
+|                             assets/img/fleet/ at some point and this
+|                             slot broke silently; 2026-08-26 it was
+|                             replaced with fleet-container-lowbed.jpg (one
+|                             of the new WhatsApp photos — visible strap
+|                             lashing on the cargo is a genuine content
+|                             match), winch-transport.jpg is unchanged.
 */
 
 require_once __DIR__ . '/includes/bootstrap.php';
@@ -102,10 +108,13 @@ require __DIR__ . '/includes/header.php';
   <!-- 1 ── BANNER ───────────────────────────────────────────
        Same photo-banner pattern as resources.php / past-projects.php — no
        scrim, text-shadow carries legibility so the photo stays at full
-       brightness. -->
+       brightness. Swapped 2026-08-26 to fleet-iqip-tank-load.jpg (client
+       request) — one of the WhatsApp photos sent for this page; not used
+       elsewhere on our-fleet.php, only duplicated by index.php's Vision
+       photo (a different page, so no on-page repeat). -->
   <section class="cgs-page-banner">
     <div class="cgs-page-banner__media">
-      <img src="<?php echo url('assets/img/fleet/yellow-equipment-transport.jpg'); ?>"
+      <img src="<?php echo url('assets/img/fleet/fleet-iqip-tank-load.jpg'); ?>"
            width="1600" height="1200" alt=""
            fetchpriority="high">
     </div>
@@ -237,9 +246,12 @@ require __DIR__ . '/includes/header.php';
        than described. Each line draws itself in off the same
        [data-reveal] mechanism every other section on the site already
        uses (see cgs.js) — no page-specific script. Each card now carries
-       a real photo of that lane (barge-at-night for Batam, a CGS-liveried
-       overland trailer for Malaysia/Thailand) behind a navy scrim, the
-       same media+overlay technique as .cgs-port-ops__media. -->
+       a real photo of that lane behind a navy scrim, the same
+       media+overlay technique as .cgs-port-ops__media. Batam's photo was
+       swapped 2026-08-26 (client request) to oocl-pipe-trailer.jpg — also
+       used as the Port & Terminal section's backdrop above, reused here
+       rather than duplicated as a second file — Malaysia/Thailand keeps
+       its own overland-trailer photo (ops-07.jpg). -->
   <?php if ($transhipmentOps): $transBlock = $fleetBlocks['transhipment'] ?? null; ?>
   <section class="cgs-section cgs-transhipment" id="transhipment" aria-labelledby="transhipment-heading">
     <div class="container-fluid px-4">
@@ -254,7 +266,7 @@ require __DIR__ . '/includes/header.php';
 
         <article class="cgs-route-card">
           <div class="cgs-route-card__media" aria-hidden="true">
-            <img src="<?php echo url('assets/img/gallery/ops-06.jpg'); ?>" alt="" loading="lazy">
+            <img src="<?php echo url('assets/img/fleet/oocl-pipe-trailer.jpg'); ?>" alt="" loading="lazy">
           </div>
           <svg class="cgs-route-card__svg" viewBox="0 0 220 20" aria-hidden="true">
             <line x1="10" y1="10" x2="210" y2="10" class="cgs-route-card__path"></line>
@@ -308,8 +320,8 @@ require __DIR__ . '/includes/header.php';
     <div class="container-fluid px-4">
       <div class="cgs-split">
         <div class="cgs-split__media">
-          <img src="<?php echo url('assets/img/fleet/lashing.jpg'); ?>"
-               alt="Cargo chained and lashed to a Carriage Global trailer at night"
+          <img src="<?php echo url('assets/img/fleet/fleet-container-lowbed.jpg'); ?>"
+               alt="Cargo strapped and lashed down on a Carriage Global low-bed trailer"
                loading="lazy" width="900" height="700">
           <img src="<?php echo url('assets/img/fleet/winch-transport.jpg'); ?>"
                alt="Winch and lifting equipment secured on a Carriage Global low-bed trailer"

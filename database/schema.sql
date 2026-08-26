@@ -457,7 +457,7 @@ INSERT IGNORE INTO `page_blocks` (`page_key`, `block_key`, `heading`, `subheadin
 ('home',      'why-us',       'Why Carriage Global',              NULL, NULL, 3),
 ('home',      'cta',          'Send Us Your Packing List',        NULL, NULL, 4),
 ('our-fleet', 'intro',        'Our Fleet & Capabilities', NULL,
-  '<p>Welcome to CGS. We own, operate, and manage a complete range of heavy transport equipment, serving as Singapore''s premier asset-based partner for global freight forwarders, MNCs, and direct cargo owners alike.</p><p>Whether you are an international freight forwarder seeking a reliable, neutral local partner or a direct client requiring specialized logistics, we manage every step of your oversize cargo journey using our own skilled crew and specialized fleet.</p>', 1),
+  '<p>Welcome to CGS. We own, operate, and manage a complete range of heavy transport fleet such as Super low bed trailers, Low bed trailers, skeleton chassis, Modular trailers etc.</p><p>Whether you are an international freight forwarder seeking a reliable, neutral local partner or a direct client requiring specialized logistics, we manage every step of your oversize cargo journey using our own skilled crew and specialized fleet.</p>', 1),
 ('our-fleet', 'fleet',        'Specialized Fleet & Infrastructure',
   'We provide heavy-duty transport vehicles built for oversize, general, and heavy cargo, offering MNC forwarders the asset capacity they need to scale.', NULL, 2),
 ('our-fleet', 'port-terminal','Port & Terminal Operations',
@@ -474,32 +474,46 @@ INSERT IGNORE INTO `page_blocks` (`page_key`, `block_key`, `heading`, `subheadin
 -- dimension the client gave (Low Bed / Super Low Bed deck length and
 -- height); nothing else is invented. Images are matched to real Carriage
 -- Global operations photography where the equipment is an honest match
--- (assets/img/fleet/). Forklifts and the Open Storage Yard have no
--- dedicated photo in the asset set — a full scan of both raw client
--- WhatsApp drops (client_assets/pic/ and client_assets/latest/latest/,
--- ~34 unique images between them, 2026-08-14/20) turned up no forklift and
--- no open-air storage yard shot, so these two use the closest available
--- real CGS photography as an atmospheric stand-in rather than a literal
--- equipment match: ops-09.jpg (a MAFI terminal tractor at a Singapore
--- port apron — ground handling equipment, not a forklift) and ops-16.jpg
--- (a CGS low-bed trailer under a loading-bay roof, captioned "at a yard"
--- in the gallery table — not an open-air storage yard). Swap both for
--- real forklift/yard photos the moment the client supplies them.
+-- (assets/img/fleet/).
 -- `sort_order` here is the page's own display order (Modular Trailers
 -- leads, as the widest showcase tile), not the order the docx lists them in.
 --
--- 2026-08-26: Modular Trailers' photo swapped from assets/img/fleet/spmt-
--- trailer.jpg (had a hand-drawn orange circle annotation baked into the
--- image) to assets/img/gallery/ops-18.jpg — the same SPMT/ship-crane photo
--- already used on contact.php's form panel, reused here rather than
--- duplicated as a second file.
+-- 2026-08-26: Angeline reviewed and asked to remove the remaining stand-in
+-- photos and replace with "the 8 highlighted images of our fleet and prime
+-- movers" sent via WhatsApp. Of the 9 files dropped into assets/img/fleet/,
+-- only 4 turned out to be genuinely new — 4 of the other 5 were
+-- byte-identical resends of images already in assets/img/fleet/, and a
+-- 5th (fleet-iqip-tank-load.jpg) turned out to be a re-send of
+-- assets/img/gallery/ops-16.jpg (already index.php's Vision photo), so it
+-- was deliberately left unused rather than risk the exact Mission/Vision
+-- photo repeat the client explicitly ruled out ("use images but not
+-- repeat it for mission and vision"). The old spmt-trailer.jpg (had a
+-- hand-drawn orange circle annotation baked in) stays retired/unused; two
+-- other old files (tank-transport.jpg, lashing.jpg) were removed from disk
+-- directly by the user, which broke their references on index.php's
+-- Mission pillar and this page's Lashing section — both were repointed to
+-- real WhatsApp photos as part of this same pass rather than left broken.
+--
+-- Final mapping across all 5 Fleet tiles plus the two off-page slots that
+-- broke: fleet-crane-lift-lowbed.jpg -> both Forklifts below (atmospheric
+-- stand-in, no forklift photo exists) and index.php's Mission pillar
+-- (crane lowering cargo onto a low-bed — reused across pages, not within
+-- the same Mission/Vision pair); fleet-container-lowbed.jpg -> this page's
+-- Lashing section second photo (visible strap lashing) and reused again on
+-- Open Storage Yard below (client request, 2026-08-26: "reuse the
+-- certified trust 1st image there also" — "Certified Trust" is the Lashing
+-- section's eyebrow); fleet-trailer.jpg (old file, genuinely a bare
+-- flatbed/skeletal trailer) -> Skeleton Chassis; fleet-scania-lowbed.jpg ->
+-- Low Bed & Super Low Bed Trailers; fleet-cable-reel-chassis.jpg -> Modular
+-- Trailers (closest available multi-axle/bogie trailer shot, still not a
+-- literal SPMT).
 -- -----------------------------------------------------------------------------
 INSERT IGNORE INTO `fleet_items` (`id`, `category`, `title`, `description`, `specs`, `image`, `sort_order`, `status`) VALUES
 (1, 'Fleet', 'Skeleton Chassis', 'Reliable frames for standard container transport and specialized moves.', NULL, 'assets/img/fleet/fleet-trailer.jpg', 2, 'active'),
-(2, 'Fleet', 'Low Bed & Super Low Bed Trailers', 'Heavy-capacity units engineered to clear low Singapore road height limits.', 'Length: 12m\nHeight: 0.8m', 'assets/img/fleet/tank-transport.jpg', 3, 'active'),
-(3, 'Fleet', 'Modular Trailers', 'Advanced multi-axle trailers configured for massive, ultra-heavy lifts.', NULL, 'assets/img/gallery/ops-18.jpg', 1, 'active'),
-(4, 'Fleet', 'Forklifts', 'A wide variety of lift trucks ready for heavy industrial loading and cross-docking.', NULL, 'assets/img/gallery/ops-09.jpg', 4, 'active'),
-(5, 'Fleet', 'Open Storage Yard', 'A secure space dedicated to storing oversize cargo and performing cargo re-working at 14 Penjuru Road.', NULL, 'assets/img/gallery/ops-16.jpg', 5, 'active'),
+(2, 'Fleet', 'Low Bed & Super Low Bed Trailers', 'Heavy-capacity units engineered to clear low Singapore road height limits.', 'Length: 12m\nHeight: 0.8m', 'assets/img/fleet/fleet-scania-lowbed.jpg', 3, 'active'),
+(3, 'Fleet', 'Modular Trailers', 'Advanced multi-axle trailers configured for massive, ultra-heavy lifts.', NULL, 'assets/img/fleet/fleet-cable-reel-chassis.jpg', 1, 'active'),
+(4, 'Fleet', 'Forklifts', 'A wide variety of lift trucks ready for heavy industrial loading and cross-docking.', NULL, 'assets/img/fleet/fleet-crane-lift-lowbed.jpg', 4, 'active'),
+(5, 'Fleet', 'Open Storage Yard', 'A secure space dedicated to storing oversize cargo and performing cargo re-working at 14 Penjuru Road.', NULL, 'assets/img/fleet/fleet-container-lowbed.jpg', 5, 'active'),
 (6, 'Port & Terminal', 'Pasir Panjang Auto Terminal', 'Direct lift of cargo from Mafi trailers straight onto low bed trailers for efficient delivery.', NULL, NULL, 1, 'active'),
 (7, 'Port & Terminal', 'PSA Container Terminal', 'In-port flat rack stripping to lower overall cargo height and meet Singapore road regulations. This enables seamless transhipment within the port without the need for external trucking.', NULL, NULL, 2, 'active'),
 (8, 'Port & Terminal', 'Barge Operations', 'Execution of complex roll-on/roll-off (RoRo), roll-up, and jack-down operations for barges, concrete blocks, and heavy infrastructure components.', NULL, NULL, 3, 'active'),

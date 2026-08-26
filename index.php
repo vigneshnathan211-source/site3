@@ -329,8 +329,17 @@ $ourStory = [
    Each pillar now carries two real photos for the collage instead of
    one: 'image'/'alt' is the large lead photo, 'image_two'/'alt_two' is
    the smaller overlapping accent photo (client: "use images but not
-   repeat it for mission and vision"). Mission keeps its original pair
-   (tank-transport.jpg + ops-05.jpg). Vision's pair was replaced 2026-08-21
+   repeat it for mission and vision"). Mission's lead photo was swapped
+   2026-08-26 from tank-transport.jpg (removed from assets/img/fleet/,
+   file no longer on disk) to fleet-crane-lift-lowbed.jpg, one of the new
+   WhatsApp photos Angeline sent for the Fleet page (also used on
+   our-fleet.php's Forklifts tile — reused across pages, not within this
+   same Mission/Vision pair). NOTE: one of the other "new" WhatsApp photos,
+   fleet-iqip-tank-load.jpg, turned out to be a re-send of the exact same
+   photo already at assets/img/gallery/ops-16.jpg (Vision's own lead photo
+   below) — so it was deliberately NOT used here, to avoid recreating the
+   Mission/Vision repeat the client explicitly ruled out. ops-05.jpg is
+   unchanged. Vision's pair was replaced 2026-08-21
    (client: "replace vision images") — spmt-trailer.jpg and ops-09.jpg are
    now unused anywhere on this page (freed up, not deleted, in case a
    future section wants them) rather than reused elsewhere. The
@@ -345,8 +354,8 @@ $pillars = [
         'marker'    => 'present position',
         'icon'      => 'fa-bullseye',
         'body'      => "To provide integrated, customized and reliable logistics solutions that optimize customers' supply chains, while maintaining high standards of quality, compliance, health, safety and environmental responsibility.",
-        'image'     => 'assets/img/fleet/tank-transport.jpg',
-        'alt'       => 'Crane lowering a large process tank onto a low-bed trailer at a Singapore port',
+        'image'     => 'assets/img/fleet/fleet-crane-lift-lowbed.jpg',
+        'alt'       => 'Crane lowering heavy cargo onto a Carriage Global low-bed trailer',
         'image_two' => 'assets/img/gallery/ops-05.jpg',
         'alt_two'   => 'Large cable reel secured on a Carriage Global low-bed trailer at a container terminal at night',
     ],
