@@ -487,11 +487,17 @@ INSERT IGNORE INTO `page_blocks` (`page_key`, `block_key`, `heading`, `subheadin
 -- real forklift/yard photos the moment the client supplies them.
 -- `sort_order` here is the page's own display order (Modular Trailers
 -- leads, as the widest showcase tile), not the order the docx lists them in.
+--
+-- 2026-08-26: Modular Trailers' photo swapped from assets/img/fleet/spmt-
+-- trailer.jpg (had a hand-drawn orange circle annotation baked into the
+-- image) to assets/img/gallery/ops-18.jpg — the same SPMT/ship-crane photo
+-- already used on contact.php's form panel, reused here rather than
+-- duplicated as a second file.
 -- -----------------------------------------------------------------------------
 INSERT IGNORE INTO `fleet_items` (`id`, `category`, `title`, `description`, `specs`, `image`, `sort_order`, `status`) VALUES
 (1, 'Fleet', 'Skeleton Chassis', 'Reliable frames for standard container transport and specialized moves.', NULL, 'assets/img/fleet/fleet-trailer.jpg', 2, 'active'),
 (2, 'Fleet', 'Low Bed & Super Low Bed Trailers', 'Heavy-capacity units engineered to clear low Singapore road height limits.', 'Length: 12m\nHeight: 0.8m', 'assets/img/fleet/tank-transport.jpg', 3, 'active'),
-(3, 'Fleet', 'Modular Trailers', 'Advanced multi-axle trailers configured for massive, ultra-heavy lifts.', NULL, 'assets/img/fleet/spmt-trailer.jpg', 1, 'active'),
+(3, 'Fleet', 'Modular Trailers', 'Advanced multi-axle trailers configured for massive, ultra-heavy lifts.', NULL, 'assets/img/gallery/ops-18.jpg', 1, 'active'),
 (4, 'Fleet', 'Forklifts', 'A wide variety of lift trucks ready for heavy industrial loading and cross-docking.', NULL, 'assets/img/gallery/ops-09.jpg', 4, 'active'),
 (5, 'Fleet', 'Open Storage Yard', 'A secure space dedicated to storing oversize cargo and performing cargo re-working at 14 Penjuru Road.', NULL, 'assets/img/gallery/ops-16.jpg', 5, 'active'),
 (6, 'Port & Terminal', 'Pasir Panjang Auto Terminal', 'Direct lift of cargo from Mafi trailers straight onto low bed trailers for efficient delivery.', NULL, NULL, 1, 'active'),
@@ -501,3 +507,43 @@ INSERT IGNORE INTO `fleet_items` (`id`, `category`, `title`, `description`, `spe
 (10, 'Transhipment', 'Malaysia & Thailand Cross-Border', 'Reliable transport of oversize cargo from Singapore through West Malaysia and up to Thailand, ensuring timely offshore vessel connections.', NULL, NULL, 2, 'active'),
 (11, 'Lashing', 'Trusted by major shipping lines', 'Many major global shipping lines trust our crew completely.', NULL, NULL, 1, 'active'),
 (12, 'Lashing', 'Survey certificates often waived', 'Because of our strict adherence to international safety standards, liners often waive the requirement for external lashing survey certificates when CGS crews secure cargo across Singapore, Malaysia, and Batam.', NULL, NULL, 2, 'active');
+
+-- -----------------------------------------------------------------------------
+-- heavy-lift-chartering.php seeds — the client's "Breakbulk chartering -1
+-- pics" email (Angeline Tilokani, 14 Aug 2026), transcribed verbatim in
+-- docs/CONTENT.md ("Service page 2 — Chartering Heavy Lift & Semi-Geared
+-- Vessels"). page_blocks carries the intro/statement prose and the two
+-- section headings; service_sections (service_id 2, matching the
+-- `services` row above) carries the two repeatable lists the same prose
+-- breaks into: the seven-step "How Tailored Vessel Solutions Work"
+-- sequence (`layout` = 'list') and the four discrete capabilities the
+-- closing paragraph names (`layout` = 'cards' — see docs/CONTENT.md's own
+-- note that this prose "lists four discrete capabilities... which is how
+-- it should be laid out on the page"). Images are the client's own
+-- photography from three separate "Breakbulk pics" email attachments in
+-- Thunderbird (18 photos total, client_assets/email-assets/Fw_ Breakbulk
+-- pics_/), copied into assets/img/services/heavy-lift/ — see
+-- heavy-lift-chartering.php's header comment for which photo maps to
+-- which slot and why.
+-- -----------------------------------------------------------------------------
+INSERT IGNORE INTO `page_blocks` (`page_key`, `block_key`, `eyebrow`, `heading`, `body`, `sort_order`) VALUES
+('heavy-lift-chartering', 'intro', NULL, 'Vessel Chartering for Break Bulk & Project Cargo',
+  '<p>Vessel chartering for break bulk and project cargo provides flexible, efficient transport for oversized, heavy, or irregular goods that cannot fit into standard containers. CGS specializes in custom vessel chartering to ensure complex industrial shipments reach their destinations safely, on time, and according to exact project schedules.</p>', 1),
+('heavy-lift-chartering', 'statement', NULL, 'Our Vessel Chartering Services',
+  '<p>Tailored vessel solutions match your cargo size with the right ship. Options range from small feeder ships to large ocean-crossing vessels, often combining barges, landing craft transport (LCT), and deep-sea mother vessels to move cargo from local ports to global destinations.</p>', 2),
+('heavy-lift-chartering', 'process', 'How It Works', 'How Tailored Vessel Solutions Work', NULL, 3),
+('heavy-lift-chartering', 'capabilities', 'Why Choose CGS', 'Comprehensive Cargo Handling and Marine Logistics Solutions',
+  '<p>Managing heavy or specialized cargo requires an end-to-end approach that accounts for every technical and logistical hurdle from origin to destination.</p>', 4);
+
+INSERT IGNORE INTO `service_sections` (`service_id`, `heading`, `body`, `image`, `layout`, `sort_order`, `status`) VALUES
+(2, 'Cargo Assessment', '<p>Matching weight, volume, and type to the correct ship size.</p>', 'assets/img/services/heavy-lift/step-cargo-assessment.jpg', 'list', 1, 'active'),
+(2, 'Barge and LCT Operations', '<p>Using shallow-draft vessels or landing craft to load cargo where large ships cannot dock.</p>', 'assets/img/services/heavy-lift/gallery-03.jpg', 'list', 2, 'active'),
+(2, 'Mother Vessel Connection', '<p>Transferring goods from local barges to large deep-sea vessels for long-distance travel.</p>', 'assets/img/services/heavy-lift/step-mother-vessel.jpg', 'list', 3, 'active'),
+(2, 'Port-to-Port Delivery', '<p>Managing the full route from initial commercial ports to final international destinations.</p>', 'assets/img/services/heavy-lift/gallery-04.jpg', 'list', 4, 'active'),
+(2, 'Route Selection', '<p>Experts study routes and use trusted partners to ensure smooth port transit and lower costs.</p>', 'assets/img/services/heavy-lift/step-route-selection.jpg', 'list', 5, 'active'),
+(2, 'Onboard Cargo Handling', '<p>Crews use specialized gear and skills to load, store, and unload fragile or massive items safely.</p>', 'assets/img/services/heavy-lift/step-onboard-handling.jpg', 'list', 6, 'active'),
+(2, 'Compliance and Documentation', '<p>The team manages all global shipping rules, customs papers, and port permits.</p>', 'assets/img/services/heavy-lift/gallery-05.jpg', 'list', 7, 'active'),
+(2, 'Fabrication & Sea-Worthy Packing', '<p>The process begins with the initial fabrication and custom packaging of boxes designed to withstand harsh transit conditions. Securing cargo for ocean travel demands sea-worthy packing standards that protect assets against moisture, shifting, and environmental wear during long voyages.</p>', 'assets/img/services/heavy-lift/cap-packing.jpg', 'cards', 1, 'active'),
+(2, 'Lifting & Lashing Calculations', '<p>Specialists perform detailed lifting and lashing calculations to verify that weight distributions and anchor points can endure dynamic ocean forces.</p>', 'assets/img/services/heavy-lift/cap-lifting.jpg', 'cards', 2, 'active'),
+(2, 'Stowage Plan & Certified Gear', '<p>Teams coordinate pre-approval stages for the stowage plan while ensuring certified lifting gears are fully available and ready for deployment.</p>', 'assets/img/services/heavy-lift/cap-stowage.jpg', 'cards', 3, 'active'),
+(2, 'Contractual Review & Delivery', '<p>Coordinators review every clause and requirement alongside ship owners and charterers to eliminate operational friction. The service oversees the entire transit phase down to the final drop-off location, ensuring a secure and seamless delivery.</p>', NULL, 'cards', 4, 'active');

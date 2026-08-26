@@ -4365,3 +4365,338 @@ html.js [data-reveal].is-visible .cgs-route-card__path { stroke-dashoffset: 0; }
 @media (max-width: 767.98px) {
   .cgs-route-cards { grid-template-columns: 1fr; }
 }
+
+/* =============================================================================
+   Heavy Lift Chartering page (heavy-lift-chartering.php)
+   -----------------------------------------------------------------------------
+   Content is the client's "Breakbulk chartering -1 pics" email (Angeline
+   Tilokani, 14 Aug 2026), transcribed verbatim in docs/CONTENT.md ("Service
+   page 2"). Five section families below, none repeated: an intro split, a
+   full-bleed statement band, a vertical connected process rail (the 7-step
+   "How Tailored Vessel Solutions Work" list), an asymmetric capability
+   bento (the four discrete capabilities buried in the closing prose), and
+   a photo gallery reusing .cgs-gallery wholesale.
+   ========================================================================== */
+
+/* --- Intro: text + one photo. Same grid mechanics as .cgs-fleet-intro but
+   its own rule set — page-scoped classes, not shared, per this file's own
+   per-page-prefix convention. */
+.cgs-lift-intro__inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+  gap: clamp(28px, 4vw, 56px);
+}
+.cgs-lift-intro__text { display: flex; flex-direction: column; justify-content: center; }
+.cgs-lift-intro__inner h2 {
+  margin: 0 0 18px;
+  font-size: clamp(26px, 3.2vw, 38px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.cgs-lift-intro__media {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--cgs-radius);
+  min-height: 320px;
+}
+.cgs-lift-intro__media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+@media (max-width: 767.98px) {
+  .cgs-lift-intro__inner { grid-template-columns: 1fr; }
+  .cgs-lift-intro__media { min-height: 240px; order: -1; }
+}
+
+/* --- Statement: full-bleed photo band with the pull-quote text held in its
+   own floating card, not washed directly onto the photo — a plain gradient
+   scrim still let the crane rigging's diagonal lines cross straight through
+   the letterforms behind it. The card gives the text a hard, clean edge
+   against the photo instead, while the photo itself stays fully visible
+   everywhere the card doesn't cover it. Still a full-bleed photo band, not
+   a second grid split — distinct from .cgs-lift-intro's boxed two-column
+   layout above it. */
+.cgs-lift-statement {
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  min-height: clamp(380px, 44vw, 540px);
+  padding: clamp(48px, 6vw, 80px) 0;
+}
+.cgs-lift-statement__media { position: absolute; inset: 0; z-index: 0; }
+.cgs-lift-statement__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cgs-lift-statement__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(8, 34, 56, .1) 0%, rgba(8, 34, 56, .45) 100%);
+}
+.cgs-lift-statement > .container-fluid { position: relative; z-index: 1; width: 100%; }
+.cgs-lift-statement__inner {
+  max-width: 640px;
+  background: rgba(8, 34, 56, .85);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border-left: 3px solid var(--cgs-cyan-400);
+  border-radius: var(--cgs-radius);
+  padding: clamp(28px, 3.4vw, 44px) clamp(28px, 3.4vw, 48px);
+  box-shadow: var(--cgs-shadow-lg);
+}
+.cgs-lift-statement__inner h2 {
+  margin: 0 0 16px;
+  font-size: 32px;
+  font-weight: 800;
+  color: #fff;
+}
+.cgs-lift-statement__inner p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  font-weight: 500;
+  color: rgba(255, 255, 255, .92);
+  text-wrap: balance;
+}
+
+@media (max-width: 767.98px) {
+  .cgs-lift-statement { min-height: 0; padding: 40px 0; }
+  .cgs-lift-statement__inner { max-width: 100%; }
+}
+
+/* --- Process: a vertical connected rail, not a card grid or a bare list —
+   the seven steps read as one plotted sequence, alternating text-only
+   rows with text+photo rows for rhythm rather than repeating one row
+   shape seven times. */
+.cgs-lift-process__head { max-width: 640px; margin: 0 auto clamp(40px, 5vw, 60px); text-align: center; }
+.cgs-lift-process__head h2 { margin: 0; font-size: clamp(24px, 2.8vw, 32px); font-weight: 800; }
+
+.cgs-lift-rail { position: relative; max-width: 1080px; margin: 0 auto; }
+.cgs-lift-rail::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 27px;
+  width: 2px;
+  background: rgba(255, 255, 255, .14);
+}
+.cgs-lift-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 22px;
+  padding-bottom: clamp(24px, 3vw, 32px);
+  border-bottom: 1px solid rgba(255, 255, 255, .08);
+  margin-bottom: clamp(24px, 3vw, 32px);
+}
+.cgs-lift-step:last-child { padding-bottom: 0; margin-bottom: 0; border-bottom: none; }
+.cgs-lift-step__num {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--cgs-navy-900);
+  border: 1px solid rgba(46, 159, 214, .4);
+  color: var(--cgs-cyan-300);
+  font-family: var(--cgs-font);
+  font-size: 15px;
+  font-weight: 800;
+}
+.cgs-lift-step__body {
+  padding-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 24px;
+}
+.cgs-lift-step__text { flex: 1 1 340px; min-width: 0; }
+.cgs-lift-step h3 { margin: 0 0 8px; font-size: 18px; font-weight: 800; color: #fff; }
+.cgs-lift-step p { margin: 0; font-size: 14.5px; line-height: 1.7; color: rgba(255, 255, 255, .72); max-width: 52ch; }
+.cgs-lift-step__media {
+  flex: 0 0 240px;
+  width: 240px;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--cgs-radius);
+  overflow: hidden;
+}
+.cgs-lift-step__media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+@media (max-width: 767.98px) {
+  .cgs-lift-step__media { flex-basis: 100%; width: 100%; max-width: 320px; aspect-ratio: 16 / 10; }
+}
+
+@media (max-width: 575.98px) {
+  .cgs-lift-rail::before { left: 23px; }
+  .cgs-lift-step { grid-template-columns: 48px 1fr; }
+  .cgs-lift-step__num { width: 48px; height: 48px; font-size: 13px; }
+}
+
+/* --- Capabilities: asymmetric 2+2 bento (photo, photo / photo, text) for
+   the four discrete capabilities buried in the client's closing prose
+   (docs/CONTENT.md: "That last block is prose, but it lists four discrete
+   capabilities... which is how it should be laid out on the page"). */
+.cgs-lift-capabilities__head { max-width: 680px; margin: 0 0 clamp(32px, 4vw, 48px); }
+.cgs-lift-capabilities__head h2 {
+  margin: 0 0 12px;
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.cgs-lift-capabilities__head p { margin: 0; color: var(--cgs-slate); font-size: 15.5px; line-height: 1.7; }
+
+.cgs-lift-bento {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(16px, 2vw, 22px);
+}
+.cgs-lift-bento__cell {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--cgs-radius);
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.cgs-lift-bento__cell--wide { grid-column: span 2; }
+.cgs-lift-bento__cell img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 500ms var(--ease-out);
+}
+.cgs-lift-bento__cell:hover img,
+.cgs-lift-bento__cell:focus-within img { transform: scale(1.045); }
+.cgs-lift-bento__cell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(8, 34, 56, .05) 30%, rgba(8, 34, 56, .88) 100%);
+}
+.cgs-lift-bento__body { position: relative; z-index: 1; padding: clamp(20px, 2.4vw, 28px); color: #fff; }
+.cgs-lift-bento__body h3 { margin: 0 0 8px; font-size: 18px; font-weight: 800; color: #fff; }
+.cgs-lift-bento__body p { margin: 0; font-size: 14px; line-height: 1.65; color: rgba(255, 255, 255, .82); }
+
+/* Text-only cell (no photo): white card with a hairline border, not a tint —
+   this section is itself .cgs-section--tint, so a var(--cgs-surface) fill
+   here was invisible against its own background. Same white+border
+   treatment as .cgs-fleet-tile--icon, which sits in the identical
+   tinted-section context on our-fleet.php. */
+.cgs-lift-bento__cell--text {
+  background: #fff;
+  border: 1px solid var(--cgs-line);
+  box-shadow: var(--cgs-shadow);
+  justify-content: center;
+  min-height: 220px;
+}
+.cgs-lift-bento__cell--text::after { display: none; }
+.cgs-lift-bento__cell--text .cgs-lift-bento__body {
+  color: var(--cgs-ink);
+  padding: clamp(28px, 3vw, 40px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.cgs-lift-bento__cell--text h3 { color: var(--cgs-navy-900); font-size: 24px; }
+.cgs-lift-bento__cell--text p { color: var(--cgs-slate); font-size: 15px; max-width: 52ch; }
+
+@media (max-width: 767.98px) {
+  .cgs-lift-bento { grid-template-columns: 1fr; }
+  .cgs-lift-bento__cell--wide { grid-column: span 1; }
+}
+
+/* --- Gallery: single-row Swiper carousel, not the shared .cgs-gallery__grid
+   masonry past-projects.php uses — uniform-aspect cards, no hover caption
+   text, arrow/swipe browsing instead of a scroll grid. Reuses the
+   data-gallery-swiper wiring already in cgs.js (built for this exact
+   pattern, previously unused in any page's markup) and the shared
+   .cgs-gallery-trigger lightbox binding from includes/scripts.php, so
+   clicking a slide still opens the full-size lightbox with gallery nav. */
+.cgs-lift-gallery__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 0 0 clamp(28px, 3.5vw, 40px);
+}
+.cgs-lift-gallery__intro { max-width: 62ch; margin: 0; }
+.cgs-lift-gallery__intro h2 {
+  margin: 0 0 12px;
+  font-size: clamp(26px, 3.2vw, 38px);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--cgs-navy-900);
+  text-wrap: balance;
+}
+.cgs-lift-gallery__intro p { margin: 0; font-size: 15.5px; line-height: 1.7; color: var(--cgs-slate); }
+
+.cgs-lift-gallery__arrows { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.cgs-lift-gallery__arrow {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  padding: 0;
+  border: 1.5px solid var(--cgs-line);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--cgs-navy-900);
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 200ms var(--ease-out),
+              border-color 200ms var(--ease-out),
+              color 200ms var(--ease-out),
+              transform 160ms var(--ease-out);
+}
+.cgs-lift-gallery__arrow:active { transform: scale(0.94); }
+.cgs-lift-gallery__arrow:disabled { opacity: .38; cursor: default; }
+@media (hover: hover) and (pointer: fine) {
+  .cgs-lift-gallery__arrow:not(:disabled):hover {
+    background: var(--cgs-navy-900);
+    border-color: var(--cgs-navy-900);
+    color: #fff;
+  }
+}
+
+.cgs-lift-gallery__swiper { overflow: hidden; }
+.cgs-lift-gallery__slide { width: 320px; }
+.cgs-lift-gallery__link {
+  display: block;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--cgs-radius);
+  overflow: hidden;
+  box-shadow: var(--cgs-shadow);
+}
+.cgs-lift-gallery__link img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 500ms var(--ease-out);
+}
+.cgs-lift-gallery__link:hover img,
+.cgs-lift-gallery__link:focus-visible img { transform: scale(1.05); }
+
+@media (max-width: 575.98px) {
+  .cgs-lift-gallery__head { flex-direction: column; align-items: flex-start; }
+  .cgs-lift-gallery__slide { width: 240px; }
+}

@@ -137,16 +137,69 @@ gear, contractual review — which is how it should be laid out on the page.
 
 ## Service page 3 — Chartering Tug & Barge
 
-**NOT SUPPLIED.** Only the one-line description from the Project Freight
-Forwarding email exists ("Useful for remote job sites or shallow waters lacking
-deep-water port infrastructure"), plus the barge/LCT material in service page 2,
-which overlaps but belongs to that page. Request dedicated copy and photos.
+Supplied verbatim by the client (email: *"webpage -3rd email on Tug and Barge
+charter"*).
+
+### Ballastable Tug and Barge versus Self-Propelled Barge
+
+> Choosing the right maritime transport solution is a critical decision that
+> impacts project safety, budget, and timelines. The choice between a
+> ballastable barge, a standard tug-and-barge configuration, or a self-propelled
+> vessel depends entirely on your cargo profile and operational risks.
+
+### Four Core Pillars We Evaluate
+
+- **Deck Strength** — High-tonnage cargo requires reinforced deck load capacities (t/m²) to prevent structural warping.
+- **Cargo Dimensions** — Total footprint, height, and center of gravity dictate the required beam width and stability calculations.
+- **Travel Distance** — Longer open-ocean transits often justify the speed of self-propelled vessels, while shorter regional routes favor traditional towing.
+- **Operational Risk** — Environmental factors, narrow channels, and tight port windows require precise maneuvering capabilities.
+
+### Proven Track Record: Regional Logistics Expertise
+
+> CGS delivers tailored chartering solutions across Southeast Asia, managing
+> complex industrial cargo movements through versatile operating methodologies:
+
+- **Heavy Lift Pipe Transits (Batam to Kuching)** — We manage international cross-border charters executing precise Lift-On/Lift-Off (Lo-Lo) operations. Our engineered seafastening plans ensure high-volume, heavy-lift pipe stacks remain completely stable across changing regional sea conditions.
+- **Domestic Roll-On/Roll-Off (Ro-Ro) Charters** — We bridge the gap between heavy fabrication yards and private jetties using specialized Roll-On/Roll-Off (Ro-Ro) barges. Internal ballasting systems balance the vessel continuously, matching the dock height exactly as heavy modular cargo rolls onboard.
+- **Strategic Port Interconnection** — Our charter fleet seamlessly links key maritime hubs, transferring critical cargo directly from the PSA Container Terminal and Jurong Port.
+- **Direct Underhook Transfers** — For ultra-heavy or oversized components, we position barges directly alongside deep-sea heavy lift vessels. This allows for immediate underhook transfers in open port waters, cutting out extra handling steps and minimizing cargo risk.
+
+**Note:** the client says a YouTube video can go on this page ("try to mute
+sound") — no link supplied yet, request it.
+
+---
 
 ## Service page 4 — Roll On / Roll Off
 
-**NOT SUPPLIED.** Only the Mafi Trailers line from the Project Freight Forwarding
-email. Request dedicated copy; the client has RoRo photography in the breakbulk
-image sets that can be re-tagged.
+Supplied verbatim by the client (email: *"webpage -4th email Roll on-Roll
+off"*). Client's own note on this email: *"you can segregate pages as per
+written on the wapp. Let me know once you design website, i will identify pics
+on each page as roro, breakbulk, or tug and barge etc."* — the client will
+help re-tag photography once the pages exist; not page copy itself.
+
+### Roll-On/Roll-Off (RoRo) Operations
+
+> Roll-on/Roll-off (RoRo) operations, a Mafi trailer (or roll trailer) acts as a
+> heavy-duty wheeled platform used to load non-motorized, static, or oversized
+> cargo. A terminal tractor (tugmaster) hooks up to the Mafi using a gooseneck
+> pin, rolls the cargo up the vessel ramp, parks it inside the deck, and
+> unhooks it for secure ocean transit. Eg Modular trailers using king pin size
+> to tow using tow tug instead of using power pack unit.
+
+### Cargo Types Loaded on Mafi Trailers
+
+- **Heavy Industrial Machines** — Transformers, generators, and large boilers.
+- **Construction and Mining Equipment** — Equipment that lacks wheels or cannot be safely driven.
+- **Steel Structures** — Steel plates, wire rope reels.
+- **Large Crated Goods** — Boats, and rail components.
+
+### Step-by-Step Loading Process
+
+1. **Pre-Staging** — The cargo is placed onto the Mafi platform at the terminal yard using heavy cranes or forklifts.
+2. **Securing (Lashing)** — Workers lash, chain, and block the cargo tightly to the Mafi deck so it cannot shift under motion.
+3. **Towing** — A terminal tractor attaches a gooseneck attachment to the front of the Mafi trailer.
+4. **Rolling On** — The tractor reverses or pulls the Mafi up the ship's stern or side ramp directly into the garage decks.
+5. **Parking and Disconnection** — The unit is parked into its designated stowage slot, unhooked from the tractor, and lashed to the ship's deck fittings for the voyage.
 
 ## Service page 5 — Air Freight
 
