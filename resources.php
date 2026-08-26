@@ -23,21 +23,27 @@
 |                             just the real scanned certificate image — opens
 |                             the actual PDF in the existing Magnific Popup
 |                             lightbox.
-|   Cargo Measurement      -> asymmetric split, prose left (led by a real
-|                             yard photo) / formula reference card right
-|                             (client supplied this copy verbatim, in-line
-|                             in the email body).
-|   Shipping Essentials    -> a "big tabs" module — Incoterms, Freight
-|                             Service Liability Insurance vs Cargo
-|                             Insurance, Chargeable Weight Calculation —
-|                             beside a real cargo photo, on a dot-grid
-|                             decorated section. The client asked for the
-|                             tabs explicitly: "I want to show big tabs such
-|                             as Incoterms... and third tab chargeable
-|                             weight calculation." Copy is original (client:
-|                             "we do not want to copy but i need you to
-|                             re write"), grounded in the three reference
-|                             links she sent, not reproduced from them.
+|   Cargo Measurement      -> rebuilt 2026-08-25 as an "instrument panel":
+|                             an isometric crate diagram whose L/W/H edges
+|                             draw themselves in on scroll and resolve into
+|                             the CBM formula, beside the existing admin
+|                             prose and a split-flap freight-ton converter
+|                             (Gross Weight Ton <-> Metric Weight Ton).
+|   Shipping Essentials    -> rebuilt 2026-08-25 as an expanding "manifest"
+|                             of three leaves (client's original "big tabs"
+|                             instruction, now literal cargo-tag leaves that
+|                             fan open) — Incoterms as a flip-card grid,
+|                             Liability vs Cargo Insurance as a VS split,
+|                             Chargeable Weight as a live L/W/H calculator.
+|                             $incotermsAnyMode / $incotermsSeaMode /
+|                             the VS bullets below are the same
+|                             resources.content facts already in the
+|                             database (see database/schema.sql, ids 1/2/3/6),
+|                             restructured for the new visual — not new
+|                             claims. Any future topic added from the admin
+|                             that isn't one of these three known slugs
+|                             still renders, as a plain prose leaf, so the
+|                             section never silently drops content.
 |   Terms & Conditions     -> a document grid (General T&Cs, Code of
 |                             Conduct, Alcohol & Drug Policy, Environmental
 |                             Policy Statement) — all four PDFs arrived
@@ -72,30 +78,44 @@ $certificateRows = db_all(
     "SELECT * FROM certificates WHERE status = 'active' ORDER BY sort_order ASC, id ASC"
 );
 
-/* Icon per Shipping Essentials slug — all three confirmed present in the
-   self-hosted FontAwesome build (assets/css/plugins/fontawesome.css). */
-$tabIcons = [
+/* Icon + flip-grid data for the three known Shipping Essentials leaves —
+   all three FontAwesome icons confirmed present in the self-hosted build
+   (assets/css/plugins/fontawesome.css). The Incoterms rows are the same
+   eleven terms as the resources.content table for id 2 (see
+   database/schema.sql), split into the same "any mode" / "sea only"
+   grouping the client's own copy describes, just rendered as flip cards
+   instead of a plain <table>. */
+$knownLeafIcons = [
     'incoterms'                          => 'fa-scale-balanced',
     'liability-versus-cargo-insurance'   => 'fa-shield-halved',
     'chargeable-weight-calculation'      => 'fa-weight-hanging',
 ];
-
-/* One real photo per tab (already vetted, captioned real client photography
-   reused from index.php's gallery arrays — none repeated from the
-   Certificates or Cargo Measurement sections above). */
-$tabMedia = [
-    'incoterms' => [
-        'src' => 'assets/img/gallery/ops-08.jpg', 'w' => 1600, 'h' => 900,
-        'alt' => 'MacGregor ship crane hoisting cargo over the water at a Singapore port',
-    ],
-    'liability-versus-cargo-insurance' => [
-        'src' => 'assets/img/gallery/ops-13.jpg', 'w' => 1080, 'h' => 809,
-        'alt' => "Wrapped process vessel lowered into a ship's cargo hold",
-    ],
-    'chargeable-weight-calculation' => [
-        'src' => 'assets/img/gallery/ops-14.jpg', 'w' => 2048, 'h' => 1152,
-        'alt' => 'Winch and crane equipment secured on a vessel deck alongside shipping containers',
-    ],
+/* Short label for the collapsed (vertical-text) tab state — the full
+   title still shows once a leaf is open. "Freight Service Liability
+   Insurance versus Cargo Insurance" set in vertical text needs real
+   height to read without truncating, and since the row's height tracks
+   whichever leaf content is tallest (see .cgs-manifest in cgs.css), a
+   long collapsed title was quietly becoming that tallest thing instead
+   of the actually-open panel's content. */
+$knownLeafShortTitles = [
+    'incoterms'                          => 'Incoterms',
+    'liability-versus-cargo-insurance'   => 'Insurance',
+    'chargeable-weight-calculation'      => 'Chargeable Weight',
+];
+$incotermsAnyMode = [
+    ['EXW', 'Ex Works', "At the seller's premises, before loading"],
+    ['FCA', 'Free Carrier', "Once goods are handed to the buyer's carrier"],
+    ['CPT', 'Carriage Paid To', 'At the first carrier, though seller pays freight to destination'],
+    ['CIP', 'Carriage and Insurance Paid To', 'At the first carrier; seller also insures to destination'],
+    ['DAP', 'Delivered at Place', 'On arrival, ready for unloading'],
+    ['DPU', 'Delivered at Place Unloaded', 'On arrival, after unloading'],
+    ['DDP', 'Delivered Duty Paid', 'On arrival, duty and taxes cleared by seller'],
+];
+$incotermsSeaMode = [
+    ['FAS', 'Free Alongside Ship', 'Once goods are placed alongside the vessel'],
+    ['FOB', 'Free on Board', 'Once goods are loaded onto the vessel'],
+    ['CFR', 'Cost and Freight', 'Once loaded, though seller pays freight to destination port'],
+    ['CIF', 'Cost, Insurance and Freight', 'Once loaded; seller also insures to destination port'],
 ];
 
 require __DIR__ . '/includes/head.php';
@@ -159,44 +179,60 @@ require __DIR__ . '/includes/header.php';
   <?php endif; ?>
 
   <!-- 3 ── CARGO MEASUREMENT: CBM & FREIGHT TON ─────────────
-       Asymmetric split (prose / reference card), led by a real yard photo,
-       not a third instance of the tab or grid pattern used below it. -->
+       Redesigned 2026-08-25 (instrument panel), then again on request to
+       drop the crate diagram: a stacked reading layout instead — full-
+       width intro, "What is CBM" and "Understanding Freight Ton" side by
+       side, then a full-width "How CBM and Freight Ton Work Together"
+       with the split-flap freight-ton converter under it. The admin copy
+       is still one content blob (three <h3> sections after an intro
+       paragraph); it's split on those <h3> boundaries below so each part
+       can be placed, rather than turning it into three separate DB rows —
+       this is bespoke placement of one fixed piece of copy, the same
+       precedent as the Incoterms/Insurance/Chargeable Weight slugs below. -->
   <?php if ($cargoMeasurement): ?>
-  <section class="cgs-section" id="cargo-measurement" aria-labelledby="cargo-measurement-heading">
+  <?php
+    $cbmChunks = preg_split('/(?=<h3>)/', $cargoMeasurement['content']);
+    $cbmIntro  = trim(array_shift($cbmChunks));
+  ?>
+  <section class="cgs-section cgs-section--dark" id="cargo-measurement" aria-labelledby="cargo-measurement-heading">
     <div class="container-fluid px-4">
-      <div class="cgs-measure">
+      <div class="cgs-cbm">
 
-        <div data-reveal>
+        <div class="cgs-cbm__intro" data-reveal>
           <h2 id="cargo-measurement-heading">CBM and Freight Ton</h2>
-          <div class="cgs-prose">
-            <?php echo $cargoMeasurement['content']; ?>
-          </div>
+          <?php if ($cbmIntro !== ''): ?>
+          <div class="cgs-prose"><?php echo $cbmIntro; ?></div>
+          <?php endif; ?>
         </div>
 
-        <div class="cgs-measure__col">
-          <figure class="cgs-measure__media" data-reveal style="--reveal-delay: 80ms">
-            <img src="<?php echo url('assets/img/gallery/ops-07.jpg'); ?>"
-                 width="2048" height="1152" loading="lazy"
-                 alt="Carriage Global trailer loaded with a large cable reel and crated cargo at a yard">
-          </figure>
+        <?php if ($cbmChunks): ?>
+        <div class="cgs-cbm__split">
+          <?php if (isset($cbmChunks[0])): ?>
+          <div class="cgs-prose" data-reveal><?php echo $cbmChunks[0]; ?></div>
+          <?php endif; ?>
+          <?php if (isset($cbmChunks[1])): ?>
+          <div class="cgs-prose" data-reveal style="--reveal-delay: 100ms"><?php echo $cbmChunks[1]; ?></div>
+          <?php endif; ?>
+        </div>
+        <?php endif; ?>
 
-          <aside class="cgs-measure__ref" data-reveal style="--reveal-delay: 120ms">
-            <p class="cgs-measure__ref-label">Quick Reference</p>
-            <dl class="cgs-measure__ref-list">
-              <div>
-                <dt>CBM (Cubic Meter)</dt>
-                <dd>Length &times; Width &times; Height (m)</dd>
-              </div>
-              <div>
-                <dt>Gross Weight Ton (Short Ton)</dt>
-                <dd>Weight (lbs) &divide; 2,000</dd>
-              </div>
-              <div>
-                <dt>Metric Weight Ton</dt>
-                <dd>Weight (kg) &divide; 1,000</dd>
-              </div>
-            </dl>
-          </aside>
+        <div class="cgs-cbm__together" data-reveal>
+          <?php if (isset($cbmChunks[2])): ?>
+          <div class="cgs-prose"><?php echo $cbmChunks[2]; ?></div>
+          <?php endif; ?>
+
+          <div class="cgs-converter">
+            <div class="cgs-converter__label">Freight ton converter</div>
+            <div class="cgs-switch" role="group" aria-label="Choose ton convention">
+              <button type="button" class="is-active" data-ton="short">Gross Weight Ton (US)</button>
+              <button type="button" data-ton="metric">Metric Weight Ton</button>
+            </div>
+            <div class="cgs-converter__readout">
+              <div class="cgs-flapboard" id="tonFlap" aria-live="polite"></div>
+              <div class="cgs-converter__unit"><b id="tonUnitLabel">short tons</b><span id="tonSubLabel">2,000 lb per ton</span></div>
+            </div>
+            <div class="cgs-converter__formula" id="tonFormula"><b>Gross Weight Ton</b> = 5,000 lb &divide; 2,000</div>
+          </div>
         </div>
 
       </div>
@@ -204,54 +240,139 @@ require __DIR__ . '/includes/header.php';
   </section>
   <?php endif; ?>
 
-  <!-- 4 ── SHIPPING ESSENTIALS: BIG TABS ─────────────────────
-       Client's own instruction, verbatim: "I want to show big tabs such as
-       Incoterms... and third tab chargeable weight calculation." Tabs are
-       centered, and each panel leads with its own real photo, so the
-       module doesn't read as a bare text block. -->
+  <!-- 4 ── SHIPPING ESSENTIALS: MANIFEST ─────────────────────
+       Redesigned 2026-08-25: the client's original "big tabs" instruction
+       ("I want to show big tabs such as Incoterms... and third tab
+       chargeable weight calculation") now literal cargo-tag leaves that
+       fan open one at a time instead of a top tab row + panel underneath.
+       Section background switched to plain white (was cgs-section--tint
+       + the dot-grid cgs-shipping-decor backdrop) — the manifest's own
+       navy/white leaves already carry enough contrast on their own; the
+       dot-grid under that reads busy stacked on top of it. -->
   <?php if ($shippingEssentials): ?>
-  <section class="cgs-section cgs-section--tint cgs-shipping-decor" id="shipping-essentials" aria-labelledby="shipping-essentials-heading">
+  <section class="cgs-section" id="shipping-essentials" aria-labelledby="shipping-essentials-heading">
     <div class="container-fluid px-4">
       <h2 id="shipping-essentials-heading" data-reveal>Incoterms, Insurance and Chargeable Weight</h2>
 
-      <div data-cgs-tabs data-reveal style="--reveal-delay: 80ms">
-        <div class="cgs-tabs__list" role="tablist" aria-label="Shipping essentials">
-          <?php foreach ($shippingEssentials as $t => $topic): ?>
-          <button type="button"
-                  class="cgs-tabs__btn <?php echo $t === 0 ? 'is-active' : ''; ?>"
-                  role="tab"
-                  id="tab-<?php echo e($topic['slug']); ?>"
-                  aria-controls="panel-<?php echo e($topic['slug']); ?>"
-                  aria-selected="<?php echo $t === 0 ? 'true' : 'false'; ?>"
-                  tabindex="<?php echo $t === 0 ? '0' : '-1'; ?>"
-                  data-cgs-tab>
-            <i class="fa-solid <?php echo e($tabIcons[$topic['slug']] ?? 'fa-file-lines'); ?>" aria-hidden="true"></i>
-            <?php echo e($topic['title']); ?>
+      <div class="cgs-manifest" data-reveal style="--reveal-delay: 80ms" id="manifest">
+        <?php foreach ($shippingEssentials as $t => $topic): ?>
+        <div class="cgs-leaf<?php echo $t === 0 ? ' is-active' : ''; ?>" data-leaf="<?php echo e($topic['slug']); ?>">
+          <button class="cgs-leaf__tab" aria-expanded="<?php echo $t === 0 ? 'true' : 'false'; ?>" aria-controls="leaf-<?php echo e($topic['slug']); ?>">
+            <span class="cgs-leaf__icon" aria-hidden="true"><i class="fa-solid <?php echo e($knownLeafIcons[$topic['slug']] ?? 'fa-file-lines'); ?>"></i></span>
+            <span class="cgs-leaf__title"><?php echo e($topic['title']); ?></span>
+            <span class="cgs-leaf__title-short"><?php echo e($knownLeafShortTitles[$topic['slug']] ?? $topic['title']); ?></span>
           </button>
-          <?php endforeach; ?>
-        </div>
+          <div class="cgs-leaf__body" id="leaf-<?php echo e($topic['slug']); ?>">
+            <div class="cgs-leaf__body-inner">
 
-        <div class="cgs-tabs__panels">
-          <?php foreach ($shippingEssentials as $t => $topic): ?>
-          <div class="cgs-tabs__panel <?php echo $t === 0 ? 'is-active' : ''; ?>"
-               role="tabpanel"
-               id="panel-<?php echo e($topic['slug']); ?>"
-               aria-labelledby="tab-<?php echo e($topic['slug']); ?>"
-               data-cgs-panel>
-            <?php $media = $tabMedia[$topic['slug']] ?? null; ?>
-            <?php if ($media): ?>
-            <figure class="cgs-tabs__media">
-              <img src="<?php echo url($media['src']); ?>"
-                   width="<?php echo (int) $media['w']; ?>" height="<?php echo (int) $media['h']; ?>"
-                   loading="lazy" alt="<?php echo e($media['alt']); ?>">
-            </figure>
-            <?php endif; ?>
-            <div class="cgs-prose">
-              <?php echo $topic['content']; ?>
+              <?php if ($topic['slug'] === 'incoterms'): ?>
+              <p class="cgs-leaf__intro">Eleven standardized trade terms defining exactly where the seller&rsquo;s responsibility for cost, risk and delivery ends and the buyer&rsquo;s begins.</p>
+
+              <div class="cgs-iterm-group">
+                <p class="cgs-iterm-group__label"><i class="fa-solid fa-truck" aria-hidden="true"></i> Any mode of transport</p>
+                <div class="cgs-iterm-grid">
+                  <?php foreach ($incotermsAnyMode as $term): ?>
+                  <div class="cgs-iterm-card">
+                    <span class="cgs-iterm-code"><?php echo e($term[0]); ?></span>
+                    <span class="cgs-iterm-name"><?php echo e($term[1]); ?></span>
+                    <span class="cgs-iterm-risk"><?php echo e($term[2]); ?></span>
+                  </div>
+                  <?php endforeach; ?>
+                </div>
+              </div>
+              <div class="cgs-iterm-group">
+                <p class="cgs-iterm-group__label"><i class="fa-solid fa-ship" aria-hidden="true"></i> Sea &amp; inland waterway only</p>
+                <div class="cgs-iterm-grid">
+                  <?php foreach ($incotermsSeaMode as $term): ?>
+                  <div class="cgs-iterm-card">
+                    <span class="cgs-iterm-code"><?php echo e($term[0]); ?></span>
+                    <span class="cgs-iterm-name"><?php echo e($term[1]); ?></span>
+                    <span class="cgs-iterm-risk"><?php echo e($term[2]); ?></span>
+                  </div>
+                  <?php endforeach; ?>
+                </div>
+              </div>
+
+              <?php elseif ($topic['slug'] === 'liability-versus-cargo-insurance'): ?>
+              <p class="cgs-leaf__intro">These two covers are often confused, but they protect different things and different parties — one is the carrier&rsquo;s own capped liability, the other is a policy you arrange yourself for the goods.</p>
+              <div class="cgs-vs-split">
+                <div class="cgs-vs-badge">VS</div>
+                <div class="cgs-vs-side cgs-vs-side--a">
+                  <div class="cgs-vs-icon"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></div>
+                  <h4>Freight Service Liability Insurance</h4>
+                  <ul>
+                    <li><i class="fa-solid fa-check" aria-hidden="true"></i> Covers the carrier&rsquo;s own, legally limited liability</li>
+                    <li><i class="fa-solid fa-check" aria-hidden="true"></i> Applies only to loss or damage while cargo is in the carrier&rsquo;s care</li>
+                    <li><i class="fa-solid fa-check" aria-hidden="true"></i> Capped by weight or a fixed sum per package</li>
+                    <li><i class="fa-solid fa-check" aria-hidden="true"></i> Set by convention — Hague-Visby (sea), CMR (road)</li>
+                    <li><i class="fa-solid fa-check" aria-hidden="true"></i> The cap is fixed by that convention, not by what the cargo is actually worth</li>
+                  </ul>
+                </div>
+                <div class="cgs-vs-side cgs-vs-side--b">
+                  <div class="cgs-vs-icon"><i class="fa-solid fa-box-archive" aria-hidden="true"></i></div>
+                  <h4>Cargo Insurance</h4>
+                  <ul>
+                    <li><i class="fa-solid fa-check" aria-hidden="true"></i> Also called marine cargo insurance</li>
+                    <li><i class="fa-solid fa-check" aria-hidden="true"></i> A separate policy the cargo owner takes out, not the carrier</li>
+                    <li><i class="fa-solid fa-check" aria-hidden="true"></i> Covers the full declared value, not a capped amount</li>
+                    <li><i class="fa-solid fa-check" aria-hidden="true"></i> Includes risks the carrier isn&rsquo;t liable for at all — piracy, general average</li>
+                    <li><i class="fa-solid fa-check" aria-hidden="true"></i> Also covers damage from circumstances outside the carrier&rsquo;s control</li>
+                  </ul>
+                </div>
+                <div class="cgs-vs-note">For high-value or project cargo, a carrier&rsquo;s liability cover alone almost always leaves a gap between what the cargo is worth and what they&rsquo;re obligated to pay out. Arranging your own cargo insurance closes that gap.</div>
+              </div>
+
+              <?php elseif ($topic['slug'] === 'chargeable-weight-calculation'): ?>
+              <p class="cgs-leaf__intro">Air freight is charged on whichever is greater: actual weight, or volumetric weight. Drag the crate&rsquo;s dimensions and see which one wins.</p>
+
+              <div class="cgs-calc-grid">
+                <div>
+                  <div class="cgs-slider-row">
+                    <div class="cgs-slider-row__label"><span>Length</span><b id="valL">120</b><span class="cgs-slider-row__u"> cm</span></div>
+                    <input type="range" id="sliderL" min="60" max="200" value="120">
+                  </div>
+                  <div class="cgs-slider-row">
+                    <div class="cgs-slider-row__label"><span>Width</span><b id="valW">80</b><span class="cgs-slider-row__u"> cm</span></div>
+                    <input type="range" id="sliderW" min="40" max="150" value="80">
+                  </div>
+                  <div class="cgs-slider-row">
+                    <div class="cgs-slider-row__label"><span>Height</span><b id="valH">100</b><span class="cgs-slider-row__u"> cm</span></div>
+                    <input type="range" id="sliderH" min="50" max="160" value="100">
+                  </div>
+                  <div class="cgs-slider-row">
+                    <div class="cgs-slider-row__label"><span>Actual weight</span><b id="valWt">150</b><span class="cgs-slider-row__u"> kg</span></div>
+                    <input type="range" id="sliderWt" min="50" max="300" value="150">
+                  </div>
+                  <p class="cgs-calc-note">Volumetric weight = (L &times; W &times; H) &divide; 6,000</p>
+                </div>
+
+                <div class="cgs-race">
+                  <div>
+                    <div class="cgs-race-row__head">
+                      <span class="cgs-race-row__name">Actual weight</span>
+                      <span class="cgs-race-row__val"><span class="cgs-chargeable-pill" id="pillActual">Chargeable</span> <span class="cgs-race-num" id="numActual">150.0 kg</span></span>
+                    </div>
+                    <div class="cgs-race-track"><div class="cgs-race-fill" id="barActual"></div></div>
+                  </div>
+                  <div>
+                    <div class="cgs-race-row__head">
+                      <span class="cgs-race-row__name">Volumetric weight</span>
+                      <span class="cgs-race-row__val"><span class="cgs-chargeable-pill" id="pillVol">Chargeable</span> <span class="cgs-race-num" id="numVol">160.0 kg</span></span>
+                    </div>
+                    <div class="cgs-race-track"><div class="cgs-race-fill" id="barVol"></div></div>
+                  </div>
+                </div>
+              </div>
+
+              <?php else: ?>
+              <h3><?php echo e($topic['title']); ?></h3>
+              <div class="cgs-prose"><?php echo $topic['content']; ?></div>
+              <?php endif; ?>
+
             </div>
           </div>
-          <?php endforeach; ?>
         </div>
+        <?php endforeach; ?>
       </div>
     </div>
   </section>

@@ -52,11 +52,9 @@
   --cgs-success:   #1E9E6A;
   --cgs-danger:    #D64550;
 
-  /* Type — Plus Jakarta Sans, as the Roofer build uses */
+  /* Type — Plus Jakarta Sans, as the Roofer build uses. One family, used
+     everywhere on the site — no secondary/mono face. */
   --cgs-font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  /* Instrument-panel chrome only (cgs-waypoint's coordinate-style labels) —
-     never body copy or headings, which stay on --cgs-font. */
-  --cgs-font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
 
   /* Easing. The built-in CSS keywords are too weak to read as intentional;
      these are the stronger variants. ease-in is deliberately absent: it
@@ -1886,6 +1884,25 @@ html.js [data-services-stage]:not(.swiper-initialized) [data-service-slide].is-a
   height: 62px;
   margin-bottom: 4px;
 }
+/* "15+ Years as a WCA Project member" cell: the WCA Projects mark sits
+   inline next to the number instead of replacing it (client, 2026-08-26:
+   "paste this as well" alongside the ISO/bizSAFE logos) — a standalone
+   5th grid cell left one item orphaned on its own row in this 2-column
+   grid, and the "15+" fact is still worth keeping next to the mark. */
+.cgs-story__stat-combo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.cgs-story__stat-combo strong {
+  margin-bottom: 0;
+}
+.cgs-story__stat-mark {
+  height: 34px;
+  width: auto;
+  object-fit: contain;
+}
 .cgs-story__stat span {
   font-size: 13.5px;
   line-height: 1.45;
@@ -1908,6 +1925,7 @@ html.js [data-services-stage]:not(.swiper-initialized) [data-service-slide].is-a
      line at a time — value/logo and caption both center under each other. */
   .cgs-story__stat { text-align: center; }
   .cgs-story__stat-logo { margin-left: auto; margin-right: auto; object-position: center; }
+  .cgs-story__stat-combo { justify-content: center; }
 }
 
 /* --- Mission & Vision -------------------------------------------------------
@@ -2040,7 +2058,7 @@ html.js [data-services-stage]:not(.swiper-initialized) [data-service-slide].is-a
   gap: 9px;
   margin: 0 0 18px;
   padding: 7px 16px;
-  font-family: var(--cgs-font-mono);
+  font-family: var(--cgs-font);
   font-size: 12px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -2080,7 +2098,7 @@ html.js [data-services-stage]:not(.swiper-initialized) [data-service-slide].is-a
   align-items: center;
   gap: 9px;
   margin: 0 0 22px;
-  font-family: var(--cgs-font-mono);
+  font-family: var(--cgs-font);
   font-size: 11.5px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -3036,7 +3054,7 @@ main:has(> .cgs-cta:last-child) + .cgs-footer { padding-top: var(--cgs-cta-overl
   display: block;
   border-radius: var(--cgs-radius);
   overflow: hidden;
-  box-shadow: var(--cgs-shadow);
+  /* box-shadow: var(--cgs-shadow); */
   transition: transform .25s ease, box-shadow .25s ease;
 }
 .cgs-cert-card:hover,
@@ -3048,7 +3066,7 @@ main:has(> .cgs-cta:last-child) + .cgs-footer { padding-top: var(--cgs-cta-overl
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 3 / 4;
+  /* aspect-ratio: 3 / 4; */
   object-fit: cover;
 }
 
@@ -3147,193 +3165,382 @@ main:has(> .cgs-cta:last-child) + .cgs-footer { padding-top: var(--cgs-cta-overl
   }
 }
 
-/* --- Cargo Measurement: asymmetric split, prose left / formula card right */
-.cgs-measure {
-  display: grid;
-  grid-template-columns: 7fr 5fr;
-  gap: clamp(32px, 5vw, 72px);
-  align-items: start;
-}
-.cgs-measure__ref {
-  position: sticky;
-  top: calc(var(--cgs-header-h, 80px) + 24px);
-  padding: clamp(24px, 3vw, 32px);
-  border-radius: var(--cgs-radius);
-  background: var(--cgs-navy-900);
-  color: #fff;
-  box-shadow: var(--cgs-shadow);
-}
-.cgs-measure__ref-label {
-  margin: 0 0 18px;
-  font-size: 12.5px;
-  font-weight: 700;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: var(--cgs-cyan-300);
-}
-.cgs-measure__ref-list { margin: 0; padding: 0; }
-.cgs-measure__ref-list > div {
-  padding: 14px 0;
-  border-top: 1px solid rgba(255, 255, 255, .14);
-}
-.cgs-measure__ref-list > div:first-child { border-top: none; padding-top: 0; }
-.cgs-measure__ref-list dt {
-  font-size: 12.5px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, .64);
-}
-.cgs-measure__ref-list dd {
-  margin: 4px 0 0;
-  font-family: var(--cgs-font-mono);
-  font-size: 14.5px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: #fff;
-}
-@media (max-width: 991.98px) {
-  .cgs-measure { grid-template-columns: 1fr; }
-  .cgs-measure__ref { position: static; }
-}
-
-/* Right column: a real photo above the sticky reference card, not inside
-   it — the photo scrolls away normally, then the navy card picks up the
-   sticky hand-off, so the "follows you down the page" motion stays
-   visible instead of both elements pinning at once. Needs its own
-   align-self: stretch — .cgs-measure sets align-items: start for the grid
-   row itself, and without stretch this wrapper (not the sticky card
-   directly, now that it's nested inside one) would only be as tall as its
-   own short content, leaving the sticky child no room to travel and stay
-   pinned against the long prose column beside it. */
-.cgs-measure__col {
+/* --- Cargo Measurement: stacked reading layout + ton converter -----------
+   Redesigned 2026-08-25 (replacing the crate-diagram instrument panel):
+   full-width intro, then "What is CBM" and "Understanding Freight Ton"
+   side by side, then "How CBM and Freight Ton Work Together" beside the
+   split-flap ("departure board") freight-ton converter, same two-column
+   pattern as the row above it. resources.php splits the one admin-
+   editable content blob on its <h3> boundaries to place each part — see
+   the $cbmIntro/$cbmChunks comment there. */
+.cgs-cbm {
   display: flex;
   flex-direction: column;
-  align-self: stretch;
-  gap: 20px;
+  gap: clamp(32px, 4vw, 48px);
+}
+.cgs-cbm__intro h2 { margin: 0 0 16px; }
+.cgs-cbm__intro .cgs-prose,
+.cgs-cbm__together > .cgs-prose { max-width: none; }
+.cgs-cbm__split {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(28px, 4vw, 56px);
+}
+.cgs-cbm__split::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: rgba(255, 255, 255, .16);
+}
+@media (max-width: 760px) {
+  .cgs-cbm__split { grid-template-columns: 1fr; gap: 32px; }
+  .cgs-cbm__split::before { display: none; }
+}
+.cgs-cbm__together {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(28px, 4vw, 56px);
+  align-items: stretch;
+}
+@media (max-width: 760px) {
+  .cgs-cbm__together { grid-template-columns: 1fr; gap: 24px; }
+}
+.cgs-cbm__together .cgs-converter {
+  max-width: none;
+  height: 100%;
+  margin-top: 0;
+  padding: clamp(24px, 3vw, 34px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
 }
 
-/* Real yard photography, the same trailer/cargo shot already captioned in
-   index.php's $galleryShots. Styled like the homepage's Our Story photos
-   (.cgs-story__media: shadow instead of a hairline border, a tinted
-   fallback behind the crop, 4:3 not a full 16:9 strip). */
-.cgs-measure__media {
+/* #cargo-measurement runs .cgs-section--dark — .cgs-prose is shared with
+   the plain-white Shipping Essentials fallback leaf below, so its base
+   colours stay light-mode and get overridden here, scoped to this section
+   only, rather than changed globally. */
+#cargo-measurement .cgs-prose { color: rgba(255, 255, 255, .74); }
+#cargo-measurement .cgs-prose h3,
+#cargo-measurement .cgs-prose strong { color: #fff; }
+
+.cgs-converter {
+  margin-top: 26px;
+  background: rgba(255, 255, 255, .05);
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: var(--cgs-radius);
+  padding: clamp(18px, 2.4vw, 22px);
+}
+.cgs-converter__label {
+  font-family: var(--cgs-font);
+  font-size: 11px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .5);
+  margin-bottom: 12px;
+}
+.cgs-switch { display: inline-flex; padding: 3px; background: rgba(255, 255, 255, .08); border-radius: var(--cgs-radius); gap: 2px; }
+.cgs-switch button {
+  border: 0;
+  background: transparent;
+  padding: 9px 15px;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, .65);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background .25s var(--ease-out), color .25s var(--ease-out);
+}
+.cgs-switch button.is-active { background: var(--cgs-cyan-400); color: var(--cgs-navy-900); }
+
+.cgs-converter__readout { margin-top: 18px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.cgs-flapboard { display: inline-flex; gap: 5px; }
+.cgs-flap {
+  position: relative;
+  min-width: 1em;
+  padding: 9px 8px;
+  background: var(--cgs-navy-900);
+  border: 1px solid rgba(255, 255, 255, .15);
+  color: #EAF3FB;
+  border-radius: 4px;
+  font-family: var(--cgs-font);
+  font-size: clamp(22px, 2.6vw, 27px);
+  font-weight: 600;
+  text-align: center;
+  overflow: hidden;
+}
+.cgs-flap::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(0, 0, 0, .35); }
+.cgs-flap span { display: inline-block; }
+.cgs-flap.is-flipping span { animation: cgs-flapflip .26s ease; }
+@keyframes cgs-flapflip {
+  0%   { transform: scaleY(1);   opacity: 1; }
+  48%  { transform: scaleY(.12); opacity: .3; }
+  52%  { transform: scaleY(.12); opacity: .3; }
+  100% { transform: scaleY(1);   opacity: 1; }
+}
+.cgs-converter__unit { font-size: 13px; color: rgba(255, 255, 255, .6); }
+.cgs-converter__unit b { display: block; color: #fff; font-size: 14px; margin-bottom: 2px; }
+.cgs-converter__formula { margin-top: 12px; font-family: var(--cgs-font); font-size: 12px; color: rgba(255, 255, 255, .4); }
+.cgs-converter__formula b { color: rgba(255, 255, 255, .75); font-weight: 600; }
+
+/* --- Shipping Essentials: manifest (Incoterms / Insurance / Weight) -------
+   Redesigned 2026-08-25, replacing a top tab row + panel underneath. Three
+   cargo-tag "leaves" sit edge to edge; the active one expands, the other
+   two collapse to a 76px spine (icon + vertical title) you click to swap —
+   see cgs.js for the flex-basis toggle. No fixed height anywhere: the row
+   is display:flex with the browser's default align-items: stretch, so its
+   height always tracks whichever leaf is actually open instead of a
+   worst-case constant (this is also what keeps the Incoterms leaf, the
+   tallest of the three, from forcing the other two tall as well). */
+.cgs-manifest { display: flex; gap: 3px; align-items: stretch; }
+
+.cgs-leaf {
+  position: relative;
+  background: var(--cgs-surface);
+  border: 1px solid var(--cgs-line);
   border-radius: var(--cgs-radius);
   overflow: hidden;
-  background: var(--cgs-line);
-  box-shadow: var(--cgs-shadow);
-}
-.cgs-measure__media img {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-}
-
-/* --- "Big tabs": Incoterms / Insurance / Chargeable Weight ----------------
-   Client's own brief ("Fwd: CGS website 1", 2026-08-14): "I want to show
-   big tabs such as Incoterms, Freight service liability insurance versus
-   cargo insurance, and third tab chargeable weight calculation." Built as
-   a proper ARIA tablist (keyboard support in cgs.js), styled with the same
-   fill-on-active language as .cgs-btn rather than Bootstrap's default
-   nav-tabs underline, so "big" reads as true at both mouse and touch size. */
-.cgs-tabs__list {
+  flex: 0 0 72px;
+  transition: flex-basis .55s var(--ease-in-out);
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
-  margin: 0 0 28px;
-  padding: 0;
-  list-style: none;
+  flex-direction: column;
 }
-.cgs-tabs__btn {
-  display: inline-flex;
+.cgs-leaf.is-active { flex: 1 1 auto; background: #fff; }
+/* Collapsed leaves must not render their body at all, on any viewport —
+   left in flow (even narrowed to 72px) their real content (an 11-card
+   grid, wrapped paragraphs) still lays out at full natural height, which
+   flex's default align-items: stretch then imposes on the ACTIVE leaf too,
+   this is what was making the whole manifest scroll far taller than the
+   open panel's actual content. */
+.cgs-leaf:not(.is-active) .cgs-leaf__body { display: none; }
+
+.cgs-leaf__tab {
+  all: unset;
+  cursor: pointer;
+  display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px 24px;
-  border-radius: var(--cgs-radius);
-  border: 1.5px solid var(--cgs-line);
-  background: #fff;
-  color: var(--cgs-navy-900);
-  font-family: var(--cgs-font);
-  font-size: 15px;
+  padding: 16px;
+  color: var(--cgs-ink);
+}
+.cgs-leaf:not(.is-active) .cgs-leaf__tab {
+  flex-direction: column;
+  justify-content: flex-start;
+  text-align: center;
+  height: 100%;
+  padding-top: 20px;
+  gap: 12px;
+}
+.cgs-leaf__icon {
+  flex-shrink: 0;
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: var(--cgs-navy-900);
+  color: var(--cgs-cyan-300);
+  font-size: 13px;
+}
+.cgs-leaf__title { font-weight: 700; font-size: 15.5px; }
+.cgs-leaf__title-short {
+  display: none;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 12.5px;
   font-weight: 700;
-  letter-spacing: -0.01em;
-  cursor: pointer;
-  transition: border-color 180ms var(--ease-out), background-color 180ms var(--ease-out), color 180ms var(--ease-out), box-shadow 180ms var(--ease-out);
+  color: var(--cgs-slate);
 }
-.cgs-tabs__btn i {
-  display: grid;
-  place-items: center;
-  width: 22px;
-  font-size: 16px;
-  color: var(--cgs-cyan-400);
-  transition: color 180ms var(--ease-out);
+/* Collapsed: short vertical label only — the full title (which can run
+   long, e.g. "Freight Service Liability Insurance versus Cargo Insurance")
+   would otherwise need more height than the actually-open leaf's real
+   content, and since the row height tracks the tallest leaf, that long
+   collapsed title would quietly become the thing setting the row's height
+   instead of whatever's open. */
+.cgs-leaf:not(.is-active) .cgs-leaf__title { display: none; }
+.cgs-leaf:not(.is-active) .cgs-leaf__title-short { display: block; }
+.cgs-leaf.is-active .cgs-leaf__tab { border-bottom: 1px solid var(--cgs-line); }
+
+.cgs-leaf__body { padding: clamp(16px, 2.2vw, 26px); flex: 1; }
+.cgs-leaf__body-inner { opacity: 0; transform: translateY(10px); }
+.cgs-leaf.is-active .cgs-leaf__body-inner { animation: cgs-leaf-in .5s var(--ease-out) .12s forwards; }
+@keyframes cgs-leaf-in { to { opacity: 1; transform: translateY(0); } }
+.cgs-leaf__intro { font-size: 13.5px; color: var(--cgs-slate); line-height: 1.65; max-width: 66ch; margin: 0 0 12px; }
+
+/* Mobile: a real tab row (all three side by side), not the desktop
+   fan-of-columns — a rotated vertical title stacked three-high doesn't
+   work at phone width. `display: contents` on .cgs-leaf unwraps it so its
+   __tab and __body become direct flex children of .cgs-manifest; every
+   tab then gets `order: 0` and an equal third of the row, every body gets
+   `order: 1` and `flex-basis: 100%` so the one visible body (the other
+   two stay display:none) always falls onto its own full-width row right
+   below the tab strip, in normal document flow — no absolute positioning,
+   no JS involved. Because .cgs-leaf itself no longer paints a box, its
+   card chrome (background/border) moves onto __tab and __body directly. */
+@media (max-width: 860px) {
+  .cgs-manifest { flex-wrap: wrap; }
+  .cgs-leaf { display: contents; }
+
+  .cgs-leaf__tab {
+    order: 0;
+    flex: 1 1 0;
+    flex-direction: column !important;
+    align-items: center;
+    justify-content: center;
+    height: auto !important;
+    gap: 6px;
+    padding: 12px 6px;
+    text-align: center;
+    background: var(--cgs-surface);
+    border: 1px solid var(--cgs-line);
+    border-radius: var(--cgs-radius);
+  }
+  .cgs-leaf.is-active .cgs-leaf__tab {
+    background: var(--cgs-navy-900);
+    border-color: var(--cgs-navy-900);
+    border-bottom: none;
+    color: #fff;
+  }
+  .cgs-leaf__title,
+  .cgs-leaf__title-short { font-size: 11.5px; }
+  .cgs-leaf__title { display: none; }
+  .cgs-leaf__title-short {
+    display: block;
+    writing-mode: horizontal-tb;
+    transform: none;
+    color: inherit;
+  }
+
+  .cgs-leaf__body {
+    order: 1;
+    flex: 1 1 100%;
+    margin-top: 3px;
+    background: #fff;
+    border: 1px solid var(--cgs-line);
+    border-radius: var(--cgs-radius);
+  }
 }
-.cgs-tabs__btn:hover,
-.cgs-tabs__btn:focus-visible {
-  border-color: var(--cgs-cyan-400);
+
+/* Incoterms: static card grid instead of a <table>, grouped exactly as the
+   admin copy describes — "any mode" vs "sea and inland waterway only".
+   Each card shows the code, name and risk-transfer point together — no
+   click/flip needed to read it. */
+.cgs-iterm-group + .cgs-iterm-group { margin-top: 12px; }
+.cgs-iterm-group__label {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--cgs-muted); margin: 0 0 6px;
 }
-.cgs-tabs__btn.is-active {
-  border-color: var(--cgs-navy-900);
+.cgs-iterm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.cgs-iterm-card {
   background: var(--cgs-navy-900);
   color: #fff;
-  box-shadow: var(--cgs-shadow);
-}
-.cgs-tabs__btn.is-active i { color: var(--cgs-cyan-300); }
-
-.cgs-tabs__panel { display: none; }
-.cgs-tabs__panel.is-active {
-  display: block;
-  padding: clamp(28px, 3.5vw, 40px);
   border-radius: var(--cgs-radius);
-  background: var(--cgs-surface);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
-.cgs-tabs__panel .cgs-prose { max-width: none; }
+.cgs-iterm-code { font-size: 15px; font-weight: 700; letter-spacing: .01em; }
+.cgs-iterm-name { font-size: 10.5px; color: rgba(255, 255, 255, .55); }
+.cgs-iterm-risk { font-size: 10.5px; line-height: 1.35; color: rgba(255, 255, 255, .8); margin-top: 2px; }
 
-/* Each panel leads with its own photo, not one shared image beside the
-   whole module — a wide banner above the text, same framed-photo language
-   as .cgs-measure__media. */
-.cgs-tabs__media {
-  margin: 0 0 22px;
+/* Liability vs Cargo Insurance: a VS split instead of a paragraph. */
+.cgs-vs-split {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--cgs-line);
   border-radius: var(--cgs-radius);
   overflow: hidden;
+}
+.cgs-vs-side {
+  background: #fff;
+  padding: clamp(18px, 2.6vw, 24px);
+  opacity: 0;
+  transition: opacity .5s var(--ease-out), transform .5s var(--ease-out);
+}
+.cgs-vs-side--a { transform: translateX(-14px); }
+.cgs-vs-side--b { transform: translateX(14px); }
+.cgs-leaf.is-active .cgs-vs-side { opacity: 1; transform: translateX(0); }
+.cgs-leaf.is-active .cgs-vs-side--b { transition-delay: .12s; }
+.cgs-vs-side h4 { font-size: 15px; font-weight: 800; margin: 12px 0 10px; color: var(--cgs-ink); }
+.cgs-vs-side ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.cgs-vs-side li { display: flex; gap: 8px; font-size: 13px; color: var(--cgs-slate); line-height: 1.5; }
+.cgs-vs-side li i { flex-shrink: 0; margin-top: 3px; font-size: 11px; color: var(--cgs-cyan-400); }
+.cgs-vs-icon {
+  width: 30px; height: 30px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: var(--cgs-surface);
   border: 1px solid var(--cgs-line);
+  color: var(--cgs-blue-500);
+  font-size: 13px;
 }
-.cgs-tabs__media img {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 3 / 1;
-  object-fit: cover;
+.cgs-vs-badge {
+  position: absolute; left: 50%; top: 26px; transform: translateX(-50%);
+  width: 38px; height: 38px; border-radius: 50%;
+  background: var(--cgs-navy-900); color: #fff;
+  display: grid; place-items: center;
+  font-family: var(--cgs-font); font-size: 10.5px; font-weight: 600;
+  box-shadow: var(--cgs-shadow);
+  z-index: 1;
+}
+.cgs-vs-note { grid-column: 1 / -1; background: var(--cgs-surface); padding: 14px 20px; font-size: 12.5px; color: var(--cgs-slate); border-top: 1px solid var(--cgs-line); }
+@media (max-width: 620px) {
+  .cgs-vs-split { grid-template-columns: 1fr; }
+  .cgs-vs-side--a { order: 1; }
+  .cgs-vs-badge {
+    position: static;
+    order: 2;
+    justify-self: center;
+    margin: -19px 0;
+  }
+  .cgs-vs-side--b { order: 3; }
+  .cgs-vs-note { order: 4; }
 }
 
-@media (max-width: 767.98px) {
-  .cgs-tabs__btn { flex: 1 1 100%; justify-content: flex-start; }
-  .cgs-tabs__media img { aspect-ratio: 16 / 9; }
+/* Chargeable weight: live L/W/H sliders racing an actual-vs-volumetric bar. */
+.cgs-calc-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(22px, 3vw, 36px); align-items: start; }
+@media (max-width: 720px) { .cgs-calc-grid { grid-template-columns: 1fr; } }
+.cgs-slider-row { margin-bottom: 16px; }
+.cgs-slider-row:last-of-type { margin-bottom: 0; }
+.cgs-slider-row__label { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--cgs-slate); margin-bottom: 7px; }
+.cgs-slider-row__label b { font-family: var(--cgs-font); color: var(--cgs-ink); font-weight: 600; }
+.cgs-slider-row__u { font-family: var(--cgs-font); color: var(--cgs-muted); }
+.cgs-calc-note { margin: 14px 0 0; font-family: var(--cgs-font); font-size: 12px; color: var(--cgs-muted); }
+
+.cgs-manifest input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 4px; border-radius: 2px;
+  background: var(--cgs-line); outline: none; cursor: pointer;
+}
+.cgs-manifest input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+  background: var(--cgs-cyan-400); border: 3px solid var(--cgs-navy-900); cursor: grab;
+}
+.cgs-manifest input[type="range"]::-moz-range-thumb {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--cgs-cyan-400); border: 3px solid var(--cgs-navy-900); cursor: grab;
 }
 
-/* Section backdrop: same dot-grid + soft colour-field technique as
-   .cgs-video-band, scaled down and sitting on --cgs-surface instead of
-   white — decoration behind the tabs since each panel now carries its own
-   photo instead of one shared image beside the module. */
-.cgs-shipping-decor { position: relative; overflow: hidden; }
-.cgs-shipping-decor::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(var(--cgs-line) 1px, transparent 1px);
-  background-size: 26px 26px;
-  opacity: .7;
-  pointer-events: none;
+.cgs-race { display: flex; flex-direction: column; gap: 14px; }
+.cgs-race-row__head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.cgs-race-row__name { font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--cgs-muted); font-family: var(--cgs-font); }
+.cgs-race-row__val { display: flex; align-items: center; gap: 8px; }
+.cgs-race-num { font-family: var(--cgs-font); font-variant-numeric: tabular-nums; font-size: 13px; color: var(--cgs-ink); }
+.cgs-race-track { height: 28px; background: var(--cgs-surface); border: 1px solid var(--cgs-line); border-radius: 3px; overflow: hidden; }
+.cgs-race-fill { height: 100%; width: 0%; background: var(--cgs-navy-700); transition: width .4s var(--ease-out), background .3s; border-radius: 2px 0 0 2px; }
+.cgs-race-fill.is-winner { background: var(--cgs-cyan-400); }
+.cgs-chargeable-pill {
+  font-family: var(--cgs-font); font-size: 10px; font-weight: 600; letter-spacing: .05em;
+  background: var(--cgs-cyan-400); color: var(--cgs-navy-900); padding: 2px 7px; border-radius: 20px;
+  opacity: 0; transform: scale(.7); transition: opacity .25s, transform .25s;
 }
-.cgs-shipping-decor::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(360px circle at 102% 8%, rgba(46, 159, 214, .16), transparent 70%);
-  pointer-events: none;
-}
-.cgs-shipping-decor > .container-fluid { position: relative; z-index: 1; }
+.cgs-chargeable-pill.is-shown { opacity: 1; transform: scale(1); }
 
 /* --- Terms & Conditions / policy documents --------------------------------
    Same hairline-grid technique as .cgs-desk__grid (1px background showing
@@ -3470,6 +3677,15 @@ html.js [data-reveal].is-visible {
   .cgs-topbar__contact:hover i { transform: none; }
   .cgs-docs__link:hover .cgs-docs__meta i,
   .cgs-docs__link:focus-visible .cgs-docs__meta i { transform: none; }
+
+  /* Shipping Essentials manifest — the flip and slide motions are all
+     decorative sequencing; drop them and show the end state immediately.
+     Values (split-flap digits, calculator bars) still update, just
+     without the travel. */
+  .cgs-flap.is-flipping span { animation: none; }
+  .cgs-leaf__body-inner { opacity: 1; transform: none; animation: none; }
+  .cgs-vs-side { opacity: 1 !important; transform: none !important; transition: none; }
+  .cgs-leaf { transition: none; }
 }
 
 /* --- Focus visibility ---------------------------------------------------- */
@@ -3859,3 +4075,293 @@ html.js [data-reveal].is-visible {
 .cgs-touch__socials a:hover { background: var(--cgs-navy-900); color: #fff; }
 
 @media (max-width: 575.98px) { .cgs-touch__item { flex-basis: 100%; } }
+
+/* =============================================================================
+   Our Fleet page (our-fleet.php)
+   -----------------------------------------------------------------------------
+   Content is Angeline Tilokani's corrected "Our Fleet.docx" (25 Aug 2026) —
+   see our-fleet.php's header comment. Four sections below: the asymmetric
+   equipment showcase, the dark connected Port & Terminal row, the two
+   plotted-route Transhipment cards, and the existing .cgs-split reused for
+   Lashing.
+   ========================================================================== */
+
+/* --- Intro -------------------------------------------------------------
+   Text and image columns share one grid track size, so the right-hand
+   photo is locked to the exact width and height of the text column
+   rather than sized to its own content. */
+.cgs-fleet-intro__inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+  gap: clamp(28px, 4vw, 56px);
+}
+.cgs-fleet-intro__text { display: flex; flex-direction: column; justify-content: center; }
+.cgs-fleet-intro__inner h2 {
+  margin: 0 0 18px;
+  font-size: clamp(26px, 3.2vw, 38px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.cgs-fleet-intro__prose p { margin: 0 0 16px; }
+.cgs-fleet-intro__prose p:last-child { margin-bottom: 0; }
+.cgs-fleet-intro__media {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--cgs-radius);
+  min-height: 320px;
+}
+.cgs-fleet-intro__media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 767.98px) {
+  .cgs-fleet-intro__inner { grid-template-columns: 1fr; }
+  .cgs-fleet-intro__media { min-height: 240px; order: -1; }
+}
+
+/* --- Specialized Fleet & Infrastructure: bento showcase --------------------
+   Five items, five cells, no empty space: Modular Trailers leads wide
+   (nth-child(1)) since the SPMT photo is the strongest equipment match in
+   the asset set, Skeleton Chassis sits beside it, then Low Bed, Forklifts
+   and Open Storage Yard share the row underneath — the two icon cells
+   (no photo exists for either) sit inline with that row rather than in
+   their own separate strip. Order is driven entirely by fleet_items.sort_order
+   (see schema.sql), not by markup position. */
+.cgs-fleet-bento__head { max-width: 640px; margin: 0 0 clamp(32px, 4vw, 48px); }
+.cgs-fleet-bento__head h2 {
+  margin: 0 0 10px;
+  font-size: clamp(24px, 2.8vw, 32px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.cgs-fleet-bento__head p { margin: 0; color: var(--cgs-slate); font-size: 15.5px; line-height: 1.7; }
+
+.cgs-fleet-bento {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(14px, 2vw, 20px);
+}
+.cgs-fleet-bento .cgs-fleet-tile:nth-child(1) { grid-column: span 2; min-height: 360px; }
+
+.cgs-fleet-tile {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--cgs-radius);
+  min-height: 260px;
+  display: flex;
+  align-items: flex-end;
+}
+.cgs-fleet-tile img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 500ms var(--ease-out);
+}
+.cgs-fleet-tile:hover img,
+.cgs-fleet-tile:focus-within img { transform: scale(1.045); }
+.cgs-fleet-tile::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(8, 34, 56, 0) 35%, rgba(8, 34, 56, .82) 100%);
+}
+.cgs-fleet-tile__body { position: relative; z-index: 1; padding: 20px 22px; color: #fff; }
+.cgs-fleet-tile__body h3 { margin: 0 0 6px; font-size: 18px; font-weight: 800; color: #fff; }
+.cgs-fleet-tile__body p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, .85);
+  max-width: 42ch;
+}
+.cgs-fleet-tile__specs { margin: 12px 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
+.cgs-fleet-tile__specs li {
+  font-family: var(--cgs-font);
+  font-size: 11px;
+  letter-spacing: .04em;
+  padding: 4px 10px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, .14);
+  border: 1px solid rgba(255, 255, 255, .24);
+  color: #fff;
+}
+
+.cgs-fleet-tile--icon {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 26px 24px;
+  background: #fff;
+  border: 1px solid var(--cgs-line);
+}
+.cgs-fleet-tile__icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 14px;
+  border-radius: 50%;
+  background: var(--cgs-surface);
+  color: var(--cgs-cyan-400);
+  font-size: 19px;
+  flex: none;
+}
+.cgs-fleet-tile--icon h3 { margin: 0 0 8px; font-size: 17px; font-weight: 800; color: var(--cgs-ink); }
+.cgs-fleet-tile--icon p { margin: 0; font-size: 14px; line-height: 1.6; color: var(--cgs-slate); }
+
+@media (max-width: 767.98px) {
+  .cgs-fleet-bento { grid-template-columns: 1fr; }
+  .cgs-fleet-bento .cgs-fleet-tile:nth-child(1) { grid-column: span 1; min-height: 240px; }
+}
+
+/* --- Port & Terminal Operations: dark connected row -------------------------
+   A process, not a product — no equipment photo would fit honestly here,
+   so the three nodes sit on a hairline rail instead. Real container-
+   terminal photography (oocl-pipe-trailer.jpg, shot beside OOCL boxes)
+   dimmed well back behind it, in place of a stock icon watermark, since
+   real photography exists for this section specifically. */
+.cgs-port-ops { position: relative; overflow: hidden; }
+.cgs-port-ops__media { position: absolute; inset: 0; z-index: 0; }
+.cgs-port-ops__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(.65) brightness(.4);
+}
+.cgs-port-ops__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(8, 34, 56, .9), rgba(8, 34, 56, .95));
+}
+.cgs-port-ops > .container-fluid { position: relative; z-index: 1; }
+
+.cgs-port-ops__head { max-width: 640px; margin: 0 auto clamp(40px, 5vw, 60px); text-align: center; }
+.cgs-port-ops__head h2 { margin: 0 0 10px; font-size: clamp(24px, 2.8vw, 32px); font-weight: 800; }
+.cgs-port-ops__head p { margin: 0; color: rgba(255, 255, 255, .72); font-size: 15.5px; line-height: 1.7; }
+
+.cgs-port-ops__row {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(24px, 3vw, 40px);
+}
+.cgs-port-ops__row::before {
+  content: '';
+  position: absolute;
+  top: 27px;
+  left: calc(100% / 6);
+  right: calc(100% / 6);
+  height: 1px;
+  background: rgba(46, 159, 214, .28);
+}
+.cgs-port-node { position: relative; text-align: center; padding: 0 12px; }
+.cgs-port-node__icon {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  background: var(--cgs-navy-900);
+  border: 1px solid rgba(46, 159, 214, .4);
+  color: var(--cgs-cyan-300);
+  font-size: 18px;
+}
+.cgs-port-node h3 { margin: 0 0 8px; font-size: 17px; font-weight: 800; color: #fff; }
+.cgs-port-node p { margin: 0; font-size: 14px; line-height: 1.65; color: rgba(255, 255, 255, .7); }
+
+@media (max-width: 767.98px) {
+  .cgs-port-ops__row { grid-template-columns: 1fr; gap: 28px; }
+  .cgs-port-ops__row::before { display: none; }
+}
+
+/* --- Regional Transhipment Services: plotted-route cards --------------------
+   Two small route diagrams instead of another card grid — the shape of
+   each lane (a short hop to Batam, a longer overland run through Malaysia
+   to Thailand) is the point, so it is drawn rather than described. */
+.cgs-transhipment__head { max-width: 640px; margin: 0 0 clamp(32px, 4vw, 48px); }
+.cgs-transhipment__head h2 { margin: 0 0 10px; font-size: clamp(24px, 2.8vw, 32px); font-weight: 800; }
+.cgs-transhipment__head p { margin: 0; color: var(--cgs-slate); font-size: 15.5px; line-height: 1.7; }
+
+.cgs-route-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(20px, 3vw, 32px);
+}
+.cgs-route-card {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(26px, 3vw, 34px) clamp(24px, 3vw, 30px);
+  border-radius: var(--cgs-radius);
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.cgs-route-card__media { position: absolute; inset: 0; z-index: 0; }
+.cgs-route-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 500ms var(--ease-out);
+}
+.cgs-route-card:hover .cgs-route-card__media img,
+.cgs-route-card:focus-within .cgs-route-card__media img { transform: scale(1.045); }
+.cgs-route-card__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(8, 34, 56, .55) 0%, rgba(8, 34, 56, .9) 100%);
+}
+.cgs-route-card__svg,
+.cgs-route-card__stops,
+.cgs-route-card h3,
+.cgs-route-card p { position: relative; z-index: 1; }
+.cgs-route-card__svg { display: block; width: 100%; height: 20px; margin-bottom: 16px; overflow: visible; }
+.cgs-route-card__path { stroke: var(--cgs-cyan-400); stroke-width: 2; fill: none; }
+.cgs-route-card__dot { fill: var(--cgs-navy-900); stroke: var(--cgs-cyan-400); stroke-width: 2; }
+.cgs-route-card__stops {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 0 20px;
+  font-family: var(--cgs-font);
+  font-size: 11.5px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .75);
+}
+.cgs-route-card h3 { margin: 0 0 8px; font-size: 18px; font-weight: 800; letter-spacing: -0.01em; color: #fff; }
+.cgs-route-card p { margin: 0; font-size: 14.5px; line-height: 1.7; color: rgba(255, 255, 255, .82); }
+
+/* Draw-in piggybacks on the shared [data-reveal] mechanism in cgs.js — the
+   wrapping .cgs-route-cards already carries data-reveal, so no
+   page-specific script is needed. Scoped to html.js exactly like every
+   other [data-reveal] rule, so a no-JS visitor gets the line fully drawn
+   rather than permanently hidden. The second line of the Malaysia/Thailand
+   card carries its own --path-delay so that hop draws in a beat after the
+   first, reading as two legs of one journey instead of one flat wipe. */
+html.js .cgs-route-card__path {
+  stroke-dasharray: 210;
+  stroke-dashoffset: 210;
+  transition: stroke-dashoffset 900ms var(--ease-in-out) var(--path-delay, 0ms);
+}
+html.js [data-reveal].is-visible .cgs-route-card__path { stroke-dashoffset: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cgs-route-card__path { transition-duration: 0ms; }
+}
+
+@media (max-width: 767.98px) {
+  .cgs-route-cards { grid-template-columns: 1fr; }
+}

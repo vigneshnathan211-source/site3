@@ -63,7 +63,8 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `phone`            VARCHAR(50)  DEFAULT '+65 6515 6106',
   `phone_247`        VARCHAR(50)  DEFAULT '+65 6899 8251',
   `fax`              VARCHAR(50)  DEFAULT '+65 6472 5443',
-  `whatsapp_number`  VARCHAR(50)  DEFAULT NULL,
+  -- client-supplied 2026-08-26 ("W/app number as per blank write +65 91700300")
+  `whatsapp_number`  VARCHAR(50)  DEFAULT '+65 9170 0300',
   `email`            VARCHAR(150) DEFAULT 'admin@carriageglobal.com',
   `address`          VARCHAR(255) DEFAULT '21 Bukit Batok Crescent, WCEGA Tower #17-82, Singapore 658065',
   `map_embed_url`    TEXT         DEFAULT NULL,
@@ -72,8 +73,12 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `my_office_name`   VARCHAR(150) DEFAULT 'Carriage Global (M) Sdn Bhd',
   `my_reg_no`        VARCHAR(50)  DEFAULT '1236698-V',
   `my_address`       VARCHAR(255) DEFAULT 'Suite 28.02, 28th Floor, Menara Zurich No.15, Jalan Dato Abdullah Tahir, Johor Bahru, Johor',
+  -- client, 2026-08-26: "Do not write phone number" for the Malaysia office —
+  -- stays NULL on purpose (contact.php omits the phone line entirely when
+  -- unset, rather than showing a "to be confirmed" placeholder).
   `my_phone`         VARCHAR(50)  DEFAULT NULL,
-  `my_email`         VARCHAR(150) DEFAULT NULL,
+  -- client-supplied 2026-08-26 ("Malaysia email write:- ops@carriageglobal.com")
+  `my_email`         VARCHAR(150) DEFAULT 'ops@carriageglobal.com',
   `my_map_embed_url` TEXT         DEFAULT NULL,
 
   -- socials (rendered only when non-empty). facebook/linkedin/youtube are
@@ -164,12 +169,17 @@ CREATE TABLE IF NOT EXISTS `service_sections` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- -----------------------------------------------------------------------------
--- fleet_items — the "Our Fleet" page. `category` splits the page into its three
--- client-specified blocks: the fleet itself, in-house lashing, and the open yard.
+-- fleet_items — the "Our Fleet" page. `category` splits the page into the four
+-- blocks the client's corrected copy actually uses (Angeline Tilokani,
+-- "Our Fleet.docx", 25 Aug 2026, superseding an earlier plain-text draft —
+-- see our-fleet.php's header comment): the equipment itself, port and
+-- terminal operations, regional transhipment, and in-house lashing. The open
+-- yard (14 Penjuru Road) is one Fleet item in that copy, not its own
+-- category, which folds the earlier 'Open Yard' enum value into 'Fleet'.
 -- -----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `fleet_items` (
   `id`          INT(11) NOT NULL AUTO_INCREMENT,
-  `category`    ENUM('Fleet','Lashing','Open Yard') NOT NULL DEFAULT 'Fleet',
+  `category`    ENUM('Fleet','Port & Terminal','Transhipment','Lashing') NOT NULL DEFAULT 'Fleet',
   `title`       VARCHAR(200) NOT NULL,
   `description` TEXT         DEFAULT NULL,
   `specs`       TEXT         DEFAULT NULL,     -- one "Label: value" per line
@@ -409,7 +419,7 @@ INSERT IGNORE INTO `certificates` (`id`, `title`, `issuer`, `cert_no`, `valid_un
 (2, 'bizSAFE Level 4', 'Workplace Safety and Health Council', 'E12697', '2028-07-30',
  'Confirms a company-wide workplace safety and health management system verified to bizSAFE Level 4, the risk management tier for organizations managing higher-risk operations.',
  'assets/img/certificates/badge-bizsafe.jpg', 'assets/img/certificates/bizsafe.jpg', 'assets/certificates/bizsafe-4.pdf', 2, 'active'),
-(3, 'WCA Project, 15 yrs', 'WCA World (WCA Projects)', NULL, '2026-02-09',
+(3, 'WCA Project, 15 yrs', 'WCA World (WCA Projects)', '71622', '2027-02-09',
  'Membership in the WCA Projects network, connecting Carriage Global with vetted project-cargo partners worldwide for coordinated heavy lift and break bulk moves.',
  'assets/img/certificates/badge-wca.png', 'assets/img/certificates/wca-project-membership.jpg', 'assets/certificates/wca-project-membership.pdf', 3, 'active');
 
@@ -441,11 +451,53 @@ INSERT IGNORE INTO `gallery` (`id`, `category`, `image_path`, `alt_text`, `sort_
 (16, 'Project Freight Forwarding', 'assets/img/gallery/ops-16.jpg', 'Large IQIP pressure vessel rigged for lifting on a Carriage Global low-bed trailer at a yard', 16, 'active'),
 (17, 'Project Freight Forwarding', 'assets/img/gallery/ops-17.jpg', 'Mobile crane lowering specialized equipment onto a low-bed trailer at a Singapore port, container cranes in the background', 17, 'active');
 
-INSERT IGNORE INTO `page_blocks` (`page_key`, `block_key`, `heading`, `sort_order`) VALUES
-('home',      'video',     'See How We Move Project Cargo',       1),
-('home',      'intro',     'Integrated Customized Logistics',     2),
-('home',      'why-us',    'Why Carriage Global',                 3),
-('home',      'cta',       'Send Us Your Packing List',           4),
-('our-fleet', 'intro',     'Our Fleet',                           1),
-('our-fleet', 'lashing',   'In-House Lashing',                    2),
-('our-fleet', 'open-yard', 'Open Yard for Cargo Storage & Re-Working', 3);
+INSERT IGNORE INTO `page_blocks` (`page_key`, `block_key`, `heading`, `subheading`, `body`, `sort_order`) VALUES
+('home',      'video',        'See How We Move Project Cargo',    NULL, NULL, 1),
+('home',      'intro',        'Integrated Customized Logistics',  NULL, NULL, 2),
+('home',      'why-us',       'Why Carriage Global',              NULL, NULL, 3),
+('home',      'cta',          'Send Us Your Packing List',        NULL, NULL, 4),
+('our-fleet', 'intro',        'Our Fleet & Capabilities', NULL,
+  '<p>Welcome to CGS. We own, operate, and manage a complete range of heavy transport equipment, serving as Singapore''s premier asset-based partner for global freight forwarders, MNCs, and direct cargo owners alike.</p><p>Whether you are an international freight forwarder seeking a reliable, neutral local partner or a direct client requiring specialized logistics, we manage every step of your oversize cargo journey using our own skilled crew and specialized fleet.</p>', 1),
+('our-fleet', 'fleet',        'Specialized Fleet & Infrastructure',
+  'We provide heavy-duty transport vehicles built for oversize, general, and heavy cargo, offering MNC forwarders the asset capacity they need to scale.', NULL, 2),
+('our-fleet', 'port-terminal','Port & Terminal Operations',
+  'We work directly inside Singapore''s major ports to streamline operations, lower costs, and reduce transit times for your supply chain.', NULL, 3),
+('our-fleet', 'transhipment', 'Regional Transhipment Services',
+  'We extend your reach across Southeast Asia, moving cargo seamlessly across borders using our own low bed fleet and dedicated manpower.', NULL, 4),
+('our-fleet', 'lashing',      'In-House Lashing & Lifting', 'Certified Trust',
+  '<p>Safety and neutrality are our top priorities. Our highly experienced in-house team handles all lifting and lashing directly, giving forwarders sub-contracting peace of mind.</p>', 5);
+
+-- -----------------------------------------------------------------------------
+-- fleet_items seeds — Angeline Tilokani's corrected "Our Fleet.docx"
+-- (25 Aug 2026), the client's final copy for this page (see our-fleet.php's
+-- header comment for the full email chain). `specs` carries the one real
+-- dimension the client gave (Low Bed / Super Low Bed deck length and
+-- height); nothing else is invented. Images are matched to real Carriage
+-- Global operations photography where the equipment is an honest match
+-- (assets/img/fleet/). Forklifts and the Open Storage Yard have no
+-- dedicated photo in the asset set — a full scan of both raw client
+-- WhatsApp drops (client_assets/pic/ and client_assets/latest/latest/,
+-- ~34 unique images between them, 2026-08-14/20) turned up no forklift and
+-- no open-air storage yard shot, so these two use the closest available
+-- real CGS photography as an atmospheric stand-in rather than a literal
+-- equipment match: ops-09.jpg (a MAFI terminal tractor at a Singapore
+-- port apron — ground handling equipment, not a forklift) and ops-16.jpg
+-- (a CGS low-bed trailer under a loading-bay roof, captioned "at a yard"
+-- in the gallery table — not an open-air storage yard). Swap both for
+-- real forklift/yard photos the moment the client supplies them.
+-- `sort_order` here is the page's own display order (Modular Trailers
+-- leads, as the widest showcase tile), not the order the docx lists them in.
+-- -----------------------------------------------------------------------------
+INSERT IGNORE INTO `fleet_items` (`id`, `category`, `title`, `description`, `specs`, `image`, `sort_order`, `status`) VALUES
+(1, 'Fleet', 'Skeleton Chassis', 'Reliable frames for standard container transport and specialized moves.', NULL, 'assets/img/fleet/fleet-trailer.jpg', 2, 'active'),
+(2, 'Fleet', 'Low Bed & Super Low Bed Trailers', 'Heavy-capacity units engineered to clear low Singapore road height limits.', 'Length: 12m\nHeight: 0.8m', 'assets/img/fleet/tank-transport.jpg', 3, 'active'),
+(3, 'Fleet', 'Modular Trailers', 'Advanced multi-axle trailers configured for massive, ultra-heavy lifts.', NULL, 'assets/img/fleet/spmt-trailer.jpg', 1, 'active'),
+(4, 'Fleet', 'Forklifts', 'A wide variety of lift trucks ready for heavy industrial loading and cross-docking.', NULL, 'assets/img/gallery/ops-09.jpg', 4, 'active'),
+(5, 'Fleet', 'Open Storage Yard', 'A secure space dedicated to storing oversize cargo and performing cargo re-working at 14 Penjuru Road.', NULL, 'assets/img/gallery/ops-16.jpg', 5, 'active'),
+(6, 'Port & Terminal', 'Pasir Panjang Auto Terminal', 'Direct lift of cargo from Mafi trailers straight onto low bed trailers for efficient delivery.', NULL, NULL, 1, 'active'),
+(7, 'Port & Terminal', 'PSA Container Terminal', 'In-port flat rack stripping to lower overall cargo height and meet Singapore road regulations. This enables seamless transhipment within the port without the need for external trucking.', NULL, NULL, 2, 'active'),
+(8, 'Port & Terminal', 'Barge Operations', 'Execution of complex roll-on/roll-off (RoRo), roll-up, and jack-down operations for barges, concrete blocks, and heavy infrastructure components.', NULL, NULL, 3, 'active'),
+(9, 'Transhipment', 'The Batam Connection', 'Smooth transhipment from global origins to Batam via Singapore (and vice versa). We offer full door-to-door delivery in Batam under DAP and DDP terms, acting as a trusted extended arm for global forwarders.', NULL, NULL, 1, 'active'),
+(10, 'Transhipment', 'Malaysia & Thailand Cross-Border', 'Reliable transport of oversize cargo from Singapore through West Malaysia and up to Thailand, ensuring timely offshore vessel connections.', NULL, NULL, 2, 'active'),
+(11, 'Lashing', 'Trusted by major shipping lines', 'Many major global shipping lines trust our crew completely.', NULL, NULL, 1, 'active'),
+(12, 'Lashing', 'Survey certificates often waived', 'Because of our strict adherence to international safety standards, liners often waive the requirement for external lashing survey certificates when CGS crews secure cargo across Singapore, Malaysia, and Batam.', NULL, NULL, 2, 'active');

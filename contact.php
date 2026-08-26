@@ -11,11 +11,13 @@
 | Real vs. placeholder, per that same brief ("keep if you have it use it
 | otherwise do a placeholder"):
 |   - SG office name/address/phone/phone_247/email: real (settings table).
-|   - MY office name/reg no/address: real. my_phone / my_email are unset in
-|     settings, so those two lines are simply omitted (existing !empty()
-|     convention), not invented.
-|   - whatsapp_number is unset, so the WhatsApp tile below renders as a
-|     visibly-marked "coming soon" cell instead of a dead wa.me link.
+|   - MY office name/reg no/address/email: real (email client-supplied
+|     2026-08-26: "Malaysia email write:- ops@carriageglobal.com"). my_phone
+|     stays unset — same email, "Do not write phone number" — so the phone
+|     line is simply omitted (existing !empty() convention) rather than
+|     shown as a "to be confirmed" placeholder.
+|   - whatsapp_number is real, client-supplied 2026-08-26 ("W/app number as
+|     per blank write +65 91700300").
 |   - map_embed_url / my_map_embed_url: real Google Maps embed URLs the
 |     client sent 2026-08-24, one per office, each rendered in its own map
 |     card in the .cgs-map-stack. Either one falls back independently to a
@@ -222,8 +224,6 @@ require __DIR__ . '/includes/header.php';
               <li><i class="fa-solid fa-location-dot" aria-hidden="true"></i> <span><?php echo e($settings['my_address']); ?></span></li>
               <?php if (!empty($settings['my_phone'])): ?>
               <li><i class="fa-solid fa-phone" aria-hidden="true"></i> <a href="tel:<?php echo e(tel_link($settings['my_phone'])); ?>"><?php echo e($settings['my_phone']); ?></a></li>
-              <?php else: ?>
-              <li class="cgs-office-card__soon"><i class="fa-solid fa-phone" aria-hidden="true"></i> <span>Phone line to be confirmed</span></li>
               <?php endif; ?>
               <?php if (!empty($settings['my_email'])): ?>
               <li><i class="fa-solid fa-envelope" aria-hidden="true"></i> <a href="mailto:<?php echo e($settings['my_email']); ?>"><?php echo e($settings['my_email']); ?></a></li>

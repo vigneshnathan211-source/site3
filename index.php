@@ -291,7 +291,15 @@ $partners = [
    The founding-year cell was swapped for the company motto 2026-08-21
    (client: "in our story replace 2007 stats with company motto"). Pulled
    from $settings['tagline'] rather than retyped here, so it stays in sync
-   with the same line already shown in the footer (includes/footer.php). */
+   with the same line already shown in the footer (includes/footer.php).
+
+   WCA Projects mark added 2026-08-26 (client, attaching the logo: "Where
+   you have pasted the Bizsafe 4 logo and ISO logo, pls paste this as
+   well") — into the existing "15+ years" cell as a small inline mark next
+   to the number ('logo_inline', below), rather than a standalone 'logo'
+   cell like ISO/bizSAFE: a 5th grid cell left an orphaned single item on
+   its own row in the 2-column grid, and the "15+" fact is worth keeping
+   next to the mark rather than dropped in favor of it. */
 $ourStory = [
     'paras' => [
         'By investing in our own asset-based fleet, storage facilities, and marine transport services, CGS has enhanced its ability to deliver seamless, end-to-end supply chain management. We remain committed to providing dependable, safe, and tailor-made project logistics throughout Southeast Asia and across the global marketplace.',
@@ -303,7 +311,7 @@ $ourStory = [
     'alt_two'     => 'Self-geared MacGregor ship crane hoisting cargo at a Singapore port',
     'stats' => [
         ['value' => $settings['tagline'], 'label' => 'Our motto'],
-        ['value' => '15+',  'label' => 'Years as a WCA Project member'],
+        ['value' => '15+',  'label' => 'Years as a WCA Project member', 'logo_inline' => 'assets/img/certificates/badge-wca-projects.png'],
         ['logo'  => 'assets/img/certificates/badge-iso9001.jpg', 'label' => 'ISO 9001:2015 certified'],
         ['logo'  => 'assets/img/certificates/badge-bizsafe.jpg', 'label' => 'bizSAFE Level 4 certified'],
     ],
@@ -565,6 +573,11 @@ require __DIR__ . '/includes/header.php';
             <div class="cgs-story__stat">
               <?php if (!empty($stat['logo'])): ?>
               <img class="cgs-story__stat-logo" src="<?php echo url($stat['logo']); ?>" alt="<?php echo e($stat['label']); ?>" loading="lazy">
+              <?php elseif (!empty($stat['logo_inline'])): ?>
+              <span class="cgs-story__stat-combo">
+                <strong><?php echo e($stat['value']); ?></strong>
+                <img class="cgs-story__stat-mark" src="<?php echo url($stat['logo_inline']); ?>" alt="" loading="lazy">
+              </span>
               <?php else: ?>
               <strong><?php echo e($stat['value']); ?></strong>
               <?php endif; ?>

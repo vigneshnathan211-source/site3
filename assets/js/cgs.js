@@ -683,47 +683,120 @@
     }
   }
 
-  /* --- Resources page: "big tabs" -------------------------------------------
-     Standard ARIA tabs keyboard pattern (arrow keys move focus and activate;
-     Home/End jump to the ends) over the client's requested Incoterms /
-     Insurance / Chargeable Weight tab group. Plain class toggles, no
-     animation library — the panel swap is instant, same as any other
-     show/hide on this site. */
-  var tabList = document.querySelector('[data-cgs-tabs]');
-
-  if (tabList) {
-    var tabButtons = Array.prototype.slice.call(tabList.querySelectorAll('[data-cgs-tab]'));
-    var tabPanels  = Array.prototype.slice.call(tabList.querySelectorAll('[data-cgs-panel]'));
-
-    var activateTab = function (targetBtn, moveFocus) {
-      tabButtons.forEach(function (btn) {
-        var isTarget = btn === targetBtn;
-        btn.classList.toggle('is-active', isTarget);
-        btn.setAttribute('aria-selected', isTarget ? 'true' : 'false');
-        btn.setAttribute('tabindex', isTarget ? '0' : '-1');
+  /* --- Resources page: split-flap freight-ton converter ---------------------
+     A small departure-board effect: each character cell flips independently,
+     staggered left to right, text swapped mid-flip so the "old" and "new"
+     values never show at once. Built generically (buildFlap/setFlap) so it
+     would work for any equal-length string pair, though this page only
+     ever feeds it two 5-character ton figures. */
+  var tonFlap = document.getElementById('tonFlap');
+  if (tonFlap) {
+    var buildFlap = function (container, text) {
+      container.innerHTML = '';
+      text.split('').forEach(function (ch) {
+        var cell = document.createElement('span');
+        cell.className = 'cgs-flap';
+        var inner = document.createElement('span');
+        inner.textContent = ch;
+        cell.appendChild(inner);
+        container.appendChild(cell);
       });
-      tabPanels.forEach(function (panel) {
-        var isTarget = panel.id === targetBtn.getAttribute('aria-controls');
-        panel.classList.toggle('is-active', isTarget);
+    };
+    var setFlap = function (container, text) {
+      var cells = container.children;
+      if (cells.length !== text.length) { buildFlap(container, text); return; }
+      Array.prototype.forEach.call(cells, function (cell, i) {
+        var next = text[i];
+        if (cell.firstChild.textContent === next) { return; }
+        var stagger = reduceMotion.matches ? 0 : i * 22;
+        window.setTimeout(function () {
+          cell.classList.add('is-flipping');
+          window.setTimeout(function () { cell.firstChild.textContent = next; }, reduceMotion.matches ? 0 : 130);
+          window.setTimeout(function () { cell.classList.remove('is-flipping'); }, reduceMotion.matches ? 0 : 260);
+        }, stagger);
       });
-      if (moveFocus) { targetBtn.focus(); }
     };
 
-    tabButtons.forEach(function (btn, index) {
-      btn.addEventListener('click', function () { activateTab(btn, false); });
+    buildFlap(tonFlap, '2.500');
+    var tonUnitLabel = document.getElementById('tonUnitLabel');
+    var tonSubLabel  = document.getElementById('tonSubLabel');
+    var tonFormula   = document.getElementById('tonFormula');
+    var tonButtons   = Array.prototype.slice.call(document.querySelectorAll('.cgs-switch [data-ton]'));
 
-      btn.addEventListener('keydown', function (event) {
-        var nextIndex = null;
-        if (event.key === 'ArrowRight' || event.key === 'ArrowDown') { nextIndex = (index + 1) % tabButtons.length; }
-        else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') { nextIndex = (index - 1 + tabButtons.length) % tabButtons.length; }
-        else if (event.key === 'Home') { nextIndex = 0; }
-        else if (event.key === 'End') { nextIndex = tabButtons.length - 1; }
-        if (nextIndex !== null) {
-          event.preventDefault();
-          activateTab(tabButtons[nextIndex], true);
+    tonButtons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (btn.classList.contains('is-active')) { return; }
+        tonButtons.forEach(function (b) { b.classList.remove('is-active'); });
+        btn.classList.add('is-active');
+        if (btn.getAttribute('data-ton') === 'short') {
+          setFlap(tonFlap, '2.500');
+          tonUnitLabel.textContent = 'short tons';
+          tonSubLabel.textContent = '2,000 lb per ton';
+          tonFormula.innerHTML = '<b>Gross Weight Ton</b> = 5,000 lb &divide; 2,000';
+        } else {
+          setFlap(tonFlap, '2.268');
+          tonUnitLabel.textContent = 'metric tons';
+          tonSubLabel.textContent = '1,000 kg per ton';
+          tonFormula.innerHTML = '<b>Metric Weight Ton</b> = 2,268 kg &divide; 1,000';
         }
       });
     });
+  }
+
+  /* --- Resources page: Shipping Essentials manifest --------------------------
+     Three leaves, one open at a time — clicking a collapsed leaf's tab
+     expands it (flex-basis transition in cgs.css) and collapses whichever
+     was open. Incoterms cards inside flip in place on tap/click; the
+     chargeable-weight sliders recompute live on every input event. All
+     three are independent: any one, none, or all can be present on a given
+     page load depending on what's active in the admin. */
+  var manifest = document.getElementById('manifest');
+  if (manifest) {
+    var leaves = Array.prototype.slice.call(manifest.querySelectorAll('.cgs-leaf'));
+    leaves.forEach(function (leaf) {
+      var tab = leaf.querySelector('.cgs-leaf__tab');
+      tab.addEventListener('click', function () {
+        if (leaf.classList.contains('is-active')) { return; }
+        leaves.forEach(function (l) {
+          l.classList.remove('is-active');
+          l.querySelector('.cgs-leaf__tab').setAttribute('aria-expanded', 'false');
+        });
+        leaf.classList.add('is-active');
+        tab.setAttribute('aria-expanded', 'true');
+      });
+    });
+
+    var sliderL  = document.getElementById('sliderL');
+    if (sliderL) {
+      var sliderW  = document.getElementById('sliderW');
+      var sliderH  = document.getElementById('sliderH');
+      var sliderWt = document.getElementById('sliderWt');
+      var valL = document.getElementById('valL'), valW = document.getElementById('valW'),
+          valH = document.getElementById('valH'), valWt = document.getElementById('valWt');
+      var numActual = document.getElementById('numActual'), numVol = document.getElementById('numVol');
+      var barActual = document.getElementById('barActual'), barVol = document.getElementById('barVol');
+      var pillActual = document.getElementById('pillActual'), pillVol = document.getElementById('pillVol');
+      var CALC_MAX_DOMAIN = 900;
+
+      var fmtKg = function (n) { return n.toFixed(1) + ' kg'; };
+
+      var recalcWeight = function () {
+        var L = +sliderL.value, W = +sliderW.value, H = +sliderH.value, actual = +sliderWt.value;
+        var vol = (L * W * H) / 6000;
+        valL.textContent = L; valW.textContent = W; valH.textContent = H; valWt.textContent = actual;
+        numActual.textContent = fmtKg(actual);
+        numVol.textContent = fmtKg(vol);
+        barActual.style.width = Math.min(100, (actual / CALC_MAX_DOMAIN) * 100) + '%';
+        barVol.style.width = Math.min(100, (vol / CALC_MAX_DOMAIN) * 100) + '%';
+        var actualWins = actual >= vol;
+        barActual.classList.toggle('is-winner', actualWins);
+        barVol.classList.toggle('is-winner', !actualWins);
+        pillActual.classList.toggle('is-shown', actualWins);
+        pillVol.classList.toggle('is-shown', !actualWins);
+      };
+      [sliderL, sliderW, sliderH, sliderWt].forEach(function (s) { s.addEventListener('input', recalcWeight); });
+      recalcWeight();
+    }
   }
 
 }());
