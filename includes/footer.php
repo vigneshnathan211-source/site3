@@ -69,7 +69,7 @@
         <ul class="cgs-footer__links">
           <li><a href="<?php echo url('index.php'); ?>">Home</a></li>
           <li><a href="<?php echo url('our-fleet.php'); ?>">Our Fleet</a></li>
-          <li><a href="<?php echo url('services.php'); ?>">Services</a></li>
+          <li><a href="#" onclick="return false;">Services</a></li>
           <li><a href="<?php echo url('resources.php'); ?>">Resources</a></li>
           <li><a href="<?php echo url('past-projects.php'); ?>">Past Projects</a></li>
           <li><a href="<?php echo url('contact.php'); ?>">Contact Us</a></li>

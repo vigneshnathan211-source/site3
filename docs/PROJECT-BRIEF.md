@@ -39,11 +39,11 @@ place. See *Deviations from the Roofer theme* below for what changes.
 
 | # | Page | File | Copy status |
 |---|---|---|---|
-| 7 | Project Freight Forwarding | `project-freight-forwarding.php` | ✅ supplied verbatim |
+| 7 | Project Freight Forwarding | `project-freight-forwarding.php` | ✅ supplied verbatim — built 2026-08-26 |
 | 8 | Chartering Heavy Lift & Semi-Geared Vessels | `heavy-lift-chartering.php` | ✅ supplied verbatim |
-| 9 | Chartering Tug & Barge | `tug-and-barge-chartering.php` | ❌ not supplied |
-| 10 | Roll On / Roll Off | `roll-on-roll-off.php` | ❌ not supplied |
-| 11 | Air Freight | `air-freight.php` | ✅ supplied verbatim — page/copy kept, but `services.status` set to `inactive` 2026-08-24 (client's "finalized" menu list that day dropped it from the Services nav; see `database/schema.sql`). Not counted in the primary nav below until reactivated. |
+| 9 | Chartering Tug & Barge | `tug-and-barge-chartering.php` | ✅ supplied verbatim (client's "webpage -3rd email on Tug and Barge charter") — this row previously read "not supplied"; that was stale. Built 2026-08-26. |
+| 10 | Roll On / Roll Off | `roll-on-roll-off.php` | ✅ supplied verbatim (client's "webpage -4th email Roll on-Roll off") — this row previously read "not supplied"; that was stale. Built 2026-08-26. |
+| 11 | Air Freight | `air-freight.php` | ✅ supplied verbatim — page/copy kept, but `services.status` set to `inactive` 2026-08-24 (client's "finalized" menu list that day dropped it from the Services nav; see `database/schema.sql`). Not counted in the primary nav below until reactivated. Still not built (client explicitly deprioritised it 2026-08-26, alongside the Services overview page, when the three remaining service pages above were built). |
 
 ### Supporting pages (not counted in the brief, still required)
 
@@ -200,8 +200,11 @@ verifiable claims a logistics buyer will check.
    to ten (5 primary + 5 service). Is the Services overview page not counted, or
    is one of the five service pages being dropped?
 2. **Resources structure.** One page with five sections (assumed), or five pages?
-3. **Missing copy.** Tug & Barge, RoRo, Our Fleet, all five Resources topics,
-   homepage. Should CGS write it, or is copywriting in scope?
+3. ~~**Missing copy.**~~ Resolved: Our Fleet, all five Resources topics, and
+   the homepage all now have client-supplied copy and are built (see their
+   own pages' header comments). Tug & Barge and RoRo copy also turned out to
+   already be supplied — see item 9/10 in the sitemap table above — so
+   nothing is still missing here.
 4. **Logo files.** Vector or transparent PNG, plus a white version for the dark
    footer. The supplied JPEG has a white background.
 5. **Video.** Is the AI-generated clip final, or is real operations footage coming?
@@ -267,3 +270,16 @@ verifiable claims a logistics buyer will check.
     channel ("ravi shankar", 2 subscribers) rather than an official
     Carriage Global channel — flag this so they can swap in the
     corporate channel's link if one exists.
+16. **Roll On/Roll Off has no photography at all.** ASSET-INVENTORY.md's
+    "coverage gaps" note already flagged this; confirmed again while
+    building `roll-on-roll-off.php` 2026-08-26. The page currently has no
+    gallery section as a result (Project Freight Forwarding and Tug &
+    Barge both borrow real photos from the `gallery` table's matching
+    category; RoRo's category has zero rows). Ask the client for RoRo-
+    specific photos, or confirm whether any of the 80 unsorted
+    `client_assets/pic/` WhatsApp exports show RoRo operations once that
+    folder is categorised.
+17. **Tug & Barge page video.** The client's "webpage -3rd email on Tug and
+    Barge charter" says a YouTube video can go on this page ("try to mute
+    sound") but no link was supplied. Not built into
+    `tug-and-barge-chartering.php` yet — ask for the link.

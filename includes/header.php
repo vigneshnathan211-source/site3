@@ -118,8 +118,13 @@ $activeSocials = array_filter(
           <?php foreach ($navItems as $item): ?>
             <?php $isActive = nav_active($item['match']); ?>
             <li class="<?php echo !empty($item['children']) ? 'has-dropdown' : ''; ?>">
-              <a href="<?php echo url($item['href']); ?>" class="<?php echo $isActive; ?>"
-                 <?php echo $isActive ? 'aria-current="page"' : ''; ?>>
+              <?php /* Dropdown parents (only "Services" today) have no overview
+                       page of their own to land on — the dropdown already opens
+                       on hover, so the label itself is just the toggle, not a
+                       link, and stays on "#" rather than 404ing to services.php. */ ?>
+              <a href="<?php echo !empty($item['children']) ? '#' : url($item['href']); ?>" class="<?php echo $isActive; ?>"
+                 <?php echo $isActive ? 'aria-current="page"' : ''; ?>
+                 <?php echo !empty($item['children']) ? 'onclick="return false;"' : ''; ?>>
                 <?php echo e($item['label']); ?>
                 <?php if (!empty($item['children'])): ?>
                   <i class="fa-solid fa-angle-down" aria-hidden="true"></i>
@@ -204,9 +209,9 @@ $activeSocials = array_filter(
             </a>
             <div class="collapse <?php echo nav_active($item['match'], 'show'); ?>" id="<?php echo $collapseId; ?>">
               <ul class="cgs-mobile-nav__sub">
-                <li>
-                  <a href="<?php echo url($item['href']); ?>">All <?php echo e($item['label']); ?></a>
-                </li>
+                <?php /* No "All Services" catch-all row: there is no services.php
+                         overview page to send it to, so the submenu just lists
+                         the real service pages, same as the desktop dropdown. */ ?>
                 <?php foreach ($item['children'] as $child): ?>
                 <li>
                   <a href="<?php echo url($child['href']); ?>" class="<?php echo nav_active($child['href']); ?>">

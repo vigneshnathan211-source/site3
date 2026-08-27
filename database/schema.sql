@@ -164,6 +164,16 @@ CREATE TABLE IF NOT EXISTS `service_sections` (
   `status`     ENUM('active','inactive') DEFAULT 'active',
   PRIMARY KEY (`id`),
   KEY `service_id` (`service_id`),
+  -- Every other seed table in this file is safe to re-run either because
+  -- its INSERT gives explicit primary-key ids (gallery, hero_slides,
+  -- fleet_items, services...) or because it has its own composite unique
+  -- key (page_blocks). This table had neither: an auto-increment id with
+  -- no other unique key means `INSERT IGNORE` can't actually detect a
+  -- repeat row, so re-running this file against an already-seeded
+  -- database silently doubled every row (found 2026-08-26 — Heavy Lift's
+  -- 11 rows had become 22, rendering every process step and capability
+  -- card twice). This key makes the re-run guarantee real for this table.
+  UNIQUE KEY `service_section_unique` (`service_id`, `heading`(100), `layout`),
   CONSTRAINT `fk_service_sections_service`
     FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
@@ -561,3 +571,81 @@ INSERT IGNORE INTO `service_sections` (`service_id`, `heading`, `body`, `image`,
 (2, 'Lifting & Lashing Calculations', '<p>Specialists perform detailed lifting and lashing calculations to verify that weight distributions and anchor points can endure dynamic ocean forces.</p>', 'assets/img/services/heavy-lift/cap-lifting.jpg', 'cards', 2, 'active'),
 (2, 'Stowage Plan & Certified Gear', '<p>Teams coordinate pre-approval stages for the stowage plan while ensuring certified lifting gears are fully available and ready for deployment.</p>', 'assets/img/services/heavy-lift/cap-stowage.jpg', 'cards', 3, 'active'),
 (2, 'Contractual Review & Delivery', '<p>Coordinators review every clause and requirement alongside ship owners and charterers to eliminate operational friction. The service oversees the entire transit phase down to the final drop-off location, ensuring a secure and seamless delivery.</p>', NULL, 'cards', 4, 'active');
+
+-- -----------------------------------------------------------------------------
+-- project-freight-forwarding.php / tug-and-barge-chartering.php /
+-- roll-on-roll-off.php seeds — the three remaining service-detail pages
+-- (heavy-lift-chartering.php above was the first). All three are supplied
+-- verbatim by the client (docs/CONTENT.md, "Service page 1", "Service page
+-- 3", "Service page 4" — separate emails: "In Service tab Project freight
+-- forwarding page", "webpage -3rd email on Tug and Barge charter", "webpage
+-- -4th email Roll on-Roll off"), unlike Tug & Barge and RoRo's earlier
+-- "not supplied" status in PROJECT-BRIEF.md's sitemap table (now updated).
+--
+-- Unlike Heavy Lift, none of the three has a dedicated client photo set —
+-- ASSET-INVENTORY.md's "coverage gaps" note flags Tug & Barge and RoRo as
+-- having no labelled photography at all. Project Freight Forwarding draws
+-- its gallery from the `gallery` table's existing 'Project Freight
+-- Forwarding' category (5 real CGS-branded photos, already live on
+-- past-projects.php); Tug & Barge borrows its 2 categorised gallery photos
+-- the same way; RoRo has zero, so its page simply has no gallery section —
+-- see roll-on-roll-off.php's header comment and PROJECT-BRIEF.md's open
+-- questions rather than forcing in an unrelated stock photo.
+--
+-- `layout` on service_sections is a per-page hint, not an enforced rule:
+-- each page's own template decides what 'list' vs 'cards' renders as. All
+-- three pages' 'list' rows render as the same numbered rail (Heavy Lift's
+-- mechanic) — Tug & Barge's four routes/capabilities aren't a literal
+-- sequence, but were changed 2026-08-26 to use the rail too, matching the
+-- other two pages' "How It Works" treatment for visual consistency across
+-- all three service pages (client feedback); see
+-- tug-and-barge-chartering.php's header comment.
+-- -----------------------------------------------------------------------------
+INSERT IGNORE INTO `page_blocks` (`page_key`, `block_key`, `eyebrow`, `heading`, `body`, `sort_order`) VALUES
+('project-freight-forwarding', 'intro', NULL, 'Choosing the Right Mode of Transport',
+  '<p>Project freight forwarding requires choosing the right mode of transport based on cargo size, urgency, budget, and site constraints. Companies like CGS analyze packing lists to deliver cost-effective, practical solutions instead of pushing expensive charters.</p>', 1),
+('project-freight-forwarding', 'transport-solutions', 'What We Offer', 'Transport Solutions', NULL, 2),
+('project-freight-forwarding', 'approach', 'How It Works', 'The CGS Approach', NULL, 3),
+
+('tug-and-barge-chartering', 'intro', NULL, 'Ballastable Tug and Barge versus Self-Propelled Barge',
+  '<p>Choosing the right maritime transport solution is a critical decision that impacts project safety, budget, and timelines. The choice between a ballastable barge, a standard tug-and-barge configuration, or a self-propelled vessel depends entirely on your cargo profile and operational risks.</p>', 1),
+('tug-and-barge-chartering', 'pillars', 'What We Evaluate', 'Four Core Pillars We Evaluate', NULL, 2),
+('tug-and-barge-chartering', 'track-record', NULL, 'Proven Track Record: Regional Logistics Expertise',
+  '<p>CGS delivers tailored chartering solutions across Southeast Asia, managing complex industrial cargo movements through versatile operating methodologies:</p>', 3),
+
+('roll-on-roll-off', 'intro', NULL, 'Roll-On/Roll-Off (RoRo) Operations',
+  '<p>Roll-on/Roll-off (RoRo) operations, a Mafi trailer (or roll trailer) acts as a heavy-duty wheeled platform used to load non-motorized, static, or oversized cargo. A terminal tractor (tugmaster) hooks up to the Mafi using a gooseneck pin, rolls the cargo up the vessel ramp, parks it inside the deck, and unhooks it for secure ocean transit. Eg Modular trailers using king pin size to tow using tow tug instead of using power pack unit.</p>', 1),
+('roll-on-roll-off', 'cargo-types', 'What We Move', 'Cargo Types Loaded on Mafi Trailers', NULL, 2),
+('roll-on-roll-off', 'process', 'How It Works', 'Step-by-Step Loading Process', NULL, 3);
+
+INSERT IGNORE INTO `service_sections` (`service_id`, `heading`, `body`, `image`, `layout`, `sort_order`, `status`) VALUES
+-- Project Freight Forwarding (service_id 1) — 'cards' = Transport Solutions bento, 'list' = CGS Approach rail
+(1, 'Container Vessels', '<p>Best for standard over-sized or heavy components that fit safely inside standard or high-cube containers.</p>', NULL, 'cards', 1, 'active'),
+(1, 'Mafi Trailers', '<p>Ideal for rolling heavy or awkward rolling stock and breakbulk units directly onto vessels via ramp.</p>', NULL, 'cards', 2, 'active'),
+(1, 'Specialized Equipment', '<p>Utilizes flat racks, platforms, open-top, and over-height containers for odd dimensions.</p>', NULL, 'cards', 3, 'active'),
+(1, 'Tugs and Barges', '<p>Useful for remote job sites or shallow waters lacking deep-water port infrastructure.</p>', NULL, 'cards', 4, 'active'),
+(1, 'Geared/Semi-Geared Vessels', '<p>Independent lifting gear allows loading and discharging at ports without shore cranes.</p>', NULL, 'cards', 5, 'active'),
+(1, 'Packing List Analysis', '<p>Matches cargo dimensions directly with equipment capabilities.</p>', NULL, 'list', 1, 'active'),
+(1, 'Cost Efficiency', '<p>Balances urgency against commercial constraints to avoid overspending.</p>', NULL, 'list', 2, 'active'),
+(1, 'Feasibility Studies', '<p>Ensures routes, handling gear, and vessel types match project needs.</p>', NULL, 'list', 3, 'active'),
+
+-- Chartering of Tug and Barges (service_id 3) — 'cards' = Four Core Pillars bento, 'list' = Track Record feature list
+(3, 'Deck Strength', '<p>High-tonnage cargo requires reinforced deck load capacities (t/m&sup2;) to prevent structural warping.</p>', NULL, 'cards', 1, 'active'),
+(3, 'Cargo Dimensions', '<p>Total footprint, height, and center of gravity dictate the required beam width and stability calculations.</p>', NULL, 'cards', 2, 'active'),
+(3, 'Travel Distance', '<p>Longer open-ocean transits often justify the speed of self-propelled vessels, while shorter regional routes favor traditional towing.</p>', NULL, 'cards', 3, 'active'),
+(3, 'Operational Risk', '<p>Environmental factors, narrow channels, and tight port windows require precise maneuvering capabilities.</p>', NULL, 'cards', 4, 'active'),
+(3, 'Heavy Lift Pipe Transits (Batam to Kuching)', '<p>We manage international cross-border charters executing precise Lift-On/Lift-Off (Lo-Lo) operations. Our engineered seafastening plans ensure high-volume, heavy-lift pipe stacks remain completely stable across changing regional sea conditions.</p>', NULL, 'list', 1, 'active'),
+(3, 'Domestic Roll-On/Roll-Off (Ro-Ro) Charters', '<p>We bridge the gap between heavy fabrication yards and private jetties using specialized Roll-On/Roll-Off (Ro-Ro) barges. Internal ballasting systems balance the vessel continuously, matching the dock height exactly as heavy modular cargo rolls onboard.</p>', NULL, 'list', 2, 'active'),
+(3, 'Strategic Port Interconnection', '<p>Our charter fleet seamlessly links key maritime hubs, transferring critical cargo directly from the PSA Container Terminal and Jurong Port.</p>', NULL, 'list', 3, 'active'),
+(3, 'Direct Underhook Transfers', '<p>For ultra-heavy or oversized components, we position barges directly alongside deep-sea heavy lift vessels. This allows for immediate underhook transfers in open port waters, cutting out extra handling steps and minimizing cargo risk.</p>', NULL, 'list', 4, 'active'),
+
+-- Roll On and Off (Ro-Ro) (service_id 4) — 'cards' = Cargo Types bento, 'list' = Step-by-Step rail
+(4, 'Heavy Industrial Machines', '<p>Transformers, generators, and large boilers.</p>', NULL, 'cards', 1, 'active'),
+(4, 'Construction and Mining Equipment', '<p>Equipment that lacks wheels or cannot be safely driven.</p>', NULL, 'cards', 2, 'active'),
+(4, 'Steel Structures', '<p>Steel plates, wire rope reels.</p>', NULL, 'cards', 3, 'active'),
+(4, 'Large Crated Goods', '<p>Boats, and rail components.</p>', NULL, 'cards', 4, 'active'),
+(4, 'Pre-Staging', '<p>The cargo is placed onto the Mafi platform at the terminal yard using heavy cranes or forklifts.</p>', NULL, 'list', 1, 'active'),
+(4, 'Securing (Lashing)', '<p>Workers lash, chain, and block the cargo tightly to the Mafi deck so it cannot shift under motion.</p>', NULL, 'list', 2, 'active'),
+(4, 'Towing', '<p>A terminal tractor attaches a gooseneck attachment to the front of the Mafi trailer.</p>', NULL, 'list', 3, 'active'),
+(4, 'Rolling On', '<p>The tractor reverses or pulls the Mafi up the ship''s stern or side ramp directly into the garage decks.</p>', NULL, 'list', 4, 'active'),
+(4, 'Parking and Disconnection', '<p>The unit is parked into its designated stowage slot, unhooked from the tractor, and lashed to the ship''s deck fittings for the voyage.</p>', NULL, 'list', 5, 'active');

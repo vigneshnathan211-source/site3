@@ -83,13 +83,15 @@ $capabilityCards = array_values(array_filter($sectionRows, fn($r) => $r['layout'
    (that table feeds past-projects.php's filterable grid — mixing the two
    would silently add these to that page's "Chartering Heavy Lift" filter
    too, which nobody asked for). Reuses the same .cgs-gallery-trigger
-   lightbox class, wired once in includes/scripts.php for every page. */
+   lightbox class, wired once in includes/scripts.php for every page.
+   gallery-03/04/05 are deliberately left out here (2026-08-26 fix) — they
+   already appear above as the Barge and LCT Operations, Port-to-Port
+   Delivery and Compliance and Documentation process-step photos, and
+   showing the same three images twice on one page read as duplicated
+   content. */
 $galleryShots = [
     ['file' => 'gallery-01.jpg', 'alt' => 'Cable-laying reel structure staged on a self-propelled trailer at a shipyard, a gantry crane marked "NO.8" behind'],
     ['file' => 'gallery-02.jpg', 'alt' => 'Deck crew looking up as a cable-reel structure is lowered toward the water during a marine charter'],
-    ['file' => 'gallery-03.jpg', 'alt' => 'Crane lowering a cable-reel structure over open water alongside a tug and barge'],
-    ['file' => 'gallery-04.jpg', 'alt' => 'Large cylindrical pressure vessel craned onto a flatbed trailer at a floodlit night berth'],
-    ['file' => 'gallery-05.jpg', 'alt' => 'Mobile crane suspended on a spreader beam between two ship gantry cranes, blue sky behind'],
     ['file' => 'gallery-06.jpg', 'alt' => 'Underhook transfer of a mobile crane into an open cargo hold alongside open water'],
     ['file' => 'gallery-07.jpg', 'alt' => 'Spherical pressure vessel head wrapped for transit, crew standing by during positioning'],
     ['file' => 'gallery-08.jpg', 'alt' => 'Disassembled crawler crane components rigged for lift-out from a vessel\'s cargo hold'],
